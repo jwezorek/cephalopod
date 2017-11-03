@@ -1,0 +1,9 @@
+{
+    "diamonds" : {"rect" : [ 1, 1, 345, 188 ], "index" : 0 },
+    "alien" : {"rect" : [ 1, 191, 148, 79 ], "index" : 1 },
+    "green_square" : {"rect" : [ 151, 191, 50, 50 ], "index" : 2 },
+    "little_grid" : {"rect" : [ 151, 243, 25, 25 ], "index" : 3 },
+    "blue_square" : {"rect" : [ 203, 191, 50, 50 ], "index" : 4 },
+    "red_diamond" : {"rect" : [ 1, 272, 116, 116 ], "index" : 5 },
+    "ship" : {"rect" : [ 119, 272, 102, 109 ], "index" : 6 }
+}
