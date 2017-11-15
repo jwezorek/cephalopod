@@ -5,6 +5,7 @@
 #include "actor.hpp"
 #include "events.hpp"
 #include "texture.hpp"
+#include "signals.hpp"
 
 namespace ceph {
 
@@ -13,7 +14,7 @@ namespace ceph {
 	typedef std::function<void(Actor&, float)> UpdateHandlerFunc;
 	typedef std::function<void(Actor&, bool, KeyCode, unsigned char)> KeyEventHandlerFunc;
 
-	class Scene
+	class Scene : public Slot<Scene>
 	{
 	private:
 		std::unique_ptr<SceneImpl> impl_;
@@ -21,16 +22,12 @@ namespace ceph {
 	public:
 		Scene();
 
-		void handleKeyEvent(bool isPressed, KeyCode key, unsigned char modifiers);
 		void setBackground(const std::shared_ptr<Texture>& tex );
 		void setBackground(const std::shared_ptr<Texture>& tex, CoordinateMapping mapping);
-		void scheduleUpdate(Actor&, const UpdateHandlerFunc& func);
-		void unscheduleUpdate(Actor&);
-		void registerKeyEventHandler(Actor&, const KeyEventHandlerFunc& func);
-		void unregisterKeyEvenHandler(Actor&);
 		void addActor(const std::shared_ptr<Actor>& child);
-		void update(float elapsed);
 		void draw(DrawingContext&& rt);
+
+		Signal<float> updateEvent;
 
 		virtual ~Scene();
 	};

@@ -2,6 +2,7 @@
 #include <memory>
 #include "scene.hpp"
 #include "types.hpp"
+#include "signals.hpp"
 
 namespace ceph
 {
@@ -12,7 +13,7 @@ namespace ceph
 		WindowedWithTitleBar
 	};
 
-	class Game
+	class Game : public Slot<Game> 
 	{
 	public:
 		virtual ~Game() = default;
@@ -26,6 +27,9 @@ namespace ceph
 		virtual Size<float> getLogicalSize() = 0;
 		virtual CoordinateMapping getCoordinateMapping() const = 0;
 
+		Signal<bool, KeyCode, unsigned char> keyEvent;
+
 		static Game& getInstance();
+		static std::unique_ptr<ceph::Game> ceph::Game::createInstance();
 	};
 }

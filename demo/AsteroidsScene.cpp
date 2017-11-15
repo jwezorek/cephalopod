@@ -4,8 +4,9 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Asteroids::Asteroids()
+Asteroids::Asteroids() 
 {
+	
 	sprite_sheet_ = ceph::SpriteSheet::create(
 		".\\data\\zarquon.png", 
 		".\\data\\zarquon.json"
@@ -33,10 +34,9 @@ Asteroids::Asteroids()
 	squ1->setPosition( loc );
 	squ2->setPosition(rect.getLocation().x + rect.getSize().wd - 25, rect.getLocation().y + rect.getSize().hgt - 25);
 
-
-	scheduleUpdate(*ship_, 
-		[&](ceph::Actor& actor, float dt) {
-			this->updateShip(dt);
+	updateEvent.connect(*ship_, 
+		[=](float dt) {
+			updateShip(dt);
 		}
 	);
 
@@ -69,11 +69,12 @@ Asteroids::Asteroids()
 	blue_square->setAlpha(0.25f);
 
 	this->addActor(blue_square);
-	scheduleUpdate(*blue_square,
-		[&](ceph::Actor& actor, float dt) {
-			float theta = actor.getRotation();
+	
+	updateEvent.connect(*blue_square,
+		[=](float dt) {
+			float theta = blue_square->getRotation();
 			theta += 2*dt;
-			actor.setRotation(theta);
+			blue_square->setRotation(theta);
 		}
 	);
 }

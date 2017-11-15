@@ -112,4 +112,6 @@ void ceph::Actor::draw(DrawingContext& dcParent) const
 
 ceph::Actor::~Actor()
 {
+	int aaa;
+	aaa = 5;
 }

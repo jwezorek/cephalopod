@@ -21,10 +21,13 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{83881108-4F26-47B4-8BDB-E5D9E31F98AC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>coyote</RootNamespace>
+    <RootNamespace>cephalopod</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="UserMacros">
+    <SfmlDir>C:\SFML-2.4.2\</SfmlDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -82,7 +85,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\third-party\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SfmlDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -91,7 +94,7 @@
       <AdditionalDependencies>winmm.lib;opengl32.lib;vorbis.lib; vorbisfile.lib;ogg.lib; flac.lib;jpeg.lib;freetype.lib;sfml-graphics-s-d.lib; sfml-system-s-d.lib; sfml-window-s-d.lib; sfml-audio-s-d.lib;</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>.\third-party\lib;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SfmlDir)\lib;</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -101,7 +104,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\SFML-2.4.2\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SfmlDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -116,7 +119,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>SFML_STATIC;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\third-party\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SfmlDir)\nclude</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,7 +130,7 @@
       <AdditionalDependencies>winmm.lib;sfml-graphics-s.lib; sfml-system-s.lib; sfml-window-s.lib; sfml-audio-s.lib;vorbis.lib; vorbisfile.lib;ogg.lib; flac.lib;opengl32.lib;jpeg.lib;freetype.lib;</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>.\third-party\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SfmlDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,7 +142,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\SFML-2.4.2\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SfmlDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,16 +151,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\coyote\actor.hpp" />
-    <ClInclude Include="include\coyote\events.hpp" />
-    <ClInclude Include="include\coyote\game.hpp" />
-    <ClInclude Include="include\coyote\types.hpp" />
-    <ClInclude Include="include\coyote\scene.hpp" />
-    <ClInclude Include="include\coyote\sprite.hpp" />
-    <ClInclude Include="include\coyote\spriteframe.hpp" />
-    <ClInclude Include="include\coyote\spritesheet.hpp" />
-    <ClInclude Include="include\coyote\texture.hpp" />
+    <ClInclude Include="include\cephalopod\actor.hpp" />
+    <ClInclude Include="include\cephalopod\delegate.hpp" />
+    <ClInclude Include="include\cephalopod\events.hpp" />
+    <ClInclude Include="include\cephalopod\game.hpp" />
+    <ClInclude Include="include\cephalopod\scene.hpp" />
+    <ClInclude Include="include\cephalopod\signals.hpp" />
+    <ClInclude Include="include\cephalopod\sprite.hpp" />
+    <ClInclude Include="include\cephalopod\spriteframe.hpp" />
+    <ClInclude Include="include\cephalopod\spritesheet.hpp" />
+    <ClInclude Include="include\cephalopod\texture.hpp" />
+    <ClInclude Include="include\cephalopod\types.hpp" />
+    <ClInclude Include="signals.hpp" />
     <ClInclude Include="source\actorimpl.hpp" />
+    <ClInclude Include="source\gameimpl.hpp" />
     <ClInclude Include="source\json11.hpp" />
     <ClInclude Include="source\sceneimpl.hpp" />
     <ClInclude Include="source\spriteimpl.hpp" />

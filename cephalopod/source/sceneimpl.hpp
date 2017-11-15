@@ -14,8 +14,8 @@ namespace ceph
 	public:
 		std::vector<std::shared_ptr<Actor>> stage_;
 		std::vector<std::pair<Actor*, UpdateHandlerFunc>> updateHandlers_;
-		std::shared_ptr<Texture> bkgd_tex_;
 		sf::Sprite bkgd_;
+		std::shared_ptr<Texture> bkgd_tex_;
 		sf::Transform bkgd_mat_;
 		ceph::CoordinateMapping coordinate_mapping_mode_;
 

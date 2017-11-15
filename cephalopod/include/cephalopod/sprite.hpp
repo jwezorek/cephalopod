@@ -6,12 +6,13 @@
 #include "spritesheet.hpp"
 #include "texture.hpp"
 #include "spriteframe.hpp"
+#include "signals.hpp"
 
 namespace ceph {
 
 	class SpriteImpl;
 
-	class Sprite : public Actor
+	class Sprite : public Slot<Sprite>, public Actor
 	{
 	private:
 		SpriteFrame sprite_frame_;

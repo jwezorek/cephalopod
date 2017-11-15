@@ -21,29 +21,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\coyote\actor.hpp">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\coyote\events.hpp">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\coyote\game.hpp">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\coyote\scene.hpp">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\coyote\sprite.hpp">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\coyote\spritesheet.hpp">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
     <ClInclude Include="source\json11.hpp">
       <Filter>Header Files\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="include\coyote\texture.hpp">
-      <Filter>Header Files\include</Filter>
     </ClInclude>
     <ClInclude Include="source\textureimpl.hpp">
       <Filter>Header Files\internal</Filter>
@@ -51,19 +30,52 @@
     <ClInclude Include="source\spriteimpl.hpp">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="include\coyote\spriteframe.hpp">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
     <ClInclude Include="source\actorimpl.hpp">
       <Filter>Header Files\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="include\coyote\types.hpp">
-      <Filter>Header Files\include</Filter>
     </ClInclude>
     <ClInclude Include="source\sceneimpl.hpp">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
     <ClInclude Include="source\util.hpp">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="signals.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\actor.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\delegate.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\events.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\game.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\scene.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\sprite.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\spriteframe.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\spritesheet.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\texture.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\types.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\signals.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="source\gameimpl.hpp">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
   </ItemGroup>
