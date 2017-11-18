@@ -12,7 +12,7 @@ namespace ceph {
 
 	class SpriteImpl;
 
-	class Sprite : public Slot<Sprite>, public Actor
+	class Sprite : public Actor
 	{
 	private:
 		SpriteFrame sprite_frame_;

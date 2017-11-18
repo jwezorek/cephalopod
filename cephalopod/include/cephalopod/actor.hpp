@@ -3,12 +3,13 @@
 #include <vector>
 #include <memory>
 #include "types.hpp"
+#include "signals.hpp"
 
 namespace ceph {
 	class DrawingContext;
 	class ActorImpl;
 
-	class Actor
+	class Actor : public Slot<Actor>
 	{
 	protected:
 		std::unique_ptr<ActorImpl> impl_;
