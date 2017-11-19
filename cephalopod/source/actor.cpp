@@ -1,5 +1,6 @@
 #include "../include/cephalopod/actor.hpp"
 #include "../include/cephalopod/types.hpp"
+#include "../include/cephalopod/scene.hpp"
 #include "SFML/Graphics.hpp"
 #include "drawingcontext.hpp"
 #include "actorimpl.hpp"
@@ -12,12 +13,58 @@ ceph::Actor::Actor() :
 
 void ceph::Actor::AddChild(const std::shared_ptr<ceph::Actor>& actor)
 {
-	impl_->children.push_back(actor);
+	children_.push_back(actor);
+	if (isInScene())
+		actor->attachToScene(scene_.lock());
 }
 
 void ceph::Actor::RemoveChild(const std::shared_ptr<ceph::Actor>& actor)
 {
+	auto i = std::find(children_.begin(), children_.end(), actor);
+	if (i == children_.end())
+		return;
 
+	(*i)->parent_ = std::weak_ptr<Actor>();
+	(*i)->detachFromScene();
+
+	children_.erase(i);
+}
+
+void ceph::Actor::detach()
+{
+	if (hasParent())
+		parent_.lock()->RemoveChild(shared_from_this());
+	else if (isInScene())
+		scene_.lock()->removeActor(shared_from_this());
+}
+
+void ceph::Actor::detachFromScene()
+{
+	scene_ = std::weak_ptr<Scene>();
+	for (auto child : children_)
+		child->detachFromScene();
+}
+
+void ceph::Actor::attachToScene(const std::shared_ptr<Scene>& scene)
+{
+	scene_ = scene;
+	for (auto child : children_)
+		child->attachToScene(scene);
+}
+
+bool ceph::Actor::isInScene() const
+{
+	return !scene_.expired();
+}
+
+bool ceph::Actor::hasParent() const
+{
+	return !parent_.expired();
+}
+
+bool ceph::Actor::isInSceneTopLevel() const
+{
+	return isInScene() && !hasParent();
 }
 
 float ceph::Actor::getAlpha() const
@@ -105,13 +152,11 @@ void ceph::Actor::draw(DrawingContext& dcParent) const
 	);
 	drawThis(dc);
 	dc.transform *= sf::Transform().translate(impl_->properties.getOrigin());
-	for (const auto& child : impl_->children) {
+	for (const auto& child : children_) {
 		child->draw(dc);
 	}
 }
 
 ceph::Actor::~Actor()
 {
-	int aaa;
-	aaa = 5;
 }

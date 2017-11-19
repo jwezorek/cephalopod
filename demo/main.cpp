@@ -24,7 +24,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		ceph::Size<float>(WD, HGT)
 	);
 
-	auto scene = std::static_pointer_cast<ceph::Scene>(std::make_shared<Asteroids>());
+	auto scene = ceph::Scene::create<Asteroids>();
 	game->run(scene);
 
 	return 0;

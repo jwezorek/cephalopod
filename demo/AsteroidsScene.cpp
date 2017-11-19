@@ -4,10 +4,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Asteroids::Asteroids() 
+void Asteroids::initialize()
 {
 	sprite_sheet_ = ceph::SpriteSheet::create(
-		".\\data\\zarquon.png", 
+		".\\data\\zarquon.png",
 		".\\data\\zarquon.json"
 	);
 
@@ -21,5 +21,4 @@ Asteroids::Asteroids()
 	);
 	this->addActor(ship_);
 }
-
 

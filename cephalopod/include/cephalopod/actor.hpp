@@ -8,17 +8,31 @@
 namespace ceph {
 	class DrawingContext;
 	class ActorImpl;
+	class Scene;
 
-	class Actor : public Slot<Actor>
+	class Actor : public Slot<Actor>, std::enable_shared_from_this<Actor>
 	{
+		friend class Scene;
+
 	protected:
+		std::weak_ptr<Scene> scene_;
+		std::weak_ptr<Actor> parent_;
+		std::vector<std::shared_ptr<Actor>> children_;
 		std::unique_ptr<ActorImpl> impl_;
+
 		virtual void drawThis(DrawingContext& rt) const = 0;
+		void detachFromScene();
+		void attachToScene(const std::shared_ptr<Scene>& scene);
+
 	public:
 		Actor();
 
 		void AddChild(const std::shared_ptr<Actor>&);
 		void RemoveChild(const std::shared_ptr<Actor>&);
+		void detach();
+		bool isInScene() const;
+		bool hasParent() const;
+		bool isInSceneTopLevel() const;
 
 		virtual float getAlpha() const;
 		virtual void setAlpha(float alpha);

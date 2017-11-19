@@ -22,7 +22,7 @@ void ceph::Action::unattach()
 
 bool ceph::Action::isAttached() const
 {
-	return owner_.expired();
+	return !owner_.expired();
 }
 
 void ceph::Action::pause()
@@ -58,13 +58,16 @@ ceph::Action::~Action()
 ceph::FiniteAction::FiniteAction(float duration)
 {
 	duration_ = duration;
-	initialize();
+	elapsed_ = 0.0f;
+	is_complete_ = false;
 }
 
-void ceph::FiniteAction::initialize() 
+void ceph::FiniteAction::run() 
 {
 	elapsed_ = 0.0f;
 	is_complete_ = false;
+	for (auto& child : children_)
+		child->run();
 }
 
 void ceph::FiniteAction::update(float elapsed)
@@ -75,7 +78,13 @@ void ceph::FiniteAction::update(float elapsed)
 	float pcnt_complete = elapsed_ / duration_;
 	if (pcnt_complete >= 1.0f) 
 		pcnt_complete = 1.0f;
-	updatePcntComplete(pcnt_complete);
+
+	setActionState(pcnt_complete);
+}
+
+void ceph::FiniteAction::setActionState(float pcnt_complete)
+{
+	setSpriteState(pcnt_complete);
 	if (pcnt_complete == 1.0f) {
 		is_complete_ = true;
 		complete_event_.fire(this);

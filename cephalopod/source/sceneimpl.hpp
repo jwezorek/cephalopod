@@ -12,8 +12,6 @@ namespace ceph
 	class SceneImpl
 	{
 	public:
-		std::vector<std::shared_ptr<Actor>> stage_;
-		std::vector<std::pair<Actor*, UpdateHandlerFunc>> updateHandlers_;
 		sf::Sprite bkgd_;
 		std::shared_ptr<Texture> bkgd_tex_;
 		sf::Transform bkgd_mat_;

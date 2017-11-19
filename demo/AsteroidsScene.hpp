@@ -12,5 +12,5 @@ private:
 	std::shared_ptr<Ship> ship_;
 
 public:
-	Asteroids();
+	void initialize() override;
 };

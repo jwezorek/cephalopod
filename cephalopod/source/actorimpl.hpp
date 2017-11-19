@@ -8,7 +8,6 @@ namespace ceph
 	class ActorImpl {
 	public:
 		Actor* parent;
-		std::vector<std::shared_ptr<Actor>> children;
 		float alpha;
 		Point<float> anchor;
 		Size<int> frame_sz;

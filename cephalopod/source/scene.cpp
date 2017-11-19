@@ -21,16 +21,26 @@ void ceph::Scene::setBackground(const std::shared_ptr<Texture>& tex, ceph::Coord
 	impl_->setBackground(tex, mapping);
 }
 
-
 void ceph::Scene::addActor(const std::shared_ptr<ceph::Actor>& child)
 {
-	impl_->stage_.push_back(child);
+	stage_.push_back(child);
+	child->attachToScene( shared_from_this() );
+}
+
+void ceph::Scene::removeActor(const std::shared_ptr<ceph::Actor>& child)
+{
+	auto i = std::find(stage_.begin(), stage_.end(), child);
+	if (i == stage_.end())
+		return;
+
+	(*i)->detachFromScene();
+	stage_.erase(i);
 }
 
 void ceph::Scene::draw(DrawingContext && rt)
 {
 	impl_->drawBackground(rt);
-	for (const auto& actor : impl_->stage_)
+	for (const auto& actor : stage_)
 		actor->draw(rt);
 }
 

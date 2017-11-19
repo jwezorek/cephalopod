@@ -7,10 +7,11 @@ namespace ceph {
 
 	class Action : public Slot<Action>
 	{
-	private:
+	protected:
 		std::weak_ptr<Actor> owner_;
 		bool is_paused_;
 		std::vector<std::shared_ptr<Action>> children_;
+
 	public:
 		Action(bool startPaused = false);
 
@@ -23,7 +24,7 @@ namespace ceph {
 		void unattach();
 		bool isAttached() const;
 
-		virtual void initialize() = 0;
+		virtual void run() = 0;
 		virtual void update(float elapsed) = 0;
 
 		~Action();
@@ -39,10 +40,12 @@ namespace ceph {
 	public:
 		FiniteAction(float duration);
 
-		virtual bool isComplete() const;
-		virtual void initialize() override;
-		virtual void update(float elapsed) override;
-		virtual void updatePcntComplete(float pcnt) = 0;
+		bool isComplete() const;
+		void run() override;
+		void update(float elapsed) override;
+		void setActionState(float pcnt_complete);
+		virtual void setSpriteState(float pcnt_complete) = 0;
+
 	};
 
 }
