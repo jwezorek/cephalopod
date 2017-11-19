@@ -117,10 +117,14 @@ void GameImpl::initialize(ceph::ScreenMode mode, int wd, int hgt, const std::str
 	switch (mode) {
 		case ceph::ScreenMode::FullScreenExclusive:
 			video_mode = sf::VideoMode::getFullscreenModes()[0];
+			wd = video_mode.width;
+			hgt = video_mode.height;
 			style = sf::Style::Fullscreen;
 			break;
 		case ceph::ScreenMode::FullScreenWindowed:
 			video_mode = sf::VideoMode::getDesktopMode();
+			wd = video_mode.width;
+			hgt = video_mode.height;
 			style = sf::Style::None;
 			break;
 		case ceph::ScreenMode::WindowedWithTitleBar:
@@ -130,6 +134,7 @@ void GameImpl::initialize(ceph::ScreenMode mode, int wd, int hgt, const std::str
 	}
 
 	window_ = std::make_unique<sf::RenderWindow>( video_mode, title, style );
+	setLogicalCoordinates(ceph::CoordinateMapping::StretchToFit, ceph::Size<float>(wd, hgt), ceph::CoordinateSystem::UpperLeftOriginDescendingY);
 }
 
 void GameImpl::setLogicalCoordinates(ceph::CoordinateMapping mapping, const ceph::Size<float>& log_size, ceph::CoordinateSystem system)

@@ -17,12 +17,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		}
 	);
 
-	game->initialize(ceph::ScreenMode::WindowedWithTitleBar, WD, HGT, std::string("foobar") );
-	//game.initialize(ceph::ScreenMode::FullScreenExclusive);
-	game->setLogicalCoordinates(
-		ceph::CoordinateMapping::StretchToFit,
-		ceph::Size<float>(WD, HGT)
-	);
+	game->initialize(ceph::ScreenMode::FullScreenExclusive);
 
 	auto scene = ceph::Scene::create<Asteroids>();
 	game->run(scene);
