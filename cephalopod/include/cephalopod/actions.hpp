@@ -1,9 +1,11 @@
 #pragma once
 
 #include "signals.hpp"
-#include "actor.hpp"
+#include "types.hpp"
 
 namespace ceph {
+
+	class Actor;
 
 	class Action : public Slot<Action>
 	{
@@ -24,7 +26,7 @@ namespace ceph {
 		void unattach();
 		bool isAttached() const;
 
-		virtual void run() = 0;
+		virtual void run(const std::shared_ptr<Actor>& actor);
 		virtual void update(float elapsed) = 0;
 
 		~Action();
@@ -38,14 +40,25 @@ namespace ceph {
 		float duration_;
 		bool is_complete_;
 	public:
-		FiniteAction(float duration);
+		FiniteAction(float duration, bool startPaused = false);
 
 		bool isComplete() const;
-		void run() override;
 		void update(float elapsed) override;
 		void setActionState(float pcnt_complete);
+		virtual void run(const std::shared_ptr<Actor>& actor) override;
 		virtual void setSpriteState(float pcnt_complete) = 0;
 
+	};
+
+	class MoveToAction : public FiniteAction
+	{
+	private:
+		Point<float> start_;
+		Point<float> dest_;
+	public: 
+		MoveToAction(float duration, const Point<float>& dest, bool startPaused = false);
+		void run(const std::shared_ptr<Actor>& actor) override;
+		void setSpriteState(float pcnt_complete) override;
 	};
 
 }

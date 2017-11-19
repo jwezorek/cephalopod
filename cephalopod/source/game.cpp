@@ -16,8 +16,7 @@
 #include "util.hpp"
 #include "gameimpl.hpp"
 
-
-void GameImpl::handleInput(const sf::Event& evt)
+void ceph::GameImpl::handleInput(const sf::Event& evt)
 {
 	switch (evt.type) {
 		case sf::Event::KeyPressed:
@@ -29,12 +28,12 @@ void GameImpl::handleInput(const sf::Event& evt)
 	}
 }
 
-unsigned char GameImpl::getModifiers(const sf::Event::KeyEvent& ke) {
+unsigned char ceph::GameImpl::getModifiers(const sf::Event::KeyEvent& ke) {
 	//TODO
 	return 0;
 }
 
-sf::Transform GameImpl::getCoordinateSystemMatrix(ceph::CoordinateSystem system, const ceph::Size<float>& log_sz)
+sf::Transform ceph::GameImpl::getCoordinateSystemMatrix(ceph::CoordinateSystem system, const ceph::Size<float>& log_sz)
 {
 	if (system == ceph::CoordinateSystem::UpperLeftOriginDescendingY)
 		return sf::Transform::Identity;
@@ -47,7 +46,7 @@ sf::Transform GameImpl::getCoordinateSystemMatrix(ceph::CoordinateSystem system,
 	return inverted_y.translate(orig_pt);
 }
 
-ceph::Size<float> GameImpl::getLogSizeFromMapping(ceph::CoordinateMapping mapping_mode, const ceph::Size<float>& log_size, const ceph::Size<int>& scr_size)
+ceph::Size<float> ceph::GameImpl::getLogSizeFromMapping(ceph::CoordinateMapping mapping_mode, const ceph::Size<float>& log_size, const ceph::Size<int>& scr_size)
 {
 	float aspect_ratio = static_cast<float>(scr_size.wd) / static_cast<float>(scr_size.hgt);
 	switch (mapping_mode) {
@@ -68,7 +67,7 @@ ceph::Size<float> GameImpl::getLogSizeFromMapping(ceph::CoordinateMapping mappin
 	return  ceph::Size<float>(0, 0);
 }
 
-std::tuple<sf::Transform, std::vector<sf::RectangleShape>> GameImpl::getCoordinateMappingInfo(
+std::tuple<sf::Transform, std::vector<sf::RectangleShape>> ceph::GameImpl::getCoordinateMappingInfo(
 	ceph::CoordinateMapping mapping_mode, 
 	const ceph::Size<float>& log_sz, 
 	const ceph::Size<int>& scr_sz)
@@ -101,16 +100,16 @@ std::tuple<sf::Transform, std::vector<sf::RectangleShape>> GameImpl::getCoordina
 	return std::tuple<sf::Transform, std::vector<sf::RectangleShape>>( mapping, bars );
 }
 
-GameImpl::GameImpl() {
-	GameImpl::instance_ = this;
+ceph::GameImpl::GameImpl() {
+	ceph::GameImpl::instance_ = this;
 }
 
-GameImpl* GameImpl::getInstance()
+ceph::GameImpl* ceph::GameImpl::getInstance()
 {
 	return instance_;
 }
 
-void GameImpl::initialize(ceph::ScreenMode mode, int wd, int hgt, const std::string& title)
+void ceph::GameImpl::initialize(ceph::ScreenMode mode, int wd, int hgt, const std::string& title)
 {
 	sf::VideoMode video_mode;
 	unsigned int style;
@@ -134,10 +133,14 @@ void GameImpl::initialize(ceph::ScreenMode mode, int wd, int hgt, const std::str
 	}
 
 	window_ = std::make_unique<sf::RenderWindow>( video_mode, title, style );
-	setLogicalCoordinates(ceph::CoordinateMapping::StretchToFit, ceph::Size<float>(wd, hgt), ceph::CoordinateSystem::UpperLeftOriginDescendingY);
+	setLogicalCoordinates(
+		ceph::CoordinateMapping::StretchToFit, 
+		ceph::Size<float>(static_cast<float>(wd), static_cast<float>(hgt)),
+		ceph::CoordinateSystem::UpperLeftOriginDescendingY
+	);
 }
 
-void GameImpl::setLogicalCoordinates(ceph::CoordinateMapping mapping, const ceph::Size<float>& log_size, ceph::CoordinateSystem system)
+void ceph::GameImpl::setLogicalCoordinates(ceph::CoordinateMapping mapping, const ceph::Size<float>& log_size, ceph::CoordinateSystem system)
 {
 	auto scr_sz = getScreenSize();
 	log_size_ = getLogSizeFromMapping(mapping, log_size, scr_sz);
@@ -156,7 +159,7 @@ void GameImpl::setLogicalCoordinates(ceph::CoordinateMapping mapping, const ceph
 	);
 }
 
-void GameImpl::drawBlackBars()
+void ceph::GameImpl::drawBlackBars()
 {
 	if (black_bars_.get()) {
 		for( auto& bar: *black_bars_)
@@ -164,7 +167,7 @@ void GameImpl::drawBlackBars()
 	}
 }
 
-void GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
+void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 	active_scene_ = startingScene;
 
 	sf::Event event;
@@ -176,9 +179,12 @@ void GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 				window_->close();
 			handleInput(event);
 		}
-		active_scene_->updateEvent.fire( clock.getElapsedTime().asSeconds() );
 
+		auto elapsed = clock.getElapsedTime().asSeconds();
+		active_scene_->updateActionsEvent.fire(elapsed);
+		active_scene_->updateEvent.fire(elapsed);
 		clock.restart();
+
 		window_->clear();
 
 		active_scene_->draw( ceph::DrawingContext( *window_, coord_transform_));
@@ -190,7 +196,7 @@ void GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 	}
 }
 
-ceph::Rect<float> GameImpl::getLogicalRect() 
+ceph::Rect<float> ceph::GameImpl::getLogicalRect()
 {
 	return ceph::SfmlRectToCoyRect( 
 		coord_system_.getInverse().transformRect(
@@ -199,28 +205,28 @@ ceph::Rect<float> GameImpl::getLogicalRect()
 	);
 }
 
-ceph::Size<int> GameImpl::getScreenSize() 
+ceph::Size<int> ceph::GameImpl::getScreenSize()
 {
 	auto sz = window_->getSize();
 	return { static_cast<int>(sz.x), static_cast<int>(sz.y) };
 }
 
-ceph::Size<float> GameImpl::getLogicalSize() 
+ceph::Size<float> ceph::GameImpl::getLogicalSize()
 {
 	return log_size_;
 }
 
-void GameImpl::quit() 
+void ceph::GameImpl::quit()
 {
 	window_->close();
 }
 
-ceph::CoordinateMapping GameImpl::getCoordinateMapping() const 
+ceph::CoordinateMapping ceph::GameImpl::getCoordinateMapping() const
 {
 	return coord_mapping_mode_;
 }
 
-GameImpl* GameImpl::instance_ = nullptr;
+ceph::GameImpl* ceph::GameImpl::instance_ = nullptr;
 
 std::unique_ptr<ceph::Game> ceph::Game::createInstance()
 {

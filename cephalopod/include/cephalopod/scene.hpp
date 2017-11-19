@@ -10,17 +10,22 @@
 namespace ceph {
 
 	class SceneImpl;
+	class GameImpl;
 
 	typedef std::function<void(Actor&, float)> UpdateHandlerFunc;
 	typedef std::function<void(Actor&, bool, KeyCode, unsigned char)> KeyEventHandlerFunc;
 
 	class Scene : public Slot<Scene>, std::enable_shared_from_this<Scene>
 	{
+		friend class GameImpl;
+		friend class Actor;
+
 	private:
 		std::unique_ptr<SceneImpl> impl_;
 		std::vector<std::shared_ptr<Actor>> stage_;
 
 	protected:
+		Signal<float> updateActionsEvent;
 
 		Scene();
 

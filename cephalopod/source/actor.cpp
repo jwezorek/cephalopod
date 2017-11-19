@@ -67,6 +67,15 @@ bool ceph::Actor::isInSceneTopLevel() const
 	return isInScene() && !hasParent();
 }
 
+
+void ceph::Actor::applyAction(const std::shared_ptr<Action>& action)
+{
+	action_ = action;
+	action_->run( shared_from_this() );
+	if (isInScene())
+		scene_.lock()->updateActionsEvent.connect(*action_, &ceph::Action::update);
+}
+
 float ceph::Actor::getAlpha() const
 {
 	return 0.0f;
@@ -79,12 +88,12 @@ void ceph::Actor::setAlpha(float alpha)
 
 float ceph::Actor::getRotation() const
 {
-	return ceph::DegreesToRadians(impl_->properties.getRotation());
+	return ceph::degreesToRadians(impl_->properties.getRotation());
 }
 
 void ceph::Actor::setRotation(float radians)
 {
-	impl_->properties.setRotation(ceph::RadiansToDegrees(radians));
+	impl_->properties.setRotation(ceph::radiansToDegrees(radians));
 }
 
 float ceph::Actor::getRotationDegrees() const

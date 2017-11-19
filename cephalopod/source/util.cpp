@@ -5,14 +5,19 @@
 #include "util.hpp"
 #include "TextureImpl.hpp"
 
-float ceph::RadiansToDegrees(float radians)
+float ceph::radiansToDegrees(float radians)
 {
 	return radians * 180.0f / static_cast<float>(M_PI);
 }
 
-float ceph::DegreesToRadians(float degrees)
+float ceph::degreesToRadians(float degrees)
 {
 	return degrees * static_cast<float>(M_PI) / 180.0f;
+}
+
+float ceph::lerp(float start, float end, float pcnt)
+{
+	return (end - start) * pcnt + start;
 }
 
 

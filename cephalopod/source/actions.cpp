@@ -1,4 +1,6 @@
 #include "../include/cephalopod/actions.hpp"
+#include "../include/cephalopod/actor.hpp"
+#include "util.hpp"
 
 ceph::Action::Action(bool startPaused)
 {
@@ -49,25 +51,31 @@ bool ceph::Action::hasChildren() const
 	return !children_.empty();
 }
 
+void ceph::Action::run(const std::shared_ptr<Actor>& actor)
+{
+	owner_ = actor;
+	for (auto& child : children_)
+		child->run(actor);
+}
+
 ceph::Action::~Action()
 {
 }
 
 /*--------------------------------------------------------------------------------*/
 
-ceph::FiniteAction::FiniteAction(float duration)
+ceph::FiniteAction::FiniteAction(float duration, bool startPaused) : Action(startPaused)
 {
 	duration_ = duration;
 	elapsed_ = 0.0f;
 	is_complete_ = false;
 }
 
-void ceph::FiniteAction::run() 
+void ceph::FiniteAction::run(const std::shared_ptr<Actor>& actor)
 {
+	Action::run(actor);
 	elapsed_ = 0.0f;
 	is_complete_ = false;
-	for (auto& child : children_)
-		child->run();
 }
 
 void ceph::FiniteAction::update(float elapsed)
@@ -94,4 +102,26 @@ void ceph::FiniteAction::setActionState(float pcnt_complete)
 bool ceph::FiniteAction::isComplete() const
 {
 	return is_complete_;
+}
+
+/*--------------------------------------------------------------------------------*/
+
+ceph::MoveToAction::MoveToAction(float duration, const ceph::Point<float>& dest, bool startPaused) :
+	FiniteAction(duration, startPaused), start_(ceph::Point<float>(0,0)), dest_(dest)
+{
+}
+
+void ceph::MoveToAction::run(const std::shared_ptr<Actor>& actor)
+{
+	FiniteAction::run(actor);
+	start_ = owner_.lock()->getPosition();
+}
+
+void ceph::MoveToAction::setSpriteState(float pcnt_complete)
+{
+	auto pt = ceph::Point<float>(
+		ceph::lerp(start_.x, dest_.x, pcnt_complete),
+		ceph::lerp(start_.y, dest_.y, pcnt_complete)
+	);
+	owner_.lock()->setPosition(pt);
 }

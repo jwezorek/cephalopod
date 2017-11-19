@@ -9,8 +9,10 @@
 
 namespace ceph {
 
-	float RadiansToDegrees(float radians);
-	float DegreesToRadians(float degrees);
+	float radiansToDegrees(float radians);
+	float degreesToRadians(float degrees);
+
+	float lerp(float start, float end, float pcnt);
 
 	template<typename T>
 	ceph::Rect<T> SfmlRectToCoyRect(sf::Rect<T>& rect)
