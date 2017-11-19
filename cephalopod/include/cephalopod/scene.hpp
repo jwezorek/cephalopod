@@ -24,7 +24,12 @@ namespace ceph {
 
 		void setBackground(const std::shared_ptr<Texture>& tex );
 		void setBackground(const std::shared_ptr<Texture>& tex, CoordinateMapping mapping);
+
 		void addActor(const std::shared_ptr<Actor>& child);
+
+		template<typename T>
+		void addActor(const std::shared_ptr<T>& child) { addActor(std::static_pointer_cast<Actor>(child)); }
+
 		void draw(DrawingContext&& rt);
 
 		Signal<float> updateEvent;

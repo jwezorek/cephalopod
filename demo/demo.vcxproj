@@ -152,9 +152,11 @@
   <ItemGroup>
     <ClCompile Include="AsteroidsScene.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Ship.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AsteroidsScene.hpp" />
+    <ClInclude Include="Ship.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\zarquon.json" />

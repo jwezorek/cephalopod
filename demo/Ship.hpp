@@ -3,8 +3,8 @@
 #include "cephalopod/sprite.hpp"
 #include "cephalopod/spritesheet.hpp"
 
-class Ship : ceph::Sprite
+class Ship : public ceph::Sprite
 {
 public:
-	Ship();
+	Ship(const std::shared_ptr<ceph::SpriteSheet>& ss);
 };

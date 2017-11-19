@@ -4,6 +4,9 @@
 #include "cephalopod/game.hpp"
 #include "AsteroidsScene.hpp"
 
+const int WD = 1280;
+const int HGT = 960;
+
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
 	std::unique_ptr<ceph::Game> game = ceph::Game::createInstance();
@@ -14,11 +17,11 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		}
 	);
 
-	game->initialize(ceph::ScreenMode::WindowedWithTitleBar, 1200, 600, std::string("foobar") );
+	game->initialize(ceph::ScreenMode::WindowedWithTitleBar, WD, HGT, std::string("foobar") );
 	//game.initialize(ceph::ScreenMode::FullScreenExclusive);
 	game->setLogicalCoordinates(
-		ceph::CoordinateMapping::UseBlackBars, 
-		ceph::Size<float>(400,400)
+		ceph::CoordinateMapping::StretchToFit,
+		ceph::Size<float>(WD, HGT)
 	);
 
 	auto scene = std::static_pointer_cast<ceph::Scene>(std::make_shared<Asteroids>());

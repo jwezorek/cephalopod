@@ -11,14 +11,6 @@ ceph::Scene::Scene()
 	impl_ = std::make_unique<SceneImpl>();
 }
 
-/*
-void ceph::Scene::handleKeyEvent(bool isPressed, KeyCode key, unsigned char modifiers)
-{
-	if (isPressed && key == KeyCode::Escape)
-		ceph::Game::getInstance().quit();
-}
-*/
-
 void ceph::Scene::setBackground(const std::shared_ptr<Texture>& tex)
 {
 	setBackground(tex, ceph::Game::getInstance().getCoordinateMapping());
@@ -28,6 +20,7 @@ void ceph::Scene::setBackground(const std::shared_ptr<Texture>& tex, ceph::Coord
 {
 	impl_->setBackground(tex, mapping);
 }
+
 
 void ceph::Scene::addActor(const std::shared_ptr<ceph::Actor>& child)
 {
