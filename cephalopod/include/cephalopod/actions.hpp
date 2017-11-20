@@ -77,4 +77,16 @@ namespace ceph {
 		MoveByAction(float duration, const Size<float>& amount, bool startPaused = false);
 		MoveByAction(float duration, float x, float y, bool startPaused = false);
 	};
+
+	class SetTransparencyToAction : public FiniteAction
+	{
+	private:
+		float start_alpha_;
+		float dest_alpha_;
+	protected:
+		void run(const std::shared_ptr<Actor>& actor) override;
+		void setSpriteState(float pcnt_complete) override;
+	public:
+		SetTransparencyToAction(float duration, float alpha, bool startPaused = false);
+	};
 }

@@ -21,10 +21,8 @@ void Asteroids::initialize()
 		rect.y + rect.hgt / 2.0f
 	);
 
-	auto move_horz = std::make_shared<ceph::MoveByAction>(4.0f, ceph::Size<float>(100.0f, 0.0f));
-	auto move_vert = std::make_shared<ceph::MoveByAction>(4.0f, ceph::Size<float>(0.0f, 100.0f));
-	ship_->applyAction(move_horz);
-	ship_->applyAction(move_vert);
+	ship_->applyAction( std::make_shared<ceph::MoveByAction>(4.0f, ceph::Size<float>(100.0f, 100.0f)) );
+	ship_->applyAction(std::make_shared<ceph::SetTransparencyToAction>(4.0f, 0));
 
 	this->addActor(ship_);
 }

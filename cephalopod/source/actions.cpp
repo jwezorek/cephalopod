@@ -158,3 +158,21 @@ void ceph::MoveByAction::setSpriteState(float pcnt_complete)
 		start_.y + amount.hgt
 	);
 }
+
+/*--------------------------------------------------------------------------------*/
+
+void ceph::SetTransparencyToAction::run(const std::shared_ptr<Actor>& actor)
+{
+	FiniteAction::run(actor);
+	start_alpha_ = owner_.lock()->getAlpha();
+}
+
+void ceph::SetTransparencyToAction::setSpriteState(float pcnt_complete)
+{
+	owner_.lock()->setAlpha(ceph::lerp(start_alpha_, dest_alpha_, pcnt_complete));
+}
+
+ceph::SetTransparencyToAction::SetTransparencyToAction(float duration, float alpha, bool startPaused) :
+	FiniteAction(duration, startPaused), start_alpha_(0), dest_alpha_(alpha)
+{
+}

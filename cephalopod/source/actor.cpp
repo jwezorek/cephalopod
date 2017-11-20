@@ -107,7 +107,7 @@ void ceph::Actor::removeAction(const std::shared_ptr<ceph::Action>& removee)
 
 float ceph::Actor::getAlpha() const
 {
-	return 0.0f;
+	return impl_->alpha;
 }
 
 void ceph::Actor::setAlpha(float alpha)
