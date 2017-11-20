@@ -25,6 +25,8 @@ void ceph::Scene::addActor(const std::shared_ptr<ceph::Actor>& child)
 {
 	stage_.push_back(child);
 	child->attachToScene( shared_from_this() );
+	if (child->hasActions())
+		child->runActions();
 }
 
 void ceph::Scene::removeActor(const std::shared_ptr<ceph::Actor>& child)

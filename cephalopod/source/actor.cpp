@@ -67,12 +67,28 @@ bool ceph::Actor::isInSceneTopLevel() const
 	return isInScene() && !hasParent();
 }
 
+void ceph::Actor::runAction(const std::shared_ptr<ceph::Action>& action)
+{
+	action->run(shared_from_this());
+	if (isInScene())
+		scene_.lock()->updateActionsEvent.connect(*action, &ceph::Action::update);
+}
+
+void ceph::Actor::runActions()
+{
+	for (auto action : actions_)
+		runAction(action);
+}
+
+bool ceph::Actor::hasActions() const
+{
+	return !actions_.empty();
+}
+
 void ceph::Actor::applyAction(const std::shared_ptr<ceph::Action>& action)
 {
 	actions_.push_back(action);
-	action->run( shared_from_this() );
-	if (isInScene())
-		scene_.lock()->updateActionsEvent.connect(*action, &ceph::Action::update);
+	runAction(action);
 }
 
 void ceph::Actor::removeAction(const std::shared_ptr<ceph::Action>& removee)
@@ -83,9 +99,8 @@ void ceph::Actor::removeAction(const std::shared_ptr<ceph::Action>& removee)
 
 	auto action = *i;
 	action->stopRunning();
-	// TODO: need to implement disconnect that doesnt disconnect an entire slot...
-	//if (isInScene())
-	//	scene_.lock()->updateActionsEvent.disconnect(*action);
+	if (isInScene())
+		scene_.lock()->updateActionsEvent.disconnect(*action);
 
 	actions_.erase(i);
 }
