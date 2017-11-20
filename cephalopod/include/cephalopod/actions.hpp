@@ -70,7 +70,6 @@ namespace ceph {
 	private:
 		Size<float> amount_;
 		Point<float> start_;
-		Point<float> dest_;
 	protected:
 		void run(const std::shared_ptr<Actor>& actor) override;
 		void setSpriteState(float pcnt_complete) override;
