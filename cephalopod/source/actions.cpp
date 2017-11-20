@@ -104,6 +104,11 @@ ceph::MoveToAction::MoveToAction(float duration, const ceph::Point<float>& dest,
 {
 }
 
+ceph::MoveToAction::MoveToAction(float duration, float x, float y, bool startPaused) :
+	FiniteAction(duration, startPaused), start_(ceph::Point<float>(0, 0)), dest_(ceph::Point<float>(x,y))
+{
+}
+
 void ceph::MoveToAction::run(const std::shared_ptr<Actor>& actor)
 {
 	FiniteAction::run(actor);
@@ -116,5 +121,42 @@ void ceph::MoveToAction::setSpriteState(float pcnt_complete)
 		ceph::lerp(start_.x, dest_.x, pcnt_complete),
 		ceph::lerp(start_.y, dest_.y, pcnt_complete)
 	);
+	owner_.lock()->setPosition(pt);
+}
+
+/*--------------------------------------------------------------------------------*/
+
+ceph::MoveByAction::MoveByAction(float duration, const ceph::Size<float>& amount, bool startPaused) :
+	FiniteAction(duration, startPaused), 
+	amount_(amount), 
+	start_(ceph::Point<float>(0, 0)), 
+	dest_(ceph::Point<float>(0, 0))
+{
+}
+
+ceph::MoveByAction::MoveByAction(float duration, float x, float y, bool startPaused) :
+	FiniteAction(duration, startPaused), 
+	amount_(ceph::Size<float>(x,y)),
+	start_(ceph::Point<float>(0, 0)), 
+	dest_(ceph::Point<float>(x, y))
+{
+}
+
+void ceph::MoveByAction::run(const std::shared_ptr<Actor>& actor)
+{
+	FiniteAction::run(actor);
+	start_ = owner_.lock()->getPosition();
+	dest_ = ceph::Point<float>(
+		start_.x + amount_.wd,
+		start_.y + amount_.hgt
+	);
+}
+
+void ceph::MoveByAction::setSpriteState(float pcnt_complete)
+{
+	auto pt = ceph::Point<float>(
+		ceph::lerp(start_.x, dest_.x, pcnt_complete),
+		ceph::lerp(start_.y, dest_.y, pcnt_complete)
+		);
 	owner_.lock()->setPosition(pt);
 }

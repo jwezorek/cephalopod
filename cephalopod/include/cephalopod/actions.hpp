@@ -62,6 +62,20 @@ namespace ceph {
 		void setSpriteState(float pcnt_complete) override;
 	public: 
 		MoveToAction(float duration, const Point<float>& dest, bool startPaused = false);
+		MoveToAction(float duration, float x, float y, bool startPaused = false);
 	};
 
+	class MoveByAction : public FiniteAction
+	{
+	private:
+		Size<float> amount_;
+		Point<float> start_;
+		Point<float> dest_;
+	protected:
+		void run(const std::shared_ptr<Actor>& actor) override;
+		void setSpriteState(float pcnt_complete) override;
+	public:
+		MoveByAction(float duration, const Size<float>& amount, bool startPaused = false);
+		MoveByAction(float duration, float x, float y, bool startPaused = false);
+	};
 }

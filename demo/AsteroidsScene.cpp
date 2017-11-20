@@ -21,7 +21,7 @@ void Asteroids::initialize()
 		rect.y + rect.hgt / 2.0f
 	);
 
-	auto move_action = std::make_shared<ceph::MoveToAction>(2.0f, ceph::Point<float>(0.0f, 0.0f));
+	auto move_action = std::make_shared<ceph::MoveByAction>(2.0f, ceph::Size<float>(600.0f, 600.0f));
 	ship_->applyAction(move_action);
 
 	this->addActor(ship_);
