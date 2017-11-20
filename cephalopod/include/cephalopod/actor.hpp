@@ -21,7 +21,7 @@ namespace ceph {
 		std::weak_ptr<Actor> parent_;
 		std::vector<std::shared_ptr<Actor>> children_;
 		std::unique_ptr<ActorImpl> impl_;
-		std::shared_ptr<Action> action_;
+		std::vector<std::shared_ptr<Action>> actions_;
 
 		virtual void drawThis(DrawingContext& rt) const = 0;
 		void detachFromScene();
@@ -37,6 +37,7 @@ namespace ceph {
 		bool hasParent() const;
 		bool isInSceneTopLevel() const;
 		void applyAction(const std::shared_ptr<Action>& action);
+		void removeAction(const std::shared_ptr<Action>& action);
 
 		virtual float getAlpha() const;
 		virtual void setAlpha(float alpha);

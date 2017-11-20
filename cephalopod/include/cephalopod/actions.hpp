@@ -9,10 +9,16 @@ namespace ceph {
 
 	class Action : public Slot<Action>
 	{
+		friend class Actor;
+
 	protected:
 		std::weak_ptr<Actor> owner_;
 		bool is_paused_;
 		std::vector<std::shared_ptr<Action>> children_;
+
+		virtual void run(const std::shared_ptr<Actor>& actor);
+		virtual void stopRunning();
+		virtual void update(float elapsed) = 0;
 
 	public:
 		Action(bool startPaused = false);
@@ -21,13 +27,7 @@ namespace ceph {
 		virtual void unpause();
 		bool isPaused() const;
 		bool hasChildren() const;
-
-		void attach(const std::shared_ptr<Actor> owner);
-		void unattach();
-		bool isAttached() const;
-
-		virtual void run(const std::shared_ptr<Actor>& actor);
-		virtual void update(float elapsed) = 0;
+		bool isRunning() const;
 
 		~Action();
 	};
@@ -35,19 +35,21 @@ namespace ceph {
 	class FiniteAction : public Action
 	{
 	private:
-		Signal<const Action*> complete_event_;
+		Signal<Action&> complete_event_;
 		float elapsed_;
 		float duration_;
 		bool is_complete_;
-	public:
-		FiniteAction(float duration, bool startPaused = false);
 
-		bool isComplete() const;
+	protected:
+
 		void update(float elapsed) override;
 		void setActionState(float pcnt_complete);
 		virtual void run(const std::shared_ptr<Actor>& actor) override;
 		virtual void setSpriteState(float pcnt_complete) = 0;
 
+	public:
+		FiniteAction(float duration, bool startPaused = false);
+		bool isComplete() const;
 	};
 
 	class MoveToAction : public FiniteAction
@@ -55,10 +57,11 @@ namespace ceph {
 	private:
 		Point<float> start_;
 		Point<float> dest_;
-	public: 
-		MoveToAction(float duration, const Point<float>& dest, bool startPaused = false);
+	protected:
 		void run(const std::shared_ptr<Actor>& actor) override;
 		void setSpriteState(float pcnt_complete) override;
+	public: 
+		MoveToAction(float duration, const Point<float>& dest, bool startPaused = false);
 	};
 
 }

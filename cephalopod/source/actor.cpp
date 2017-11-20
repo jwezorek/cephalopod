@@ -7,7 +7,7 @@
 #include "util.hpp"
 
 ceph::Actor::Actor() :
-	impl_(std::make_unique<ActorImpl>())
+	impl_(std::make_unique<ceph::ActorImpl>())
 {
 }
 
@@ -40,12 +40,12 @@ void ceph::Actor::detach()
 
 void ceph::Actor::detachFromScene()
 {
-	scene_ = std::weak_ptr<Scene>();
+	scene_ = std::weak_ptr<ceph::Scene>();
 	for (auto child : children_)
 		child->detachFromScene();
 }
 
-void ceph::Actor::attachToScene(const std::shared_ptr<Scene>& scene)
+void ceph::Actor::attachToScene(const std::shared_ptr<ceph::Scene>& scene)
 {
 	scene_ = scene;
 	for (auto child : children_)
@@ -67,13 +67,27 @@ bool ceph::Actor::isInSceneTopLevel() const
 	return isInScene() && !hasParent();
 }
 
-
-void ceph::Actor::applyAction(const std::shared_ptr<Action>& action)
+void ceph::Actor::applyAction(const std::shared_ptr<ceph::Action>& action)
 {
-	action_ = action;
-	action_->run( shared_from_this() );
+	actions_.push_back(action);
+	action->run( shared_from_this() );
 	if (isInScene())
-		scene_.lock()->updateActionsEvent.connect(*action_, &ceph::Action::update);
+		scene_.lock()->updateActionsEvent.connect(*action, &ceph::Action::update);
+}
+
+void ceph::Actor::removeAction(const std::shared_ptr<ceph::Action>& removee)
+{
+	auto i = std::find(actions_.begin(), actions_.end(), removee);
+	if (i == actions_.end())
+		return;
+
+	auto action = *i;
+	action->stopRunning();
+	// TODO: need to implement disconnect that doesnt disconnect an entire slot...
+	//if (isInScene())
+	//	scene_.lock()->updateActionsEvent.disconnect(*action);
+
+	actions_.erase(i);
 }
 
 float ceph::Actor::getAlpha() const

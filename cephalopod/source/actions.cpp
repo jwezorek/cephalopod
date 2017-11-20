@@ -8,21 +8,7 @@ ceph::Action::Action(bool startPaused)
 	owner_ = std::weak_ptr<Actor>();
 }
 
-void ceph::Action::attach(const std::shared_ptr<Actor> owner)
-{
-	owner_ = owner;
-	for (auto& child : children_)
-		child->attach(owner);
-}
-
-void ceph::Action::unattach()
-{
-	owner_ = std::weak_ptr<Actor>();
-	for (auto& child : children_)
-		child->unattach();
-}
-
-bool ceph::Action::isAttached() const
+bool ceph::Action::isRunning() const
 {
 	return !owner_.expired();
 }
@@ -56,6 +42,13 @@ void ceph::Action::run(const std::shared_ptr<Actor>& actor)
 	owner_ = actor;
 	for (auto& child : children_)
 		child->run(actor);
+}
+
+void ceph::Action::stopRunning()
+{
+	owner_ = std::weak_ptr<Actor>();
+	for (auto& child : children_)
+		child->stopRunning();
 }
 
 ceph::Action::~Action()
@@ -95,7 +88,7 @@ void ceph::FiniteAction::setActionState(float pcnt_complete)
 	setSpriteState(pcnt_complete);
 	if (pcnt_complete == 1.0f) {
 		is_complete_ = true;
-		complete_event_.fire(this);
+		complete_event_.fire(*this);
 	}
 }
 
