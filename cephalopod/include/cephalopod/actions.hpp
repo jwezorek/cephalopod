@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include "signals.hpp"
 #include "types.hpp"
 
@@ -34,59 +35,73 @@ namespace ceph {
 
 	class FiniteAction : public Action
 	{
-	private:
+	protected:
 		Signal<Action&> complete_event_;
 		float elapsed_;
-		float duration_;
 		bool is_complete_;
+		float duration_;
 
-	protected:
-
-		void update(float elapsed) override;
-		void setActionState(float pcnt_complete);
+		void update(float timestep) override;
 		virtual void run(const std::shared_ptr<Actor>& actor) override;
-		virtual void setSpriteState(float pcnt_complete) = 0;
+		virtual void setSpriteState(float elapsed, float timestep) = 0;
 
 	public:
 		FiniteAction(float duration, bool startPaused = false);
-		bool isComplete() const;
-	};
 
-	class MoveToAction : public FiniteAction
-	{
-	private:
-		Point<float> start_;
-		Point<float> dest_;
-	protected:
-		void run(const std::shared_ptr<Actor>& actor) override;
-		void setSpriteState(float pcnt_complete) override;
-	public: 
-		MoveToAction(float duration, const Point<float>& dest, bool startPaused = false);
-		MoveToAction(float duration, float x, float y, bool startPaused = false);
+		template<class T>
+		FiniteAction(float duration, const std::vector<std::shared_ptr<T>>& actions, bool startPaused = false) : FiniteAction(duration, startPaused) {
+			for (auto action : actions)
+				children_.push_back(std::static_pointer_cast<Action>(action));
+		}
+
+		float getDuration() const;
+		bool isComplete() const;
+		Signal<Action&>& getCompletionEvent();
+
+		virtual float doTimestep(float elapsed, float timestep);
 	};
 
 	class MoveByAction : public FiniteAction
 	{
-	private:
-		Size<float> amount_;
-		Point<float> start_;
 	protected:
-		void run(const std::shared_ptr<Actor>& actor) override;
-		void setSpriteState(float pcnt_complete) override;
+		Vec2D<float> velocity_;
+		void setSpriteState(float elapsed, float timestep) override;
+
 	public:
-		MoveByAction(float duration, const Size<float>& amount, bool startPaused = false);
+		MoveByAction(float duration, const Vec2D<float>& amount, bool startPaused = false);
 		MoveByAction(float duration, float x, float y, bool startPaused = false);
+	};
+
+	class MoveToAction : public MoveByAction
+	{
+	protected:
+		Point<float> dest_;
+		void run(const std::shared_ptr<Actor>& actor) override;
+	public:
+		MoveToAction(float duration, const Point<float>& destination, bool startPaused = false);
 	};
 
 	class SetTransparencyToAction : public FiniteAction
 	{
 	private:
-		float start_alpha_;
-		float dest_alpha_;
+		float alpha_change_rate_;
+		float target_alpha_;
 	protected:
-		void run(const std::shared_ptr<Actor>& actor) override;
-		void setSpriteState(float pcnt_complete) override;
+		virtual void run(const std::shared_ptr<Actor>& actor) override;
+		void setSpriteState(float elapsed, float timestep) override;
 	public:
 		SetTransparencyToAction(float duration, float alpha, bool startPaused = false);
+	};
+
+	class SequenceAction : public FiniteAction
+	{
+	private:
+		std::map<float, std::shared_ptr<FiniteAction>> start_tbl_;
+		auto getCurrentAction(float elapsed) const;
+
+	protected:
+		void setSpriteState(float elapsed, float timestep) override;
+	public:
+		SequenceAction(const std::vector<std::shared_ptr<FiniteAction>>& actions, bool startPaused = false);
 	};
 }

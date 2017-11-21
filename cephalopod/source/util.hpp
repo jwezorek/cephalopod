@@ -1,5 +1,4 @@
 #pragma once
-#include <math.h>
 #include <memory>
 #include <string>
 #include <array>
@@ -11,8 +10,10 @@ namespace ceph {
 
 	float radiansToDegrees(float radians);
 	float degreesToRadians(float degrees);
-
 	float lerp(float start, float end, float pcnt);
+	float distance(float x1, float y1, float x2, float y2);
+	float magnitude(float x, float y);
+	float magnitude(Vec2D<float> vec);
 
 	template<typename T>
 	ceph::Rect<T> SfmlRectToCoyRect(sf::Rect<T>& rect)

@@ -21,9 +21,26 @@ void Asteroids::initialize()
 		rect.y + rect.hgt / 2.0f
 	);
 
-	ship_->applyAction( std::make_shared<ceph::MoveByAction>(4.0f, ceph::Size<float>(100.0f, 100.0f)) );
-	ship_->applyAction(std::make_shared<ceph::SetTransparencyToAction>(4.0f, 0));
+	std::shared_ptr<ceph::MoveByAction> foo;
+
+	std::vector<std::shared_ptr<ceph::FiniteAction>> actions = {
+		std::make_shared<ceph::MoveByAction>(2.0f, 100.0f, 100.0f),
+		std::make_shared<ceph::MoveByAction>(1.0f, -100.0f, 100.0f),
+		std::make_shared<ceph::MoveByAction>(2.0f, -100.0f, -100.0f),
+		std::make_shared<ceph::MoveByAction>(1.0f, 100.0f, -100.0f),
+	};
+
+	auto seq = std::make_shared<ceph::SequenceAction>(actions);
+	seq->getCompletionEvent().connect( *this,  [=](ceph::Action& action) { Test(action); } );
+
+	ship_->applyAction(seq);
 
 	this->addActor(ship_);
 }
 
+
+void Asteroids::Test(ceph::Action& action)
+{
+	int aaa;
+	aaa = 5;
+}

@@ -6,11 +6,11 @@
 
 class Asteroids : public ceph::Scene
 {
-
 private:
 	std::shared_ptr<ceph::SpriteSheet> sprite_sheet_;
 	std::shared_ptr<Ship> ship_;
 
 public:
 	void initialize() override;
+	void Test(ceph::Action& action);
 };

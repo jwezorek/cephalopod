@@ -153,7 +153,6 @@
   <ItemGroup>
     <ClInclude Include="include\cephalopod\actions.hpp" />
     <ClInclude Include="include\cephalopod\actor.hpp" />
-    <ClInclude Include="include\cephalopod\delegate.hpp" />
     <ClInclude Include="include\cephalopod\events.hpp" />
     <ClInclude Include="include\cephalopod\game.hpp" />
     <ClInclude Include="include\cephalopod\scene.hpp" />

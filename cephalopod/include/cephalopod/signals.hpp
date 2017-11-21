@@ -99,6 +99,15 @@ namespace ceph {
 			t.connect(*this, f);
 		}
 
+		/*
+		template<class T, class D>
+		void connect(Slot<T>& t, void(D::*f)(Args... args)) {
+			//derived class slot...
+			auto& dt = *dynamic_cast<Slot<D>*>(&t);
+			dt.connect(*this, f);
+		}
+		*/
+
 		template<class T>
 		void connect(Slot<T>& t, const std::function<void(Args... args)>& f) {
 			t.connect(*this, f);
