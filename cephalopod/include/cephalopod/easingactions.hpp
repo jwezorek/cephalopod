@@ -18,7 +18,7 @@ namespace ceph
 	protected:
 		EasingFunc func_;
 		std::shared_ptr<FiniteAction> getChild();
-		virtual void setSpriteState(float elapsed, float timestep);
+		virtual void doTimeStep(float timestep) override;
 	public:
 		EasingAction(const std::shared_ptr<FiniteAction>& child, EasingFnType typ,
 			const EasingFunc& in, const EasingFunc& out, const EasingFunc& inout, bool startPaused = false);
@@ -29,6 +29,4 @@ namespace ceph
 		public:
 			BounceEasingAction(EasingFnType typ, const std::shared_ptr<FiniteAction>& child, bool startPaused = false);
 	};
-
-	void TestEase();
 }

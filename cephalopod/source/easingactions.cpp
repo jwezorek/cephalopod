@@ -2,11 +2,11 @@
 #include "easingfunctions.hpp"
 
 //	std::function<float(float, float, float, float d)> func_;
-void ceph::EasingAction::setSpriteState(float elapsed, float timestep)
+void ceph::EasingAction::doTimeStep(float timestep)
 {
 	auto child = getChild();
 	auto current = child->getElapsed();
-	auto new_elapsed = func_(elapsed + timestep, 0.0f, duration_, duration_);
+	auto new_elapsed = func_(elapsed_ + timestep, 0.0f, duration_, duration_);
 	auto eased_timestep = new_elapsed - current;
 	child->update(eased_timestep);
 }

@@ -78,18 +78,14 @@ void ceph::FiniteAction::update(float timestep)
 	if (isComplete() || isPaused())
 		return;
 
-	elapsed_ = doTimestep(elapsed_, timestep);
-}
-
-float ceph::FiniteAction::doTimestep(float elapsed, float timestep)
-{
-	float new_elapsed = (elapsed + timestep <= duration_) ? elapsed + timestep : duration_;
-	setSpriteState( elapsed, new_elapsed - elapsed);
+	float new_elapsed = (elapsed_ + timestep <= duration_) ? elapsed_ + timestep : duration_;
+	doTimeStep(new_elapsed - elapsed_);
 	if (new_elapsed == duration_) {
 		is_complete_ = true;
 		complete_event_.fire(*this);
 	}
-	return new_elapsed;
+
+	elapsed_ = new_elapsed;
 }
 
 float ceph::FiniteAction::getDuration() const
@@ -127,7 +123,7 @@ ceph::MoveByAction::MoveByAction(float duration, float x, float y, bool startPau
 	velocity_ = ceph::Vec2D<float>(x / duration, y / duration);
 }
 
-void ceph::MoveByAction::setSpriteState(float elapsed, float timestep)
+void ceph::MoveByAction::doTimeStep(float timestep)
 {
 	auto sprite = owner_.lock();
 	auto pt = sprite->getPosition();
@@ -168,7 +164,7 @@ void ceph::SetTransparencyToAction::run(const std::shared_ptr<Actor>& actor)
 	alpha_change_rate_ = (target_alpha_ - actor->getAlpha()) / duration_;
 }
 
-void ceph::SetTransparencyToAction::setSpriteState(float elapsed, float timestep)
+void ceph::SetTransparencyToAction::doTimeStep(float timestep)
 {
 	auto actor = owner_.lock();
 	actor->setAlpha(actor->getAlpha() + alpha_change_rate_ * timestep);
@@ -193,16 +189,16 @@ auto ceph::SequenceAction::getCurrentAction(float elapsed) const
 	return (lb != start_tbl_.end() && lb->first == elapsed) ? lb : std::prev(lb);
 }
 
-void ceph::SequenceAction::setSpriteState(float elapsed, float timestep) {
-	float new_elapsed = (elapsed + timestep <= duration_) ? elapsed + timestep : duration_;
+void ceph::SequenceAction::doTimeStep(float timestep) {
+	float new_elapsed = elapsed_ + timestep;
 
-	auto start_action_iter = getCurrentAction(elapsed);
+	auto start_action_iter = getCurrentAction(elapsed_);
 	auto end_action_iter = getCurrentAction(new_elapsed);
 
 	if (start_action_iter == end_action_iter) {
 		auto action = start_action_iter->second;
 		float action_start_time = start_action_iter->first;
-		action->doTimestep(elapsed - action_start_time, timestep);
+		action->update( timestep);
 	}
 	else {
 		auto old_action = start_action_iter->second;
@@ -211,8 +207,8 @@ void ceph::SequenceAction::setSpriteState(float elapsed, float timestep) {
 		auto new_action = (end_action_iter != start_tbl_.end()) ? end_action_iter->second : nullptr;
 		float new_action_start_time = (end_action_iter != start_tbl_.end()) ? end_action_iter->first : duration_;
 
-		old_action->doTimestep(elapsed - old_action_start_time, new_action_start_time - elapsed);
+		old_action->update(new_action_start_time - elapsed_);
 		if (new_action)
-			new_action->doTimestep(0.0f, timestep - (new_action_start_time - elapsed));
+			new_action->update(timestep - (new_action_start_time - elapsed_));
 	}
 }

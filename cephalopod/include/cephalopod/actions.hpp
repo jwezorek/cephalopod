@@ -40,10 +40,8 @@ namespace ceph {
 		float elapsed_;
 		bool is_complete_;
 		float duration_;
-
 		
 		virtual void run(const std::shared_ptr<Actor>& actor) override;
-		virtual void setSpriteState(float elapsed, float timestep) = 0;
 
 	public:
 		FiniteAction(float duration, bool startPaused = false);
@@ -58,14 +56,14 @@ namespace ceph {
 		bool isComplete() const;
 		Signal<Action&>& getCompletionEvent();
 
-		virtual float doTimestep(float elapsed, float timestep);
+		virtual void doTimeStep(float timestep) = 0;
 	};
 
 	class MoveByAction : public FiniteAction
 	{
 	protected:
 		Vec2D<float> velocity_;
-		void setSpriteState(float elapsed, float timestep) override;
+		void doTimeStep(float timestep) override;
 
 	public:
 		MoveByAction(float duration, const Vec2D<float>& amount, bool startPaused = false);
@@ -88,7 +86,7 @@ namespace ceph {
 		float target_alpha_;
 	protected:
 		virtual void run(const std::shared_ptr<Actor>& actor) override;
-		void setSpriteState(float elapsed, float timestep) override;
+		void doTimeStep(float timestep) override;
 	public:
 		SetTransparencyToAction(float duration, float alpha, bool startPaused = false);
 	};
@@ -100,7 +98,7 @@ namespace ceph {
 		auto getCurrentAction(float elapsed) const;
 
 	protected:
-		void setSpriteState(float elapsed, float timestep) override;
+		void doTimeStep(float timestep) override;
 	public:
 		SequenceAction(const std::vector<std::shared_ptr<FiniteAction>>& actions, bool startPaused = false);
 	};
