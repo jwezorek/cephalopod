@@ -33,9 +33,34 @@ ceph::EasingAction::EasingAction(const std::shared_ptr<FiniteAction>& child, Eas
 	}
 }
 
+/*
+
+ceph::FooEasingAction::FooEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+	ceph::EasingAction(child, typ, ceph::ease::Foo::easeIn, ceph::ease::Foo::easeOut, ceph::ease::Foo::easeInOut) {}
+
+*/
+
+/*--------------------------------------------------------------------------------*/
+
+ceph::BackEasingAction::BackEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+	ceph::EasingAction(child, typ, ceph::ease::Back::easeIn, ceph::ease::Back::easeOut, ceph::ease::Back::easeInOut) {}
+
 /*--------------------------------------------------------------------------------*/
 
 ceph::BounceEasingAction::BounceEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
-	ceph::EasingAction(child, typ, ceph::ease::Bounce::easeIn, ceph::ease::Bounce::easeOut, ceph::ease::Bounce::easeInOut)
-{
-}
+	ceph::EasingAction(child, typ, ceph::ease::Bounce::easeIn, ceph::ease::Bounce::easeOut, ceph::ease::Bounce::easeInOut) {}
+
+/*--------------------------------------------------------------------------------*/
+
+ceph::CircEasingAction::CircEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+	ceph::EasingAction(child, typ, ceph::ease::Circ::easeIn, ceph::ease::Circ::easeOut, ceph::ease::Circ::easeInOut) {}
+
+/*--------------------------------------------------------------------------------*/
+
+ceph::CubicEasingAction::CubicEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+	ceph::EasingAction(child, typ, ceph::ease::Cubic::easeIn, ceph::ease::Cubic::easeOut, ceph::ease::Cubic::easeInOut) {}
+
+/*--------------------------------------------------------------------------------*/
+
+ceph::ElasticEasingAction::ElasticEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+	ceph::EasingAction(child, typ, ceph::ease::Elastic::easeIn, ceph::ease::Elastic::easeOut, ceph::ease::Elastic::easeInOut) {}
