@@ -167,6 +167,11 @@ void ceph::GameImpl::drawBlackBars()
 	}
 }
 
+sf::Color CephToSfColor(const ceph::ColorRGB& cc)
+{
+	return sf::Color(cc.r, cc.g, cc.b, 255);
+}
+
 void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 	active_scene_ = startingScene;
 
@@ -185,7 +190,7 @@ void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 		active_scene_->updateEvent.fire(elapsed);
 		clock.restart();
 
-		window_->clear();
+		window_->clear( CephToSfColor(active_scene_->getBackgroundColor()) );
 
 		active_scene_->draw( ceph::DrawingContext( *window_, coord_transform_));
 

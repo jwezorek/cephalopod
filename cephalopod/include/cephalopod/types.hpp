@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <memory>
 
 namespace ceph {
@@ -17,6 +18,15 @@ namespace ceph {
 		UpperLeftOriginDescendingY,
 		CenterOriginAscendingY,
 		LowerLeftOriginAscendingY
+	};
+
+	struct ColorRGB
+	{
+		unsigned char r;
+		unsigned char g;
+		unsigned char b;
+
+		ColorRGB(unsigned char r = 0, unsigned char g = 0, unsigned char b = 0) : r(r), g(g), b(b) {}
 	};
 
 	template<typename T>

@@ -3,8 +3,6 @@
 #include "cephalopod/game.hpp"
 #include "cephalopod/actions.hpp"
 #include "cephalopod/easingactions.hpp"
-#define _USE_MATH_DEFINES
-#include <math.h>
 
 void Asteroids::initialize()
 {
@@ -13,39 +11,41 @@ void Asteroids::initialize()
 		".\\data\\zarquon.json"
 	);
 
-	ship_ = std::make_shared<Ship>(sprite_sheet_);
-	auto rect = ceph::Game::getInstance().getLogicalRect();
-	ship_->setPosition(
-		rect.x + rect.wd / 2.0f,
-		rect.y + rect.hgt / 2.0f
+	ceph::Game::getInstance().keyEvent.connect( *this,
+		[=](bool isPressed, ceph::KeyCode key, unsigned char modifiers) {
+		if (isPressed && key == ceph::KeyCode::Space)
+			Test();
+		}
 	);
-	auto drop = std::make_shared<ceph::MoveByAction>(2, 0, 300.0);
-	auto ease = std::make_shared<ceph::BounceEasingAction>(ceph::EasingFnType::Out, drop);
-	ship_->applyAction(ease);
 
-	
-	alien_ = std::make_shared<Alien>(sprite_sheet_); 
-	alien_->setPosition(
-		rect.x + rect.wd / 2.0f + 50.9f,
-		rect.y + rect.hgt / 2.0f
-	);
-	std::vector<std::shared_ptr<ceph::FiniteAction>> actions = {
-		std::make_shared<ceph::BackEasingAction>(ceph::EasingFnType::In, std::make_shared<ceph::MoveByAction>(1.0f, 100.0f, 100.0f)),
-		std::make_shared<ceph::BackEasingAction>(ceph::EasingFnType::In, std::make_shared<ceph::MoveByAction>(1.0f, -100.0f, 100.0f)),
-		std::make_shared<ceph::CircEasingAction>(ceph::EasingFnType::In, std::make_shared<ceph::MoveByAction>(2.0f, -100.0f, -100.0f)),
-		std::make_shared<ceph::CircEasingAction>(ceph::EasingFnType::Out, std::make_shared<ceph::MoveByAction>(2.0f, 100.0f, -100.0f)),
-	};
-	auto seq = std::make_shared<ceph::SequenceAction>(actions);
-	seq->getCompletionEvent().connect( *this,  [=](ceph::Action& action) { Test(action); } );
-	alien_->applyAction(seq);
-
-	this->addActor( ship_ );
-	this->addActor( alien_ );
+	setBackgroundColor(ceph::ColorRGB(0, 10, 20));
 }
 
 
-void Asteroids::Test(ceph::Action& action)
+void Asteroids::Test()
 {
-	int aaa;
-	aaa = 5;
+	ship_ = std::make_shared<Ship>(sprite_sheet_);
+	auto rect = ceph::Game::getInstance().getLogicalRect();
+	ship_->setPosition(rect.x + rect.wd / 2.0f - 100.0f, rect.y + rect.hgt / 2.0f
+	);
+	ship_->applyAction(
+		std::make_shared<ceph::BounceEasingAction>(
+			ceph::EasingFnType::Out, 
+			std::make_shared<ceph::MoveByAction>(2.0f, 0.0f, 300.0f)
+		)
+	);
+
+	alien_ = std::make_shared<Alien>(sprite_sheet_);
+	alien_->setPosition(rect.x + rect.wd / 2.0f + 100.0f, rect.y + rect.hgt / 2.0f);
+	std::vector<std::shared_ptr<ceph::FiniteAction>> actions = {
+		std::make_shared<ceph::QuadEasingAction>(ceph::EasingFnType::In, std::make_shared<ceph::MoveByAction>(1.0f, 100.0f, 100.0f)),
+		std::make_shared<ceph::QuadEasingAction>(ceph::EasingFnType::Out, std::make_shared<ceph::MoveByAction>(1.0f, -100.0f, 100.0f)),
+		std::make_shared<ceph::QuadEasingAction>(ceph::EasingFnType::In, std::make_shared<ceph::MoveByAction>(1.0f, -100.0f, -100.0f)),
+		std::make_shared<ceph::QuadEasingAction>(ceph::EasingFnType::Out, std::make_shared<ceph::MoveByAction>(1.0f, 100.0f, -100.0f)),
+	};
+	auto seq = std::make_shared<ceph::SequenceAction>(actions);
+	alien_->applyAction(seq);
+
+	this->addActor(ship_);
+	this->addActor(alien_);
 }

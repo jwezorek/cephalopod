@@ -21,6 +21,16 @@ void ceph::Scene::setBackground(const std::shared_ptr<Texture>& tex, ceph::Coord
 	impl_->setBackground(tex, mapping);
 }
 
+void ceph::Scene::setBackgroundColor(const ceph::ColorRGB& color)
+{
+	bkgd_color_ = color;
+}
+
+ceph::ColorRGB ceph::Scene::getBackgroundColor() const
+{
+	return bkgd_color_;
+}
+
 void ceph::Scene::addActor(const std::shared_ptr<ceph::Actor>& child)
 {
 	stage_.push_back(child);
