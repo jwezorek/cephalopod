@@ -64,3 +64,18 @@ ceph::CubicEasingAction::CubicEasingAction(ceph::EasingFnType typ, const std::sh
 
 ceph::ElasticEasingAction::ElasticEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
 	ceph::EasingAction(child, typ, ceph::ease::Elastic::easeIn, ceph::ease::Elastic::easeOut, ceph::ease::Elastic::easeInOut) {}
+
+/*--------------------------------------------------------------------------------*/
+
+ceph::ExpoEasingAction::ExpoEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+	ceph::EasingAction(child, typ, ceph::ease::Expo::easeIn, ceph::ease::Expo::easeOut, ceph::ease::Expo::easeInOut) {}
+
+/*--------------------------------------------------------------------------------*/
+
+ceph::QuadEasingAction::QuadEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+	ceph::EasingAction(child, typ, ceph::ease::Quad::easeIn, ceph::ease::Quad::easeOut, ceph::ease::Quad::easeInOut) {}
+
+/*--------------------------------------------------------------------------------*/
+
+ceph::QuartEasingAction::QuartEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+	ceph::EasingAction(child, typ, ceph::ease::Quart::easeIn, ceph::ease::Quart::easeOut, ceph::ease::Quart::easeInOut) {}

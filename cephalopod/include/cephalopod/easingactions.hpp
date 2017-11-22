@@ -54,4 +54,22 @@ namespace ceph
 		ElasticEasingAction(EasingFnType typ, const std::shared_ptr<FiniteAction>& child, bool startPaused = false);
 	};
 
+	class ExpoEasingAction : public EasingAction
+	{
+	public:
+		ExpoEasingAction(EasingFnType typ, const std::shared_ptr<FiniteAction>& child, bool startPaused = false);
+	};
+
+	class QuadEasingAction : public EasingAction
+	{
+	public:
+		QuadEasingAction(EasingFnType typ, const std::shared_ptr<FiniteAction>& child, bool startPaused = false);
+	};
+
+	class QuartEasingAction : public EasingAction
+	{
+	public:
+		QuartEasingAction(EasingFnType typ, const std::shared_ptr<FiniteAction>& child, bool startPaused = false);
+	};
+
 }
