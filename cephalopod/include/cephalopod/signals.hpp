@@ -133,9 +133,9 @@ namespace ceph {
 			auto to_remove = std::remove_if(
 				events.begin(),
 				events.end(),
-				[ev](auto& elt) {
-				return elt == static_cast<details::SignalBase*>(ev);
-			}
+					[ev](auto& elt) {
+					return elt == static_cast<details::SignalBase*>(ev);
+				}
 			);
 			events.erase(to_remove, events.end());
 		}

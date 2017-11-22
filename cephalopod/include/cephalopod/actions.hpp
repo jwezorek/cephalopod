@@ -41,19 +41,19 @@ namespace ceph {
 		bool is_complete_;
 		float duration_;
 
-		void update(float timestep) override;
+		
 		virtual void run(const std::shared_ptr<Actor>& actor) override;
 		virtual void setSpriteState(float elapsed, float timestep) = 0;
 
 	public:
 		FiniteAction(float duration, bool startPaused = false);
-
+		void update(float timestep) override;
 		template<class T>
 		FiniteAction(float duration, const std::vector<std::shared_ptr<T>>& actions, bool startPaused = false) : FiniteAction(duration, startPaused) {
 			for (auto action : actions)
 				children_.push_back(std::static_pointer_cast<Action>(action));
 		}
-
+		float getElapsed() const;
 		float getDuration() const;
 		bool isComplete() const;
 		Signal<Action&>& getCompletionEvent();

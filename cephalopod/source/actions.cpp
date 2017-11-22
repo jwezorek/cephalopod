@@ -97,6 +97,12 @@ float ceph::FiniteAction::getDuration() const
 	return duration_;
 }
 
+float ceph::FiniteAction::getElapsed() const
+{
+	return elapsed_;
+}
+
+
 bool ceph::FiniteAction::isComplete() const
 {
 	return is_complete_;

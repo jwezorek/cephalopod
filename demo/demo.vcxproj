@@ -150,11 +150,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Alien.cpp" />
     <ClCompile Include="AsteroidsScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Ship.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Alien.hpp" />
     <ClInclude Include="AsteroidsScene.hpp" />
     <ClInclude Include="Ship.hpp" />
   </ItemGroup>
