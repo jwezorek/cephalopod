@@ -1,9 +1,11 @@
 {
-    "diamonds" : {"rect" : [ 1, 1, 345, 188 ], "index" : 0 },
-    "alien" : {"rect" : [ 1, 191, 148, 79 ], "index" : 1 },
-    "green_square" : {"rect" : [ 151, 191, 50, 50 ], "index" : 2 },
-    "little_grid" : {"rect" : [ 151, 243, 25, 25 ], "index" : 3 },
-    "blue_square" : {"rect" : [ 203, 191, 50, 50 ], "index" : 4 },
-    "red_diamond" : {"rect" : [ 1, 272, 116, 116 ], "index" : 5 },
-    "ship" : {"rect" : [ 119, 272, 102, 109 ], "index" : 6 }
+    "alien" : {"rect" : [ 1, 1, 148, 79 ], "index" : 0 },
+    "ship" : {"rect" : [ 1, 82, 102, 109 ], "index" : 1 },
+    "star_4" : {"rect" : [ 105, 82, 39, 38 ], "index" : 2 },
+    "star_2" : {"rect" : [ 105, 122, 31, 33 ], "index" : 3 },
+    "star_7" : {"rect" : [ 138, 122, 9, 10 ], "index" : 4 },
+    "star_5" : {"rect" : [ 105, 157, 24, 24 ], "index" : 5 },
+    "star_1" : {"rect" : [ 151, 1, 53, 45 ], "index" : 6 },
+    "star_3" : {"rect" : [ 151, 48, 20, 21 ], "index" : 7 },
+    "star_6" : {"rect" : [ 173, 48, 19, 19 ], "index" : 8 }
 }

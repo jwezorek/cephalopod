@@ -18,7 +18,7 @@ void Asteroids::initialize()
 		}
 	);
 
-	setBackgroundColor(ceph::ColorRGB(0, 10, 20));
+	setBackgroundColor(ceph::ColorRGB(0, 20, 40));
 }
 
 
