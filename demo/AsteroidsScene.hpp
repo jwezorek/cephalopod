@@ -14,5 +14,5 @@ private:
 
 public:
 	void initialize() override;
-	void Test(ceph::Action& action);
+	void Test();
 };

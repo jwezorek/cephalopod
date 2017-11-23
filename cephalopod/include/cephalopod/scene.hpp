@@ -23,6 +23,7 @@ namespace ceph {
 	private:
 		std::unique_ptr<SceneImpl> impl_;
 		std::vector<std::shared_ptr<Actor>> stage_;
+		ColorRGB bkgd_color_;
 
 	protected:
 		Signal<float> updateActionsEvent;
@@ -34,6 +35,9 @@ namespace ceph {
 
 		void setBackground(const std::shared_ptr<Texture>& tex );
 		void setBackground(const std::shared_ptr<Texture>& tex, CoordinateMapping mapping);
+
+		void setBackgroundColor(const ColorRGB& tex);
+		ColorRGB getBackgroundColor() const;
 
 		void addActor(const std::shared_ptr<Actor>& child);
 		void removeActor(const std::shared_ptr<Actor>& child);
