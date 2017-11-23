@@ -78,7 +78,7 @@ float ceph::ease::Elastic::easeIn(float t, float b, float c, float d) {
 	float p = d*.3f;
 	float a = c;
 	float s = p / 4;
-	float postFix = a * std::pow(2, 10 * (t -= 1)); // this is a fix, again, with post-increment operators
+	float postFix = a * std::pow(2.0f, 10.0f * (t -= 1)); // this is a fix, again, with post-increment operators
 	return -(postFix * std::sin((t*d - s)*(2 * PI) / p)) + b;
 }
 
@@ -140,4 +140,27 @@ float ceph::ease::Quart::easeOut(float t, float b, float c, float d) {
 float ceph::ease::Quart::easeInOut(float t, float b, float c, float d) {
 	if ((t /= d / 2) < 1) return c / 2 * t*t*t*t + b;
 	return -c / 2 * ((t -= 2)*t*t*t - 2) + b;
+}
+
+float ceph::ease::Quint::easeIn(float t, float b, float c, float d) {
+	return c*(t /= d)*t*t*t*t + b;
+}
+float ceph::ease::Quint::easeOut(float t, float b, float c, float d) {
+	return c*((t = t / d - 1)*t*t*t*t + 1) + b;
+}
+
+float ceph::ease::Quint::easeInOut(float t, float b, float c, float d) {
+	if ((t /= d / 2) < 1) return c / 2 * t*t*t*t*t + b;
+	return c / 2 * ((t -= 2)*t*t*t*t + 2) + b;
+}
+
+float ceph::ease::Sine::easeIn(float t, float b, float c, float d) {
+	return -c * cos(t / d * (PI / 2)) + c + b;
+}
+float ceph::ease::Sine::easeOut(float t, float b, float c, float d) {
+	return c * sin(t / d * (PI / 2)) + b;
+}
+
+float ceph::ease::Sine::easeInOut(float t, float b, float c, float d) {
+	return -c / 2 * (cos(PI*t / d) - 1) + b;
 }
