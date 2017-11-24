@@ -15,6 +15,7 @@ namespace ceph {
 	class Actor : public Slot<Actor>, std::enable_shared_from_this<Actor>
 	{
 		friend class Scene;
+		friend class Sprite;
 
 	protected:
 		std::weak_ptr<Scene> scene_;
@@ -32,12 +33,15 @@ namespace ceph {
 	public:
 		Actor();
 
-		void AddChild(const std::shared_ptr<Actor>&);
-		void RemoveChild(const std::shared_ptr<Actor>&);
+		void addChild(const std::shared_ptr<Actor>&);
+		void removeChild(const std::shared_ptr<Actor>&);
 		void detach();
 		bool isInScene() const;
 		bool hasParent() const;
 		bool isInSceneTopLevel() const;
+
+		std::weak_ptr<Actor> getParent() const;
+		std::weak_ptr<Actor> getTopLevelParent() const;
 
 		bool hasActions() const;
 		void applyAction(const std::shared_ptr<Action>& action);
@@ -62,6 +66,9 @@ namespace ceph {
 		virtual Point<float> getAnchorPt() const;
 		virtual void setAnchorPt(const Point<float>& pt);
 		virtual void setAnchorPt(float x, float y);
+
+		virtual ceph::Rect<float> getLocalBounds() const = 0;
+		virtual ceph::Rect<float> getGlobalBounds() const = 0;
 
 		virtual void draw(DrawingContext& rt) const;
 		

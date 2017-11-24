@@ -11,14 +11,15 @@ ceph::Actor::Actor() :
 {
 }
 
-void ceph::Actor::AddChild(const std::shared_ptr<ceph::Actor>& actor)
+void ceph::Actor::addChild(const std::shared_ptr<ceph::Actor>& actor)
 {
+	actor->parent_ = shared_from_this();
 	children_.push_back(actor);
 	if (isInScene())
 		actor->attachToScene(scene_.lock());
 }
 
-void ceph::Actor::RemoveChild(const std::shared_ptr<ceph::Actor>& actor)
+void ceph::Actor::removeChild(const std::shared_ptr<ceph::Actor>& actor)
 {
 	auto i = std::find(children_.begin(), children_.end(), actor);
 	if (i == children_.end())
@@ -33,7 +34,7 @@ void ceph::Actor::RemoveChild(const std::shared_ptr<ceph::Actor>& actor)
 void ceph::Actor::detach()
 {
 	if (hasParent())
-		parent_.lock()->RemoveChild(shared_from_this());
+		parent_.lock()->removeChild(shared_from_this());
 	else if (isInScene())
 		scene_.lock()->removeActor(shared_from_this());
 }
@@ -65,6 +66,19 @@ bool ceph::Actor::hasParent() const
 bool ceph::Actor::isInSceneTopLevel() const
 {
 	return isInScene() && !hasParent();
+}
+
+std::weak_ptr<ceph::Actor> ceph::Actor::getParent() const
+{
+	return parent_;
+}
+
+std::weak_ptr<ceph::Actor> ceph::Actor::getTopLevelParent() const
+{
+	std::weak_ptr<ceph::Actor> parent = parent_;
+	while (!parent.expired())
+		parent = parent.lock()->getParent();
+	return parent;
 }
 
 void ceph::Actor::runAction(const std::shared_ptr<ceph::Action>& action)

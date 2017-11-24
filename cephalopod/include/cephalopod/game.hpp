@@ -27,6 +27,8 @@ namespace ceph
 		virtual Size<float> getLogicalSize() = 0;
 		virtual CoordinateMapping getCoordinateMapping() const = 0;
 
+		virtual void addDebugRect(const Rect<float>& rect) = 0;
+
 		Signal<bool, KeyCode, unsigned char> keyEvent;
 
 		static Game& getInstance();

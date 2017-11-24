@@ -45,6 +45,6 @@ namespace ceph
 		ceph::Size<float> getLogicalSize() override;
 		void quit() override;
 		ceph::CoordinateMapping getCoordinateMapping() const override;
-
+		void addDebugRect(const Rect<float>& rect) override;
 	};
 };

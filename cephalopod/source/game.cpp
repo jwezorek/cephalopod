@@ -16,6 +16,8 @@
 #include "util.hpp"
 #include "gameimpl.hpp"
 
+static std::vector<sf::RectangleShape*> debug_rects;
+
 void ceph::GameImpl::handleInput(const sf::Event& evt)
 {
 	switch (evt.type) {
@@ -194,6 +196,9 @@ void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 
 		active_scene_->draw( ceph::DrawingContext( *window_, coord_transform_));
 
+		for (auto rs : debug_rects)
+			window_->draw(*rs);
+
 		if (coord_mapping_mode_ == ceph::CoordinateMapping::UseBlackBars)
 			drawBlackBars();
 
@@ -231,6 +236,16 @@ ceph::CoordinateMapping ceph::GameImpl::getCoordinateMapping() const
 	return coord_mapping_mode_;
 }
 
+void ceph::GameImpl::addDebugRect(const Rect<float>& rect)
+{
+	auto rs = new sf::RectangleShape(sf::Vector2f(rect.wd, rect.hgt));
+	rs->setPosition(rect.x, rect.y);
+	rs->setFillColor(sf::Color::Transparent);
+	rs->setOutlineColor(sf::Color::Green);
+	rs->setOutlineThickness( 1 );
+	debug_rects.push_back( rs );
+}
+
 ceph::GameImpl* ceph::GameImpl::instance_ = nullptr;
 
 std::unique_ptr<ceph::Game> ceph::Game::createInstance()
@@ -245,4 +260,6 @@ ceph::Game& ceph::Game::getInstance()
 		throw std::runtime_error("No instance of the cephalopod game singleton");
 	return *instance;
 }
+
+
 

@@ -27,6 +27,9 @@ namespace ceph {
 
 		void setFrame(const std::string& frame_name);
 
+		Rect<float> getLocalBounds() const override;
+		Rect<float> getGlobalBounds() const override;
+
 		virtual ~Sprite();
 	};
 }

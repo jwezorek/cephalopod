@@ -58,6 +58,31 @@ void ceph::Sprite::drawThis(DrawingContext& dc) const
 	impl_->sfml_sprite_.setColor(color);
 }
 
+ceph::Rect<float> ceph::Sprite::getLocalBounds() const
+{
+	auto bounds = impl_->sfml_sprite_.getLocalBounds();
+	auto& actor_impl = *(static_cast<const Actor*>(this)->impl_);
+	bounds = actor_impl.properties.getTransform().transformRect(bounds);
+	return ceph::Rect<float>(bounds.left, bounds.top, bounds.width, bounds.height);
+}
+
+ceph::Rect<float> ceph::Sprite::getGlobalBounds() const
+{
+	auto bounds = impl_->sfml_sprite_.getLocalBounds();
+	auto& actor_impl = *(static_cast<const Actor*>(this)->impl_);
+	auto trans = actor_impl.properties.getTransform();
+	auto parent = getParent();
+	while (!parent.expired())
+	{
+		auto& parent_actor_impl = *(parent.lock()->impl_);
+		auto parentTransform = parent_actor_impl.properties.getTransform();
+		trans = parentTransform.combine(trans);;
+		parent = parent.lock()->getParent();
+	}
+	bounds = trans.transformRect(bounds);
+	return ceph::Rect<float>(bounds.left, bounds.top, bounds.width, bounds.height);
+}
+
 ceph::Sprite::~Sprite()
 {
 }
