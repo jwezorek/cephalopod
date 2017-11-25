@@ -6,10 +6,18 @@ ceph::Texture::Texture()
 {
 }
 
-ceph::Texture::Texture(const std::string& filepath) :
+ceph::Texture::Texture(const std::string& filepath, bool invert_y) :
 	impl_( std::make_unique<ceph::TextureImpl>() )
 {
-	impl_->sfml_impl_.loadFromFile(filepath);
+	if (!invert_y) {
+		impl_->sfml_impl_.loadFromFile(filepath);
+	} else {
+		sf::Image image;
+		image.loadFromFile(filepath);
+		image.flipVertically();
+		impl_->sfml_impl_.loadFromImage(image);
+	}
+
 	impl_->sfml_impl_.setSmooth(true);
 }
 

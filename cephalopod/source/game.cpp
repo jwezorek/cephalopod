@@ -246,6 +246,11 @@ void ceph::GameImpl::addDebugRect(const Rect<float>& rect)
 	debug_rects.push_back( rs );
 }
 
+sf::Transform ceph::GameImpl::getCoordTransform() const
+{
+	return coord_transform_;
+}
+
 ceph::GameImpl* ceph::GameImpl::instance_ = nullptr;
 
 std::unique_ptr<ceph::Game> ceph::Game::createInstance()

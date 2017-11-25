@@ -8,7 +8,8 @@ void Asteroids::initialize()
 {
 	sprite_sheet_ = ceph::SpriteSheet::create(
 		".\\data\\zarquon.png",
-		".\\data\\zarquon.json"
+		".\\data\\zarquon.json" 
+		//,true
 	);
 
 	ceph::Game::getInstance().keyEvent.connect( *this,
@@ -68,6 +69,10 @@ void Asteroids::Test()
 	std::shared_ptr<ceph::Sprite> ptr4;
 	auto test = CreateTestSprite2(sprite_sheet_, &ptr1, &ptr2, &ptr3, &ptr4);
 
+	//test->setPosition(-250, 210);
+
+	auto r = test->getLocalBounds();
+
 	test->setPosition(100, 100);
 	test->setRotationDegrees(10.0f);
 
@@ -82,4 +87,29 @@ void Asteroids::Test()
 	ceph::Game::getInstance().addDebugRect(global4);
 
 	addActor(test);
+
+	ship_ = std::make_shared<Ship>(sprite_sheet_);
+	auto rect = ceph::Game::getInstance().getLogicalRect();
+	ship_->setPosition(rect.x + rect.wd / 2.0f - 100.0f, rect.y + rect.hgt / 2.0f
+	);
+	ship_->applyAction(
+		std::make_shared<ceph::BounceEasingAction>(
+			ceph::EasingFnType::Out,
+			std::make_shared<ceph::MoveByAction>(2.0f, 0.0f, 300.0f)
+			)
+	);
+
+	alien_ = std::make_shared<Alien>(sprite_sheet_);
+	alien_->setPosition(rect.x + rect.wd / 2.0f + 100.0f, rect.y + rect.hgt / 2.0f);
+	std::vector<std::shared_ptr<ceph::FiniteAction>> actions = {
+		std::make_shared<ceph::QuadEasingAction>(ceph::EasingFnType::In, std::make_shared<ceph::MoveByAction>(1.0f, 100.0f, 100.0f)),
+		std::make_shared<ceph::QuadEasingAction>(ceph::EasingFnType::Out, std::make_shared<ceph::MoveByAction>(1.0f, -100.0f, 100.0f)),
+		std::make_shared<ceph::QuadEasingAction>(ceph::EasingFnType::In, std::make_shared<ceph::MoveByAction>(1.0f, -100.0f, -100.0f)),
+		std::make_shared<ceph::QuadEasingAction>(ceph::EasingFnType::Out, std::make_shared<ceph::MoveByAction>(1.0f, 100.0f, -100.0f)),
+	};
+	auto seq = std::make_shared<ceph::SequenceAction>(actions);
+	alien_->applyAction(seq);
+
+	this->addActor(ship_);
+	this->addActor(alien_);
 }

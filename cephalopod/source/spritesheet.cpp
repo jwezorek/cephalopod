@@ -7,6 +7,13 @@
 #include "TextureImpl.hpp"
 #include "json11.hpp"
 
+namespace {
+	ceph::Rect<int>  InvertRectVertically(int hgt, ceph::Rect<int> r)
+	{
+		return ceph::Rect<int>(r.x, hgt - r.y - r.hgt, r.wd, r.hgt);
+	}
+}
+
 ceph::Rect<int> extractRect(const json11::Json& json) {
 	if (!json.is_array() || json.array_items().size() != 4)
 		throw std::exception("Invalid rectangle");
@@ -59,19 +66,25 @@ void ceph::SpriteSheet::parseAtlasJson(const std::string& atlas_path)
 		throw std::exception("bad sprite sheet atlas : expected toplevel object");
 
 	for (auto& item : json.object_items()) {
-		atlas_[item.first] = std::make_shared<ceph::SpriteSheet::FrameInfo>(item.first, item.second);
+		auto frame_info = std::make_shared<ceph::SpriteSheet::FrameInfo>(item.first, item.second);
+		atlas_[item.first] = frame_info;
 	}
 }
 
-ceph::SpriteSheet::SpriteSheet(const std::string& tex_path, const std::string& atlas_path)
+ceph::SpriteSheet::SpriteSheet(const std::string& tex_path, const std::string& atlas_path, bool invert_y) : inverted_y_(invert_y)
 {
-	texture_ = std::make_shared<ceph::Texture>( tex_path );
+	texture_ = std::make_shared<ceph::Texture>( tex_path, invert_y);
 	parseAtlasJson(atlas_path);
+	if (inverted_y_) {
+		int tex_hgt = texture_->getSize().hgt;
+		for (auto& item : atlas_)
+			item.second->rect = InvertRectVertically(tex_hgt, item.second->rect);
+	}
 }
 
-std::shared_ptr<ceph::SpriteSheet> ceph::SpriteSheet::create(const std::string& text_path, const std::string& atlas_path)
+std::shared_ptr<ceph::SpriteSheet> ceph::SpriteSheet::create(const std::string& text_path, const std::string& atlas_path, bool invert_y)
 {
-	return std::shared_ptr<ceph::SpriteSheet>(new ceph::SpriteSheet(text_path, atlas_path));
+	return std::shared_ptr<ceph::SpriteSheet>(new ceph::SpriteSheet(text_path, atlas_path, invert_y));
 }
 
 std::shared_ptr<ceph::Sprite> ceph::SpriteSheet::getSprite(const std::string& name) const

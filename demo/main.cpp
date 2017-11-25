@@ -19,7 +19,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	);
 
 	game->initialize(ceph::ScreenMode::WindowedWithTitleBar, 1024, 768, "foo");
+	//game->setLogicalCoordinates(ceph::CoordinateMapping::UseBlackBars, ceph::Size<float>(800.0, 800.0f), ceph::CoordinateSystem::CenterOriginAscendingY);
 
+	auto test = game->getLogicalRect();
 	//game->initialize(ceph::ScreenMode::FullScreenExclusive);
 
 	auto scene = ceph::Scene::create<Asteroids>();

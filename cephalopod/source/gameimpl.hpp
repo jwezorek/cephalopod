@@ -46,5 +46,6 @@ namespace ceph
 		void quit() override;
 		ceph::CoordinateMapping getCoordinateMapping() const override;
 		void addDebugRect(const Rect<float>& rect) override;
+		sf::Transform getCoordTransform() const;
 	};
 };

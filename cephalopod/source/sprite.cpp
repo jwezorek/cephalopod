@@ -1,5 +1,7 @@
 #include "../include/cephalopod/sprite.hpp"
 #include "../include/cephalopod/types.hpp"
+#include "../include/cephalopod/game.hpp"
+#include "gameimpl.hpp"
 #include "textureimpl.hpp"
 #include "spriteimpl.hpp"
 #include "drawingcontext.hpp"
@@ -79,6 +81,10 @@ ceph::Rect<float> ceph::Sprite::getGlobalBounds() const
 		trans = parentTransform.combine(trans);;
 		parent = parent.lock()->getParent();
 	}
+
+	auto transCoordSys = static_cast<ceph::GameImpl&>(ceph::Game::getInstance()).getCoordTransform();
+	trans = transCoordSys.combine(trans);
+
 	bounds = trans.transformRect(bounds);
 	return ceph::Rect<float>(bounds.left, bounds.top, bounds.width, bounds.height);
 }
