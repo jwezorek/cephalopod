@@ -33,6 +33,15 @@ namespace ceph {
 		~Action();
 	};
 
+	class RotateAction : public Action
+	{
+	protected:
+		float ang_velocity_;
+	public:
+		RotateAction(float ang_vel);
+		void update(float timestep) override;
+	};
+
 	class MoveAction : public Action
 	{
 	protected:

@@ -16,6 +16,7 @@ namespace ceph {
 	{
 		friend class Scene;
 		friend class Sprite;
+		friend class Group;
 
 	protected:
 		std::weak_ptr<Scene> scene_;

@@ -15,6 +15,11 @@ sf::IntRect ToSfmlRect(const ceph::Rect<int>& r)
 	return sf::IntRect(r.x, r.y, r.wd, r.hgt);
 }
 
+ceph::SpriteImpl::SpriteImpl() :
+	sfml_sprite_()
+{
+}
+
 ceph::SpriteImpl::SpriteImpl(const std::shared_ptr<ceph::Texture>& texture) :
 	sfml_sprite_(texture->impl_->sfml_impl_)
 {

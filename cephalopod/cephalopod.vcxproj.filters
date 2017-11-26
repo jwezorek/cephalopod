@@ -84,6 +84,9 @@
     <ClInclude Include="source\easingfunctions.hpp">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
+    <ClInclude Include="include\cephalopod\group.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\game.cpp">
@@ -129,6 +132,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\easingfunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\group.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

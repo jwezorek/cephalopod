@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include "../include/cephalopod/actions.hpp"
 #include "../include/cephalopod/actor.hpp"
 #include "../include/cephalopod/game.hpp"
@@ -56,6 +58,25 @@ void ceph::Action::stopRunning()
 
 ceph::Action::~Action()
 {
+}
+
+/*--------------------------------------------------------------------------------*/
+
+ceph::RotateAction::RotateAction(float ang_vel) :ang_velocity_(ang_vel)
+{
+}
+
+void ceph::RotateAction::update(float timestep)
+{
+	auto sprite = owner_.lock();
+	float rot = sprite->getRotation();
+	rot += ang_velocity_ * timestep;
+	//TODO: do the following correctly...
+	if (rot < 0.0f)
+		rot += 2.0f*M_PI;
+	if (rot > 2.0f*M_PI)
+		rot -= 2.0f*M_PI;
+	sprite->setRotation(rot);
 }
 
 /*--------------------------------------------------------------------------------*/

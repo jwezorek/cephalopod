@@ -156,6 +156,7 @@
     <ClInclude Include="include\cephalopod\easingactions.hpp" />
     <ClInclude Include="include\cephalopod\events.hpp" />
     <ClInclude Include="include\cephalopod\game.hpp" />
+    <ClInclude Include="include\cephalopod\group.hpp" />
     <ClInclude Include="include\cephalopod\scene.hpp" />
     <ClInclude Include="include\cephalopod\signals.hpp" />
     <ClInclude Include="include\cephalopod\sprite.hpp" />
@@ -181,6 +182,7 @@
     <ClCompile Include="source\easingactions.cpp" />
     <ClCompile Include="source\easingfunctions.cpp" />
     <ClCompile Include="source\game.cpp" />
+    <ClCompile Include="source\group.cpp" />
     <ClCompile Include="source\json11.cpp" />
     <ClCompile Include="source\scene.cpp" />
     <ClCompile Include="source\sceneimpl.cpp" />

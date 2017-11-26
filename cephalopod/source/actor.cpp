@@ -92,11 +92,18 @@ void ceph::Actor::runActions()
 {
 	for (auto action : actions_)
 		runAction(action);
+	for (const auto& child : children_)
+		child->runActions();
 }
 
 bool ceph::Actor::hasActions() const
 {
-	return !actions_.empty();
+	if (!actions_.empty())
+		return true;
+	for (const auto& child : children_)
+		if (child->hasActions())
+			return true;
+	return false;
 }
 
 void ceph::Actor::applyAction(const std::shared_ptr<ceph::Action>& action)
