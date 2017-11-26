@@ -28,7 +28,6 @@ auto CreateTestSprite(const std::shared_ptr<ceph::SpriteSheet>& sprite_sheet, st
 	*ptr1 = std::make_shared<ceph::Sprite>(sprite_sheet, "test3");
 	*ptr2 = std::make_shared<ceph::Sprite>(sprite_sheet, "test3");
 
-
 	(*ptr1)->setScale(0.5f);
 	(*ptr1)->setPosition(0.0f, 0.0f);
 
@@ -63,13 +62,17 @@ auto CreateTestSprite2(const std::shared_ptr<ceph::SpriteSheet>& sprite_sheet,
 
 void Asteroids::Test()
 {
+	auto& game = ceph::Game::getInstance();
 	std::shared_ptr<ceph::Sprite> ptr1; 
 	std::shared_ptr<ceph::Sprite> ptr2;
 	std::shared_ptr<ceph::Sprite> ptr3;
 	std::shared_ptr<ceph::Sprite> ptr4;
 	auto test = CreateTestSprite2(sprite_sheet_, &ptr1, &ptr2, &ptr3, &ptr4);
 
-	//test->setPosition(-250, 210);
+	test->setPosition(-250, 210);
+
+	auto bnds = test->getGlobalBounds();
+	auto scr_bnds = game.convertToScreenCoords(bnds);
 
 	auto r = test->getLocalBounds();
 
@@ -81,10 +84,10 @@ void Asteroids::Test()
 	auto global3 = ptr3->getGlobalBounds();
 	auto global4 = ptr4->getGlobalBounds();
 
-	ceph::Game::getInstance().addDebugRect(global1);
-	ceph::Game::getInstance().addDebugRect(global2);
-	ceph::Game::getInstance().addDebugRect(global3);
-	ceph::Game::getInstance().addDebugRect(global4);
+	ceph::Game::getInstance().addDebugRect( game.convertToScreenCoords(global1) );
+	ceph::Game::getInstance().addDebugRect( game.convertToScreenCoords(global2) );
+	ceph::Game::getInstance().addDebugRect( game.convertToScreenCoords(global3) );
+	ceph::Game::getInstance().addDebugRect( game.convertToScreenCoords(global4) );
 
 	addActor(test);
 

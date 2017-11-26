@@ -16,7 +16,30 @@
 #include "util.hpp"
 #include "gameimpl.hpp"
 
-static std::vector<sf::RectangleShape*> debug_rects;
+namespace
+{
+	static std::vector<sf::RectangleShape*> debug_rects;
+
+	sf::Rect<float> ToSfRect(const ceph::Rect<float>& r)
+	{
+		return sf::Rect<float>(r.x, r.y, r.wd, r.hgt);
+	}
+
+	ceph::Rect<float> ToCephRect(const sf::Rect<float>& r)
+	{
+		return ceph::Rect<float>(r.left, r.top, r.width, r.height);
+	}
+
+	sf::Vector2<float> ToSfPoint(const ceph::Point<float>& p)
+	{
+		return sf::Vector2<float>(p.x, p.y);
+	}
+
+	ceph::Point<float> ToCephPoint(const sf::Vector2<float>& p)
+	{
+		return ceph::Point<float>(p.x,p.y);
+	}
+}
 
 void ceph::GameImpl::handleInput(const sf::Event& evt)
 {
@@ -206,7 +229,7 @@ void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 	}
 }
 
-ceph::Rect<float> ceph::GameImpl::getLogicalRect()
+ceph::Rect<float> ceph::GameImpl::getLogicalRect() const
 {
 	return ceph::SfmlRectToCoyRect( 
 		coord_system_.getInverse().transformRect(
@@ -215,13 +238,13 @@ ceph::Rect<float> ceph::GameImpl::getLogicalRect()
 	);
 }
 
-ceph::Size<int> ceph::GameImpl::getScreenSize()
+ceph::Size<int> ceph::GameImpl::getScreenSize() const
 {
 	auto sz = window_->getSize();
 	return { static_cast<int>(sz.x), static_cast<int>(sz.y) };
 }
 
-ceph::Size<float> ceph::GameImpl::getLogicalSize()
+ceph::Size<float> ceph::GameImpl::getLogicalSize() const
 {
 	return log_size_;
 }
@@ -249,6 +272,32 @@ void ceph::GameImpl::addDebugRect(const Rect<float>& rect)
 sf::Transform ceph::GameImpl::getCoordTransform() const
 {
 	return coord_transform_;
+}
+
+ceph::Rect<float> ceph::GameImpl::getScreenRect() const
+{
+	auto sz = window_->getSize();
+	return ceph::Rect<float>(0.0f, 0.0f, static_cast<float>(sz.x), static_cast<float>(sz.y));
+}
+
+ceph::Rect<float> ceph::GameImpl::convertToScreenCoords(const ceph::Rect<float>& rect) const
+{
+	return ToCephRect(coord_transform_.transformRect(ToSfRect(rect)));
+}
+
+ceph::Rect<float> ceph::GameImpl::convertFromScreenCoords(const ceph::Rect<float>& rect) const
+{
+	return ToCephRect(coord_transform_.getInverse().transformRect(ToSfRect(rect)));
+}
+
+ceph::Point<float> ceph::GameImpl::convertToScreenCoords(const ceph::Point<float>& pt) const
+{
+	return ToCephPoint(coord_transform_.transformPoint(ToSfPoint(pt)));
+}
+
+ceph::Point<float> ceph::GameImpl::convertFromScreenCoords(const ceph::Point<float>& pt) const
+{
+	return ToCephPoint(coord_transform_.getInverse().transformPoint(ToSfPoint(pt)));
 }
 
 ceph::GameImpl* ceph::GameImpl::instance_ = nullptr;

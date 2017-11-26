@@ -57,7 +57,7 @@ namespace ceph {
 		virtual void setRotationDegrees(float degrees);
 
 		virtual float getScale() const;
-		virtual void setScale(float radians);
+		virtual void setScale(float scale);
 
 		virtual Point<float> getPosition() const;
 		virtual void setPosition(const Point<float>& pt);

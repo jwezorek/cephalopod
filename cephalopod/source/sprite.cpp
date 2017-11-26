@@ -82,8 +82,8 @@ ceph::Rect<float> ceph::Sprite::getGlobalBounds() const
 		parent = parent.lock()->getParent();
 	}
 
-	auto transCoordSys = static_cast<ceph::GameImpl&>(ceph::Game::getInstance()).getCoordTransform();
-	trans = transCoordSys.combine(trans);
+	//auto transCoordSys = static_cast<ceph::GameImpl&>(ceph::Game::getInstance()).getCoordTransform();
+	//trans = transCoordSys.combine(trans);
 
 	bounds = trans.transformRect(bounds);
 	return ceph::Rect<float>(bounds.left, bounds.top, bounds.width, bounds.height);

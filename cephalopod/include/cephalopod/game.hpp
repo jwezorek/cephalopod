@@ -22,10 +22,18 @@ namespace ceph
 			CoordinateSystem system = CoordinateSystem::UpperLeftOriginDescendingY) = 0;
 		virtual void run(const std::shared_ptr<Scene>& startingScene ) = 0;
 		virtual void quit() = 0;
-		virtual Size<int> getScreenSize() = 0;
-		virtual Rect<float> getLogicalRect() = 0;
-		virtual Size<float> getLogicalSize() = 0;
+		virtual Size<int> getScreenSize() const = 0;
+		virtual Rect<float> getLogicalRect() const = 0;
+		virtual Size<float> getLogicalSize() const = 0;
+		virtual Rect<float> getScreenRect() const = 0;
+
+		virtual Rect<float> convertToScreenCoords(const Rect<float>& rect) const = 0;
+		virtual Rect<float> convertFromScreenCoords(const Rect<float>& rect) const = 0;
+		virtual Point<float> convertToScreenCoords(const Point<float>& rect) const = 0;
+		virtual Point<float> convertFromScreenCoords(const Point<float>& rect) const = 0;
+
 		virtual CoordinateMapping getCoordinateMapping() const = 0;
+
 
 		virtual void addDebugRect(const Rect<float>& rect) = 0;
 
