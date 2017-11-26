@@ -7,6 +7,7 @@
 #include "../include/cephalopod/types.hpp"
 
 namespace ceph {
+	void outputDebugString(const std::string& str);
 
 	float radiansToDegrees(float radians);
 	float degreesToRadians(float degrees);
@@ -14,6 +15,7 @@ namespace ceph {
 	float distance(float x1, float y1, float x2, float y2);
 	float magnitude(float x, float y);
 	float magnitude(Vec2D<float> vec);
+	Point<float> lerpPtInRect(const Point<float>& pt, const Rect<float>& r);
 
 	template<typename T>
 	ceph::Rect<T> SfmlRectToCoyRect(sf::Rect<T>& rect)

@@ -60,6 +60,8 @@ namespace ceph {
 		virtual void setScale(float scale);
 
 		virtual Point<float> getPosition() const;
+		virtual Point<float> getGlobalPosition() const = 0;
+		virtual void setGlobalPosition(const Point<float>& pt_global) = 0;
 		virtual void setPosition(const Point<float>& pt);
 		virtual void setPosition(float x, float y);
 
@@ -67,9 +69,9 @@ namespace ceph {
 		virtual void setAnchorPt(const Point<float>& pt);
 		virtual void setAnchorPt(float x, float y);
 
-		virtual ceph::Rect<float> getLocalBounds() const = 0;
-		virtual ceph::Rect<float> getGlobalBounds() const = 0;
-		virtual ceph::Rect<float> getTotalGlobalBounds() const;
+		virtual Rect<float> getLocalBounds() const = 0;
+		virtual Rect<float> getGlobalBounds() const = 0;
+		virtual Rect<float> getTotalGlobalBounds() const;
 
 		virtual void draw(DrawingContext& rt) const;
 		

@@ -60,6 +60,35 @@ void ceph::Sprite::drawThis(DrawingContext& dc) const
 	impl_->sfml_sprite_.setColor(color);
 }
 
+ceph::Point<float> ceph::Sprite::getGlobalPosition() const
+{
+	auto p = getPosition();
+	auto& actor_impl = *(static_cast<const Actor*>(this)->impl_);
+	auto trans = actor_impl.properties.getTransform();
+	auto parent = getParent();
+	//TODO: make the following be a subroutine.
+	while (!parent.expired())
+	{
+		auto& parent_actor_impl = *(parent.lock()->impl_);
+		auto parentTransform = parent_actor_impl.properties.getTransform();
+		trans = parentTransform.combine(trans);;
+		parent = parent.lock()->getParent();
+	}
+
+	auto sp = trans.transformPoint( sf::Vector2<float>(p.x,p.y) );
+	return ceph::Point<float>(sp.x, sp.y);
+}
+
+void  ceph::Sprite::setGlobalPosition(const ceph::Point<float>& pt_global)
+{
+	if (!hasParent()) {
+		setPosition(pt_global);
+	} else {
+		auto parent_pos = parent_.lock()->getGlobalPosition();
+		setPosition(pt_global.x - parent_pos.x, pt_global.y - parent_pos.y);
+	}
+}
+
 ceph::Rect<float> ceph::Sprite::getLocalBounds() const
 {
 	auto bounds = impl_->sfml_sprite_.getLocalBounds();
@@ -74,6 +103,7 @@ ceph::Rect<float> ceph::Sprite::getGlobalBounds() const
 	auto& actor_impl = *(static_cast<const Actor*>(this)->impl_);
 	auto trans = actor_impl.properties.getTransform();
 	auto parent = getParent();
+
 	while (!parent.expired())
 	{
 		auto& parent_actor_impl = *(parent.lock()->impl_);
@@ -81,9 +111,6 @@ ceph::Rect<float> ceph::Sprite::getGlobalBounds() const
 		trans = parentTransform.combine(trans);;
 		parent = parent.lock()->getParent();
 	}
-
-	//auto transCoordSys = static_cast<ceph::GameImpl&>(ceph::Game::getInstance()).getCoordTransform();
-	//trans = transCoordSys.combine(trans);
 
 	bounds = trans.transformRect(bounds);
 	return ceph::Rect<float>(bounds.left, bounds.top, bounds.width, bounds.height);

@@ -91,6 +91,11 @@ namespace ceph {
 			return y + hgt;
 		}
 
+		T area() const
+		{
+			return wd*hgt;
+		}
+
 		Rect<T> unionOf(const Rect<T>& r)
 		{
 			T new_x = std::min(x, r.x);
@@ -103,6 +108,11 @@ namespace ceph {
 		void unionWith(const Rect<T>& r)
 		{
 			*this = unionOf(r);
+		}
+
+		bool intersects(const Rect<T>& r)
+		{
+			return (x < r.x2() && x2() > r.x && y < r.y2() && y2() > r.y);
 		}
 	};
 }

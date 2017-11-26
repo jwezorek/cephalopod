@@ -27,6 +27,8 @@ namespace ceph {
 
 		void setFrame(const std::string& frame_name);
 
+		Point<float> getGlobalPosition() const override;
+		void setGlobalPosition(const Point<float>& pt_global) override;
 		Rect<float> getLocalBounds() const override;
 		Rect<float> getGlobalBounds() const override;
 

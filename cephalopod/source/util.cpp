@@ -1,9 +1,14 @@
 #define _USE_MATH_DEFINES
+#ifdef WIN32
+#include "Windows.h"
+#endif
 #include <cmath>
 #include <SFML/Graphics.hpp>
 #include "../include/cephalopod/types.hpp"
 #include "util.hpp"
 #include "TextureImpl.hpp"
+
+
 
 float ceph::radiansToDegrees(float radians)
 {
@@ -18,6 +23,14 @@ float ceph::degreesToRadians(float degrees)
 float ceph::lerp(float start, float end, float pcnt)
 {
 	return (end - start) * pcnt + start;
+}
+
+ceph::Point<float> ceph::lerpPtInRect(const ceph::Point<float>& pt, const ceph::Rect<float>& r)
+{
+	return ceph::Point<float>(
+		ceph::lerp(r.x, r.x2(), pt.x),
+		ceph::lerp(r.y, r.y2(), pt.y)
+	);
 }
 
 float ceph::distance(float x1, float y1, float x2, float y2)
@@ -35,6 +48,14 @@ float ceph::magnitude(float x, float y)
 float ceph::magnitude(Vec2D<float> vec)
 {
 	return magnitude(vec.x, vec.y);
+}
+
+void ceph::outputDebugString(const std::string& str)
+{
+	std::string line = str + std::string("\n");
+#ifdef WIN32
+	OutputDebugStringA( line.c_str() );
+#endif
 }
 
 

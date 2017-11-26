@@ -1,5 +1,6 @@
 #include "../include/cephalopod/actions.hpp"
 #include "../include/cephalopod/actor.hpp"
+#include "../include/cephalopod/game.hpp"
 #include "util.hpp"
 #include <map>
 #include <numeric>
@@ -55,6 +56,46 @@ void ceph::Action::stopRunning()
 
 ceph::Action::~Action()
 {
+}
+
+/*--------------------------------------------------------------------------------*/
+
+ceph::MoveAction::MoveAction(float x, float y) : velocity_(ceph::Vec2D<float>(x, y)) {}
+ceph::MoveAction::MoveAction(const Vec2D<float>& vel) : velocity_(vel) {}
+void ceph::MoveAction::update(float timestep)
+{
+	auto sprite = owner_.lock();
+	auto p = sprite->getPosition();
+	sprite->setPosition(p.x + timestep * velocity_.x, p.y + timestep * velocity_.y);
+}
+
+/*--------------------------------------------------------------------------------*/
+
+ceph::MoveWithWrappingAction::MoveWithWrappingAction(float x, float y) : ceph::MoveAction(x,y) {}
+ceph::MoveWithWrappingAction::MoveWithWrappingAction(const ceph::Vec2D<float>& vel) : ceph::MoveAction(vel) {}
+void ceph::MoveWithWrappingAction::update(float timestep)
+{
+	MoveAction::update(timestep);
+
+	auto& game = ceph::Game::getInstance();
+	auto sprite = owner_.lock();
+	auto screen_rect = game.getScreenRect();
+	auto scr_coord_bounds = game.convertToScreenCoords(sprite->getGlobalBounds());
+
+	if (!screen_rect.intersects(scr_coord_bounds)) {
+		auto new_bounds = scr_coord_bounds;
+		if (new_bounds.x2() < 0.0f && velocity_.x < 0)
+			new_bounds.x = screen_rect.wd;
+		else if (new_bounds.x > screen_rect.wd && velocity_.x > 0)
+			new_bounds.x = -scr_coord_bounds.wd;
+		if (new_bounds.y2() < 0.0f && velocity_.y < 0)
+			new_bounds.y = screen_rect.hgt;
+		else if (new_bounds.y > screen_rect.hgt && velocity_.y > 0)
+			new_bounds.y = -scr_coord_bounds.hgt;
+		auto new_position = game.convertFromScreenCoords(ceph::lerpPtInRect(sprite->getAnchorPt(), new_bounds));
+
+		sprite->setGlobalPosition(new_position);
+	}
 }
 
 /*--------------------------------------------------------------------------------*/

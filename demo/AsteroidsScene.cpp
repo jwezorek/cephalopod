@@ -96,10 +96,7 @@ void Asteroids::Test()
 	ship_->setPosition(rect.x + rect.wd / 2.0f - 100.0f, rect.y + rect.hgt / 2.0f
 	);
 	ship_->applyAction(
-		std::make_shared<ceph::BounceEasingAction>(
-			ceph::EasingFnType::Out,
-			std::make_shared<ceph::MoveByAction>(2.0f, 0.0f, 300.0f)
-			)
+		std::make_shared<ceph::MoveWithWrappingAction>( 120.0f, 0)
 	);
 
 	alien_ = std::make_shared<Alien>(sprite_sheet_);

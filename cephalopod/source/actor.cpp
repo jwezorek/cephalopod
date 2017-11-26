@@ -178,7 +178,7 @@ void ceph::Actor::setPosition(float x, float y)
 ceph::Point<float> ceph::Actor::getAnchorPt() const
 {
 	auto origin = impl_->properties.getOrigin();
-	return ceph::Point<float>(origin.x, origin.y);
+	return ceph::Point<float>(origin.x / impl_->frame_sz.wd, origin.y / impl_->frame_sz.hgt);
 }
 
 void ceph::Actor::setAnchorPt(const ceph::Point<float>& pt)

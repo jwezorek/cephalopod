@@ -33,6 +33,24 @@ namespace ceph {
 		~Action();
 	};
 
+	class MoveAction : public Action
+	{
+	protected:
+		Vec2D<float> velocity_;
+	public:
+		MoveAction(float x, float y);
+		MoveAction(const Vec2D<float>& vel);
+		void update(float timestep) override;
+	};
+
+	class MoveWithWrappingAction : public MoveAction
+	{
+	public:
+		MoveWithWrappingAction(float x, float y);
+		MoveWithWrappingAction(const Vec2D<float>& vel);
+		void update(float timestep) override;
+	};
+
 	class FiniteAction : public Action
 	{
 	protected:
