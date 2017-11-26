@@ -69,6 +69,7 @@ namespace ceph {
 
 		virtual ceph::Rect<float> getLocalBounds() const = 0;
 		virtual ceph::Rect<float> getGlobalBounds() const = 0;
+		virtual ceph::Rect<float> getTotalGlobalBounds() const;
 
 		virtual void draw(DrawingContext& rt) const;
 		

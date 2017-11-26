@@ -71,14 +71,38 @@ namespace ceph {
 			x(xx), y(yy), wd(w), hgt(h) {
 		}
 
-		Point<T> getLocation()
+		Point<T> getLocation() const
 		{
 			return Point<T>(x, y);
 		}
 
-		Size<T> getSize()
+		Size<T> getSize() const
 		{
 			return Size<T>(wd, hgt);
+		}
+
+		T x2() const
+		{
+			return x + wd;
+		}
+
+		T y2() const
+		{
+			return y + hgt;
+		}
+
+		Rect<T> unionOf(const Rect<T>& r)
+		{
+			T new_x = std::min(x, r.x);
+			T new_y = std::min(y, r.y);
+			T new_x2 = std::max(x2(), r.x2());
+			T new_y2 = std::max(y2(), r.y2());
+			return Rect<T>(new_x, new_y, new_x2 - new_x, new_y2 - new_y);
+		}
+
+		void unionWith(const Rect<T>& r)
+		{
+			*this = unionOf(r);
 		}
 	};
 }

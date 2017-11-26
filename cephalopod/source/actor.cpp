@@ -195,6 +195,14 @@ void ceph::Actor::setAnchorPt(float x, float y)
 	);
 }
 
+ceph::Rect<float> ceph::Actor::getTotalGlobalBounds() const
+{
+	auto bounds = getGlobalBounds();
+	for (const auto& child : children_)
+		bounds.unionWith(child->getGlobalBounds());
+	return bounds;
+}
+
 void ceph::Actor::draw(DrawingContext& dcParent) const 
 {
 	DrawingContext dc(
