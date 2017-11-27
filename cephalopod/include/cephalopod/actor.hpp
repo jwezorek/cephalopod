@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <initializer_list>
 #include "types.hpp"
 #include "signals.hpp"
 #include "actions.hpp"
@@ -35,6 +36,7 @@ namespace ceph {
 		Actor();
 
 		void addChild(const std::shared_ptr<Actor>&);
+		void addChildren(std::initializer_list<std::shared_ptr<Actor>> children);
 		void removeChild(const std::shared_ptr<Actor>&);
 		void detach();
 		bool isInScene() const;
@@ -46,6 +48,7 @@ namespace ceph {
 
 		bool hasActions() const;
 		void applyAction(const std::shared_ptr<Action>& action);
+		void applyActions(std::initializer_list<std::shared_ptr<Action>> action);
 		void removeAction(const std::shared_ptr<Action>& action);
 
 		virtual float getAlpha() const;

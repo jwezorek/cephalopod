@@ -19,6 +19,12 @@ void ceph::Actor::addChild(const std::shared_ptr<ceph::Actor>& actor)
 		actor->attachToScene(scene_.lock());
 }
 
+void ceph::Actor::addChildren(std::initializer_list<std::shared_ptr<Actor>> children)
+{
+	for (const auto& child : children)
+		addChild(child);
+}
+
 void ceph::Actor::removeChild(const std::shared_ptr<ceph::Actor>& actor)
 {
 	auto i = std::find(children_.begin(), children_.end(), actor);
@@ -110,6 +116,12 @@ void ceph::Actor::applyAction(const std::shared_ptr<ceph::Action>& action)
 {
 	actions_.push_back(action);
 	runAction(action);
+}
+
+void ceph::Actor::applyActions(std::initializer_list<std::shared_ptr<Action>> actions)
+{
+	for (const auto& action : actions)
+		applyAction(action);
 }
 
 void ceph::Actor::removeAction(const std::shared_ptr<ceph::Action>& removee)

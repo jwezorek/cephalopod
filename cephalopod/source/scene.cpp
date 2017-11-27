@@ -39,6 +39,12 @@ void ceph::Scene::addActor(const std::shared_ptr<ceph::Actor>& child)
 		child->runActions();
 }
 
+void ceph::Scene::addActors(std::initializer_list<std::shared_ptr<Actor>> children)
+{
+	for (const auto& child : children)
+		addActor(child);
+}
+
 void ceph::Scene::removeActor(const std::shared_ptr<ceph::Actor>& child)
 {
 	auto i = std::find(stage_.begin(), stage_.end(), child);

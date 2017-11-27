@@ -2,6 +2,8 @@
 #include <vector>
 #include <memory>
 #include <functional>
+#include <initializer_list>
+
 #include "actor.hpp"
 #include "events.hpp"
 #include "texture.hpp"
@@ -40,6 +42,7 @@ namespace ceph {
 		ColorRGB getBackgroundColor() const;
 
 		void addActor(const std::shared_ptr<Actor>& child);
+		void addActors(std::initializer_list<std::shared_ptr<Actor>> children);
 		void removeActor(const std::shared_ptr<Actor>& child);
 
 		template<typename T>
