@@ -142,10 +142,8 @@ void ceph::FiniteAction::update(float timestep)
 
 	float new_elapsed = (elapsed_ + timestep <= duration_) ? elapsed_ + timestep : duration_;
 	doTimeStep(new_elapsed - elapsed_);
-	if (new_elapsed == duration_) {
-		is_complete_ = true;
-		complete_event_.fire(*this);
-	}
+	if (new_elapsed == duration_)
+		setComplete();
 
 	elapsed_ = new_elapsed;
 }
@@ -164,6 +162,16 @@ float ceph::FiniteAction::getElapsed() const
 bool ceph::FiniteAction::isComplete() const
 {
 	return is_complete_;
+}
+
+void ceph::FiniteAction::setComplete()
+{
+	if (is_complete_)
+		return;
+	for (auto child : children_)
+		std::static_pointer_cast<FiniteAction>(child)->setComplete();
+	is_complete_ = true;
+	complete_event_.fire(*this);
 }
 
 ceph::Signal<ceph::Action&>& ceph::FiniteAction::getCompletionEvent()
@@ -234,7 +242,7 @@ void ceph::SetTransparencyToAction::doTimeStep(float timestep)
 
 /*--------------------------------------------------------------------------------*/
 
-ceph::SequenceAction::SequenceAction(const std::vector<std::shared_ptr<ceph::FiniteAction>>& actions, bool startPaused) :
+ceph::SequenceAction::SequenceAction(std::initializer_list<std::shared_ptr<ceph::FiniteAction>> actions, bool startPaused) :
 	FiniteAction(0, actions, startPaused)
 {
 	float sum = 0.0f;
@@ -257,20 +265,24 @@ void ceph::SequenceAction::doTimeStep(float timestep) {
 	auto start_action_iter = getCurrentAction(elapsed_);
 	auto end_action_iter = getCurrentAction(new_elapsed);
 
+	std::shared_ptr<FiniteAction> current_action;
 	if (start_action_iter == end_action_iter) {
-		auto action = start_action_iter->second;
+		current_action = std::static_pointer_cast<FiniteAction>(start_action_iter->second);
 		float action_start_time = start_action_iter->first;
-		action->update( timestep);
-	}
-	else {
+		current_action->doTimeStep( timestep);
+	} else {
 		auto old_action = start_action_iter->second;
 		float old_action_start_time = start_action_iter->first;
 
-		auto new_action = (end_action_iter != start_tbl_.end()) ? end_action_iter->second : nullptr;
+		current_action = (end_action_iter != start_tbl_.end()) ? end_action_iter->second : nullptr;
 		float new_action_start_time = (end_action_iter != start_tbl_.end()) ? end_action_iter->first : duration_;
 
-		old_action->update(new_action_start_time - elapsed_);
-		if (new_action)
-			new_action->update(timestep - (new_action_start_time - elapsed_));
+		old_action->doTimeStep(new_action_start_time - elapsed_);
+		old_action->setComplete();
+
+		if (current_action)
+			current_action->doTimeStep(timestep - (new_action_start_time - elapsed_));
 	}
+	if (current_action && current_action->getElapsed() >= current_action->getDuration())
+		current_action->setComplete();
 }

@@ -1,14 +1,15 @@
 #include "../include/cephalopod/easingactions.hpp"
 #include "easingfunctions.hpp"
 
-//	std::function<float(float, float, float, float d)> func_;
 void ceph::EasingAction::doTimeStep(float timestep)
 {
 	auto child = getChild();
-	auto current = child->getElapsed();
-	auto new_elapsed = func_(elapsed_ + timestep, 0.0f, duration_, duration_);
-	auto eased_timestep = new_elapsed - current;
-	child->update(eased_timestep);
+
+	auto eased_elapsed = func_(elapsed_, 0.0f, duration_, duration_);
+	auto new_eased_elapsed = func_(elapsed_ + timestep, 0.0f, duration_, duration_);
+	auto eased_timestep = new_eased_elapsed - eased_elapsed;
+
+	child->doTimeStep(eased_timestep);
 }
 
 std::shared_ptr<ceph::FiniteAction> ceph::EasingAction::getChild()
@@ -18,7 +19,7 @@ std::shared_ptr<ceph::FiniteAction> ceph::EasingAction::getChild()
 
 ceph::EasingAction::EasingAction(const std::shared_ptr<FiniteAction>& child, EasingFnType typ,
 		const ceph::EasingFunc& in, const ceph::EasingFunc& out, const ceph::EasingFunc& inout, bool startPaused) :
-	FiniteAction(child->getDuration(), std::vector<std::shared_ptr<ceph::FiniteAction>>{child}, startPaused)
+	FiniteAction(child->getDuration(), {child}, startPaused)
 {
 	switch (typ) {
 		case EasingFnType::In:
@@ -32,13 +33,6 @@ ceph::EasingAction::EasingAction(const std::shared_ptr<FiniteAction>& child, Eas
 			break;
 	}
 }
-
-/*
-
-ceph::FooEasingAction::FooEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
-	ceph::EasingAction(child, typ, ceph::ease::Foo::easeIn, ceph::ease::Foo::easeOut, ceph::ease::Foo::easeInOut) {}
-
-*/
 
 ceph::BackEasingAction::BackEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
 	ceph::EasingAction(child, typ, ceph::ease::Back::easeIn, ceph::ease::Back::easeOut, ceph::ease::Back::easeInOut) {}

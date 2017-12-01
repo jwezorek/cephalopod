@@ -23,6 +23,14 @@ void Asteroids::initialize()
 		CreateStarLayer(-64.0f, 0.125f),
 		CreateStarLayer(-32.0f, 0.0625f)
 	});
+	auto ship = std::make_shared<Ship>(sprite_sheet_);
+	ship->setPosition(100, 100);
+	ship->applyAction(
+		std::make_shared<ceph::ElasticEasingAction>(ceph::EasingFnType::Out, 
+			std::make_shared<ceph::MoveByAction>( 1.0, 200, 200)
+		)
+	);
+	addActor(ship);
 }
 
 std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float alpha)

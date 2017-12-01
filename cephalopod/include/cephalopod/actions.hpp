@@ -62,28 +62,30 @@ namespace ceph {
 
 	class FiniteAction : public Action
 	{
+		friend class SequenceAction;
 	protected:
+		bool is_complete_;
 		Signal<Action&> complete_event_;
 		float elapsed_;
-		bool is_complete_;
 		float duration_;
-		
+
+		void update(float timestep) override;
 		virtual void run(const std::shared_ptr<Actor>& actor) override;
+		virtual void setComplete();
 
 	public:
-		FiniteAction(float duration, bool startPaused = false);
-		void update(float timestep) override;
-		template<class T>
-		FiniteAction(float duration, const std::vector<std::shared_ptr<T>>& actions, bool startPaused = false) : FiniteAction(duration, startPaused) {
+		template<typename T>
+		FiniteAction(float duration, const std::initializer_list<std::shared_ptr<T>>& actions, bool startPaused = false) : FiniteAction(duration, startPaused) {
 			for (auto action : actions)
 				children_.push_back(std::static_pointer_cast<Action>(action));
 		}
+		FiniteAction(float duration, bool startPaused = false);
+
+		virtual void doTimeStep(float timestep) = 0;
 		float getElapsed() const;
 		float getDuration() const;
 		bool isComplete() const;
 		Signal<Action&>& getCompletionEvent();
-
-		virtual void doTimeStep(float timestep) = 0;
 	};
 
 	class MoveByAction : public FiniteAction
@@ -127,6 +129,6 @@ namespace ceph {
 	protected:
 		void doTimeStep(float timestep) override;
 	public:
-		SequenceAction(const std::vector<std::shared_ptr<FiniteAction>>& actions, bool startPaused = false);
+		SequenceAction(std::initializer_list<std::shared_ptr<FiniteAction>> actions, bool startPaused = false);
 	};
 }
