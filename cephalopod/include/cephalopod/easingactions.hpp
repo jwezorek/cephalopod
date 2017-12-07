@@ -11,7 +11,7 @@ namespace ceph
 		InOut
 	};
 
-	using EasingFunc = std::function<float(float, float, float, float d)>;
+	using EasingFunc = std::function<float(float)>;
 
 	class EasingAction : public FiniteAction
 	{

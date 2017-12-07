@@ -2,165 +2,253 @@
 #include <cmath>
 #include <Windows.h>
 #include "easingfunctions.hpp"
-#include "../include/cephalopod/easingactions.hpp"
 
 const float PI = static_cast<float>(M_PI);
 
-float ceph::ease::Back::easeIn(float t, float b, float c, float d) {
+float ceph::ease::Back::in(float t)
+{
 	float s = 1.70158f;
-	float postFix = t /= d;
-	return c*(postFix)*t*((s + 1)*t - s) + b;
-}
-float ceph::ease::Back::easeOut(float t, float b, float c, float d) {
-	float s = 1.70158f;
-	return c*((t = t / d - 1)*t*((s + 1)*t + s) + 1) + b;
+	return t*t*((s + 1)*t - s);
 }
 
-float ceph::ease::Back::easeInOut(float t, float b, float c, float d) {
+float ceph::ease::Back::out(float t)
+{
 	float s = 1.70158f;
-	if ((t /= d / 2) < 1) return c / 2 * (t*t*(((s *= (1.525f)) + 1)*t - s)) + b;
-	float postFix = t -= 2;
-	return c / 2 * ((postFix)*t*(((s *= (1.525f)) + 1)*t + s) + 2) + b;
+	t -= 1;
+	return t*t*((s + 1)*t + s) + 1;
 }
 
-float ceph::ease::Bounce::easeIn(float t, float b, float c, float d) {
-	return c - easeOut(d - t, 0, c, d) + b;
+float ceph::ease::Back::inOut(float t)
+{
+	float s = 1.70158f;
+	t *= 2.0f;
+	if (t < 1)
+		return 1.0f / 2.0f * (t*t*(((s *= (1.525f)) + 1.0f)*t - s));
+	t -= 2;
+	return 1.0f / 2.0f * (t*t*(((s *= (1.525f)) + 1.0f)*t + s) + 2.0f);
 }
-float ceph::ease::Bounce::easeOut(float t, float b, float c, float d) {
-	if ((t /= d) < (1 / 2.75f)) {
-		return c*(7.5625f*t*t) + b;
+
+float ceph::ease::Bounce::in(float t)
+{
+	return 1.0f - out(1.0f - t);
+}
+
+float ceph::ease::Bounce::out(float t)
+{
+	if (t  < (1.0f / 2.75f)) {
+		return 7.5625f*t*t;
 	}
 	else if (t < (2 / 2.75f)) {
-		float postFix = t -= (1.5f / 2.75f);
-		return c*(7.5625f*(postFix)*t + .75f) + b;
+		t -= (1.5f / 2.75f);
+		return 7.5625f*t*t + .75f;
 	}
 	else if (t < (2.5 / 2.75)) {
-		float postFix = t -= (2.25f / 2.75f);
-		return c*(7.5625f*(postFix)*t + .9375f) + b;
+		t -= (2.25f / 2.75f);
+		return 7.5625f*t*t + .9375f;
 	}
 	else {
-		float postFix = t -= (2.625f / 2.75f);
-		return c*(7.5625f*(postFix)*t + .984375f) + b;
+		t -= (2.625f / 2.75f);
+		return 7.5625f*t*t + .984375f;
 	}
 }
 
-float ceph::ease::Bounce::easeInOut(float t, float b, float c, float d) {
-	if (t < d / 2) return easeIn(t * 2, 0, c, d) * .5f + b;
-	else return easeOut(t * 2 - d, 0, c, d) * .5f + c*.5f + b;
+float ceph::ease::Bounce::inOut(float t)
+{
+	if (t < 0.5f)
+		return in(t * 2.0f) * 0.5f;
+	else
+		return 0.5f * out(2.0f * t - 1.0f) + 0.5f;
 }
 
-float ceph::ease::Circ::easeIn(float t, float b, float c, float d) {
-	return -c * (std::sqrt(1 - (t /= d)*t) - 1) + b;
-}
-float ceph::ease::Circ::easeOut(float t, float b, float c, float d) {
-	return c * std::sqrt(1 - (t = t / d - 1)*t) + b;
+float ceph::ease::Circ::in(float t)
+{
+	return -1.0f * (std::sqrtf(1 - t*t) - 1);
 }
 
-float ceph::ease::Circ::easeInOut(float t, float b, float c, float d) {
-	if ((t /= d / 2) < 1) return -c / 2 * (std::sqrt(1 - t*t) - 1) + b;
-	return c / 2 * (std::sqrt(1 - t*(t -= 2)) + 1) + b;
+float ceph::ease::Circ::out(float t)
+{
+	t -= 1.0f;
+	return std::sqrtf(1.0f - t*t);
 }
 
-float ceph::ease::Cubic::easeIn(float t, float b, float c, float d) {
-	return c*(t /= d)*t*t + b;
-}
-float ceph::ease::Cubic::easeOut(float t, float b, float c, float d) {
-	return c*((t = t / d - 1)*t*t + 1) + b;
-}
-
-float ceph::ease::Cubic::easeInOut(float t, float b, float c, float d) {
-	if ((t /= d / 2) < 1) return c / 2 * t*t*t + b;
-	return c / 2 * ((t -= 2)*t*t + 2) + b;
-}
-
-float ceph::ease::Elastic::easeIn(float t, float b, float c, float d) {
-	if (t == 0) return b;  if ((t /= d) == 1) return b + c;
-	float p = d*.3f;
-	float a = c;
-	float s = p / 4;
-	float postFix = a * std::pow(2.0f, 10.0f * (t -= 1)); // this is a fix, again, with post-increment operators
-	return -(postFix * std::sin((t*d - s)*(2 * PI) / p)) + b;
-}
-
-float ceph::ease::Elastic::easeOut(float t, float b, float c, float d) {
-	if (t == 0) return b;  if ((t /= d) == 1) return b + c;
-	float p = d*.3f;
-	float a = c;
-	float s = p / 4;
-	return (a * std::pow(2, -10 * t) * std::sin((t*d - s)*(2 * PI) / p) + c + b);
-}
-
-float ceph::ease::Elastic::easeInOut(float t, float b, float c, float d) {
-	if (t == 0) return b;  if ((t /= d / 2) == 2) return b + c;
-	float p = d*(.3f*1.5f);
-	float a = c;
-	float s = p / 4;
-
+float ceph::ease::Circ::inOut(float t)
+{
+	t *= 2.0f;
 	if (t < 1) {
-		float postFix = a*pow(2, 10 * (t -= 1)); // postIncrement is evil
-		return -.5f*(postFix* std::sin((t*d - s)*(2 * PI) / p)) + b;
+		return -0.5f * (std::sqrtf(1 - t*t) - 1);
 	}
-	float postFix = a * std::pow(2, -10 * (t -= 1)); // postIncrement is evil
-	return postFix * std::sin((t*d - s)*(2 * PI) / p)*.5f + c + b;
+	else {
+		t -= 2.0f;
+		return 0.5f * (std::sqrtf(1 - t*t) + 1);
+	}
 }
 
-float ceph::ease::Expo::easeIn(float t, float b, float c, float d) {
-	return (t == 0) ? b : c * pow(2, 10 * (t / d - 1)) + b;
-}
-float ceph::ease::Expo::easeOut(float t, float b, float c, float d) {
-	return (t == d) ? b + c : c * (-pow(2, -10 * t / d) + 1) + b;
+float ceph::ease::Cubic::in(float t)
+{
+	return t*t*t;
 }
 
-float ceph::ease::Expo::easeInOut(float t, float b, float c, float d) {
-	if (t == 0) return b;
-	if (t == d) return b + c;
-	if ((t /= d / 2) < 1) return c / 2 * pow(2, 10 * (t - 1)) + b;
-	return c / 2 * (-pow(2, -10 * --t) + 2) + b;
+float ceph::ease::Cubic::out(float t)
+{
+	t -= 1.0f;
+	return t*t*t + 1.0f;
 }
 
-float ceph::ease::Quad::easeIn(float t, float b, float c, float d) {
-	return c*(t /= d)*t + b;
-}
-float ceph::ease::Quad::easeOut(float t, float b, float c, float d) {
-	return -c *(t /= d)*(t - 2) + b;
-}
-
-float ceph::ease::Quad::easeInOut(float t, float b, float c, float d) {
-	if ((t /= d / 2) < 1) return ((c / 2)*(t*t)) + b;
-	return -c / 2 * (((t - 2)*(--t)) - 1) + b;
-}
-
-float ceph::ease::Quart::easeIn(float t, float b, float c, float d) {
-	return c*(t /= d)*t*t*t + b;
-}
-float ceph::ease::Quart::easeOut(float t, float b, float c, float d) {
-	return -c * ((t = t / d - 1)*t*t*t - 1) + b;
+float ceph::ease::Cubic::inOut(float t)
+{
+	t *= 2.0f;
+	if (t < 1.0f) {
+		return 0.5f * t*t*t;
+	}
+	else {
+		t -= 2.0f;
+		return 0.5f * (t*t*t + 2.0f);
+	}
 }
 
-float ceph::ease::Quart::easeInOut(float t, float b, float c, float d) {
-	if ((t /= d / 2) < 1) return c / 2 * t*t*t*t + b;
-	return -c / 2 * ((t -= 2)*t*t*t - 2) + b;
+float ceph::ease::Elastic::in(float t)
+{
+	if (t == 0)
+		return 0;
+	if (t == 1)
+		return 1;
+	float p = 0.3f;
+	float s = p / 4;
+	t -= 1;
+	return -(std::pow(2.0f, 10.0f * t) * std::sin((t - s)*(2 * PI) / p));
 }
 
-float ceph::ease::Quint::easeIn(float t, float b, float c, float d) {
-	return c*(t /= d)*t*t*t*t + b;
-}
-float ceph::ease::Quint::easeOut(float t, float b, float c, float d) {
-	return c*((t = t / d - 1)*t*t*t*t + 1) + b;
+float ceph::ease::Elastic::inOut(float t)
+{
+	if (t == 0)
+		return 0;
+
+	if ((t *= 2.0f) == 2.0f)
+		return 1;
+
+	float p = 0.3f * 1.5f;
+	float s = p / 4;
+	float t_minus_1 = t - 1.0f;
+
+	if (t < 1)
+		return -0.5f*(std::powf(2.0f, 10.0f * t_minus_1) * std::sinf((t_minus_1 - s)*(2.0f * PI) / p));
+	else
+		return std::powf(2.0f, -10.0f * t_minus_1) * std::sinf((t_minus_1 - s)*(2.0f * PI) / p)*0.5f + 1.0f;
 }
 
-float ceph::ease::Quint::easeInOut(float t, float b, float c, float d) {
-	if ((t /= d / 2) < 1) return c / 2 * t*t*t*t*t + b;
-	return c / 2 * ((t -= 2)*t*t*t*t + 2) + b;
+float ceph::ease::Elastic::out(float t) {
+	if (t == 0)
+		return 0.0f;
+	if (t == 1)
+		return 1.0f;
+	float p = 0.3f;
+	float s = p / 4.0f;
+	return (std::powf(2.0f, -10.0f * t) * std::sinf((t - s)*(2.0f * PI) / p) + 1.0f);
 }
 
-float ceph::ease::Sine::easeIn(float t, float b, float c, float d) {
-	return -c * cos(t / d * (PI / 2)) + c + b;
-}
-float ceph::ease::Sine::easeOut(float t, float b, float c, float d) {
-	return c * sin(t / d * (PI / 2)) + b;
+float ceph::ease::Expo::in(float t)
+{
+	return (t == 0.0f) ? 0.0f : std::powf(2.0f, 10.0f * (t - 1.0f));
 }
 
-float ceph::ease::Sine::easeInOut(float t, float b, float c, float d) {
-	return -c / 2 * (cos(PI*t / d) - 1) + b;
+float ceph::ease::Expo::out(float t)
+{
+	return (t == 1.0f) ? 1.0f : -std::powf(2.0f, -10.0f * t) + 1.0f;
+}
+
+float ceph::ease::Expo::inOut(float t)
+{
+	if (t == 0.0f)
+		return 0.0f;
+	if (t == 1.0f)
+		return 1.0f;
+	t *= 2.0f;
+	float e = 10 * (t - 1);
+	if (t < 1.0f)
+		return 0.5f * std::powf(2.0f, e);
+	else
+		return 0.5f * (-std::powf(2.0f, -e) + 2);
+}
+
+float ceph::ease::Quad::in(float t)
+{
+	return t*t;
+}
+
+float ceph::ease::Quad::out(float t)
+{
+	return 2 * t - t*t;
+}
+
+float ceph::ease::Quad::inOut(float t)
+{
+	t *= 2.0f;
+	if (t < 1.0f) {
+		return 0.5f*(t*t);
+	}
+	else {
+		t -= 1.0f;
+		return t + 0.5f - 0.5f*t*t;
+	}
+}
+
+float ceph::ease::Quart::in(float t)
+{
+	return t*t*t*t;
+}
+
+float ceph::ease::Quart::out(float t)
+{
+	t -= 1.0f;
+	return 1.0f - t*t*t*t;
+}
+
+float ceph::ease::Quart::inOut(float t)
+{
+	t *= 2.0f;
+	if (t < 1.0f) {
+		return 0.5f * t*t*t*t;
+	}
+	else {
+		t -= 2.0f;
+		return 1.0f - 0.5f * t*t*t*t;
+	}
+}
+
+float ceph::ease::Quint::in(float t)
+{
+	return t*t*t*t*t;
+}
+
+float ceph::ease::Quint::out(float t)
+{
+	t -= 1.0f;
+	return t*t*t*t*t + 1;
+}
+
+float ceph::ease::Quint::inOut(float t)
+{
+	t *= 2.0f;
+	if (t  < 1.0f) {
+		return 0.5f * t*t*t*t*t;
+	}
+	else {
+		t -= 2.0f;
+		return 0.5f * t*t*t*t*t + 1.0f;
+	}
+}
+
+float ceph::ease::Sine::in(float t)
+{
+	return -1.0f * std::cosf(t * (PI / 2.0f)) + 1.0f;
+}
+
+float ceph::ease::Sine::out(float t)
+{
+	return std::sinf(t * (PI / 2.0f));
+}
+
+float ceph::ease::Sine::inOut(float t)
+{
+	return -0.5f * (std::cosf(t*PI) - 1);
 }

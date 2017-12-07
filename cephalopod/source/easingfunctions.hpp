@@ -1,100 +1,77 @@
 #pragma once
 
 namespace ceph
-{ 
+{
 	namespace ease {
-		
+
 		class Back {
-			
-			public:
-				
-				static float easeIn(float t,float b , float c, float d);
-				static float easeOut(float t,float b , float c, float d);
-				static float easeInOut(float t,float b , float c, float d);
-				
+		public:
+			static float in(float t);
+			static float out(float t);
+			static float inOut(float t);
 		};
 
 		class Bounce {
-			
-			public:
-				
-				static float easeIn(float t,float b , float c, float d);
-				static float easeOut(float t,float b , float c, float d);
-				static float easeInOut(float t,float b , float c, float d);
+		public:
+			static float in(float t);
+			static float out(float t);
+			static float inOut(float t);
 		};
 
 		class Circ {
-			
-			public:
-				
-				static float easeIn(float t,float b , float c, float d);
-				static float easeOut(float t,float b , float c, float d);
-				static float easeInOut(float t,float b , float c, float d);
+		public:
+			static float in(float t);
+			static float out(float t);
+			static float inOut(float t);
 		};
 
 		class Cubic {
-			
-			public:
-				
-				static float easeIn(float t,float b , float c, float d);
-				static float easeOut(float t,float b , float c, float d);
-				static float easeInOut(float t,float b , float c, float d);
+		public:
+			static float in(float t);
+			static float out(float t);
+			static float inOut(float t);
 		};
 
 		class Elastic {
-			
-			public:
-				
-				static float easeIn(float t,float b , float c, float d);
-				static float easeOut(float t,float b , float c, float d);
-				static float easeInOut(float t,float b , float c, float d);
+		public:
+			static float in(float t);
+			static float out(float t);
+			static float inOut(float t);
 		};
 
 		class Expo {
-			
-			public:
-				
-				static float easeIn(float t,float b , float c, float d);
-				static float easeOut(float t,float b , float c, float d);
-				static float easeInOut(float t,float b , float c, float d);
+		public:
+			static float in(float t);
+			static float out(float t);
+			static float inOut(float t);
 		};
 
-
 		class Quad {
-			
-			public:
-				
-				static float easeIn(float t,float b , float c, float d);
-				static float easeOut(float t,float b , float c, float d);
-				static float easeInOut(float t,float b , float c, float d);
+		public:
+			static float in(float t);
+			static float out(float t);
+			static float inOut(float t);
 		};
 
 		class Quart {
-			
-			public:
-				
-				static float easeIn(float t,float b , float c, float d);
-				static float easeOut(float t,float b , float c, float d);
-				static float easeInOut(float t,float b , float c, float d);
+		public:
+			static float in(float t);
+			static float out(float t);
+			static float inOut(float t);
 		};
 
 		class Quint {
-			
-			public:
-				
-				static float easeIn(float t,float b , float c, float d);
-				static float easeOut(float t,float b , float c, float d);
-				static float easeInOut(float t,float b , float c, float d);
+		public:
+			static float in(float t);
+			static float out(float t);
+			static float inOut(float t);
 		};
 
 		class Sine {
-			
-			public:
-				
-				static float easeIn(float t,float b , float c, float d);
-				static float easeOut(float t,float b , float c, float d);
-				static float easeInOut(float t,float b , float c, float d);
-				
+		public:
+			static float in(float t);
+			static float out(float t);
+			static float inOut(float t);
 		};
 	}
 }
