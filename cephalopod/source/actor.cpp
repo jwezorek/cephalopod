@@ -1,6 +1,7 @@
 #include "../include/cephalopod/actor.hpp"
 #include "../include/cephalopod/types.hpp"
 #include "../include/cephalopod/scene.hpp"
+#include "../include/cephalopod/actionplayer.hpp"
 #include "SFML/Graphics.hpp"
 #include "drawingcontext.hpp"
 #include "actorimpl.hpp"
@@ -74,6 +75,11 @@ bool ceph::Actor::isInSceneTopLevel() const
 	return isInScene() && !hasParent();
 }
 
+bool ceph::Actor::hasActions() const
+{
+	return actions_.hasActions();
+}
+
 std::weak_ptr<ceph::Actor> ceph::Actor::getParent() const
 {
 	return parent_;
@@ -87,55 +93,9 @@ std::weak_ptr<ceph::Actor> ceph::Actor::getTopLevelParent() const
 	return parent;
 }
 
-void ceph::Actor::runAction(const std::shared_ptr<ceph::Action>& action)
+ceph::ActionPlayer& ceph::Actor::getActions()
 {
-	action->run(shared_from_this());
-	if (isInScene())
-		scene_.lock()->updateActionsEvent.connect(*action, &ceph::Action::update);
-}
-
-void ceph::Actor::runActions()
-{
-	for (auto action : actions_)
-		runAction(action);
-	for (const auto& child : children_)
-		child->runActions();
-}
-
-bool ceph::Actor::hasActions() const
-{
-	if (!actions_.empty())
-		return true;
-	for (const auto& child : children_)
-		if (child->hasActions())
-			return true;
-	return false;
-}
-
-void ceph::Actor::applyAction(const std::shared_ptr<ceph::Action>& action)
-{
-	actions_.push_back(action);
-	runAction(action);
-}
-
-void ceph::Actor::applyActions(std::initializer_list<std::shared_ptr<Action>> actions)
-{
-	for (const auto& action : actions)
-		applyAction(action);
-}
-
-void ceph::Actor::removeAction(const std::shared_ptr<ceph::Action>& removee)
-{
-	auto i = std::find(actions_.begin(), actions_.end(), removee);
-	if (i == actions_.end())
-		return;
-
-	auto action = *i;
-	action->stopRunning();
-	if (isInScene())
-		scene_.lock()->updateActionsEvent.disconnect(*action);
-
-	actions_.erase(i);
+	return actions_;
 }
 
 float ceph::Actor::getAlpha() const

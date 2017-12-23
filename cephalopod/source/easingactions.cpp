@@ -1,27 +1,19 @@
 #include "../include/cephalopod/easingactions.hpp"
 #include "easingfunctions.hpp"
 
-void ceph::EasingAction::doTimeStep(float timestep)
+void ceph::EasingAction::update(ActorState& state, float t)
 {
-	auto child = getChild();
-
-	auto t = elapsed_ / duration_;
-	auto new_t = (elapsed_ + timestep) / duration_;
-	auto eased_elapsed = func_(t);
-	auto new_eased_elapsed = func_(new_t);
-	auto eased_timestep = new_eased_elapsed - eased_elapsed;
-
-	child->doTimeStep(eased_timestep);
+	getChild()->update(state, func_(t));
 }
 
-std::shared_ptr<ceph::FiniteAction> ceph::EasingAction::getChild()
+std::shared_ptr<ceph::Action> ceph::EasingAction::getChild()
 {
-	return std::static_pointer_cast<ceph::FiniteAction>(children_[0]);
+	return children_[0];
 }
 
-ceph::EasingAction::EasingAction(const std::shared_ptr<FiniteAction>& child, EasingFnType typ,
+ceph::EasingAction::EasingAction(const std::shared_ptr<Action>& child, EasingFnType typ,
 		const ceph::EasingFunc& in, const ceph::EasingFunc& out, const ceph::EasingFunc& inout, bool startPaused) :
-	FiniteAction(child->getDuration(), {child}, startPaused)
+	Action(child->getDuration())
 {
 	switch (typ) {
 		case EasingFnType::In:
@@ -36,32 +28,32 @@ ceph::EasingAction::EasingAction(const std::shared_ptr<FiniteAction>& child, Eas
 	}
 }
 
-ceph::BackEasingAction::BackEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+ceph::BackEasingAction::BackEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::Action>& child, bool startPaused) :
 	ceph::EasingAction(child, typ, ceph::ease::Back::in, ceph::ease::Back::out, ceph::ease::Back::inOut) {}
 
-ceph::BounceEasingAction::BounceEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+ceph::BounceEasingAction::BounceEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::Action>& child, bool startPaused) :
 	ceph::EasingAction(child, typ, ceph::ease::Bounce::in, ceph::ease::Bounce::out, ceph::ease::Bounce::inOut) {}
 
-ceph::CircEasingAction::CircEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+ceph::CircEasingAction::CircEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::Action>& child, bool startPaused) :
 	ceph::EasingAction(child, typ, ceph::ease::Circ::in, ceph::ease::Circ::out, ceph::ease::Circ::inOut) {}
 
-ceph::CubicEasingAction::CubicEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+ceph::CubicEasingAction::CubicEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::Action>& child, bool startPaused) :
 	ceph::EasingAction(child, typ, ceph::ease::Cubic::in, ceph::ease::Cubic::out, ceph::ease::Cubic::inOut) {}
 
-ceph::ElasticEasingAction::ElasticEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+ceph::ElasticEasingAction::ElasticEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::Action>& child, bool startPaused) :
 	ceph::EasingAction(child, typ, ceph::ease::Elastic::in, ceph::ease::Elastic::out, ceph::ease::Elastic::inOut) {}
 
-ceph::ExpoEasingAction::ExpoEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+ceph::ExpoEasingAction::ExpoEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::Action>& child, bool startPaused) :
 	ceph::EasingAction(child, typ, ceph::ease::Expo::in, ceph::ease::Expo::out, ceph::ease::Expo::inOut) {}
 
-ceph::QuadEasingAction::QuadEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+ceph::QuadEasingAction::QuadEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::Action>& child, bool startPaused) :
 	ceph::EasingAction(child, typ, ceph::ease::Quad::in, ceph::ease::Quad::out, ceph::ease::Quad::inOut) {}
 
-ceph::QuartEasingAction::QuartEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+ceph::QuartEasingAction::QuartEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::Action>& child, bool startPaused) :
 	ceph::EasingAction(child, typ, ceph::ease::Quart::in, ceph::ease::Quart::out, ceph::ease::Quart::inOut) {}
 
-ceph::QuintEasingAction::QuintEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+ceph::QuintEasingAction::QuintEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::Action>& child, bool startPaused) :
 	ceph::EasingAction(child, typ, ceph::ease::Quint::in, ceph::ease::Quint::out, ceph::ease::Quint::inOut) {}
 
-ceph::SineEasingAction::SineEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::FiniteAction>& child, bool startPaused) :
+ceph::SineEasingAction::SineEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::Action>& child, bool startPaused) :
 	ceph::EasingAction(child, typ, ceph::ease::Sine::in, ceph::ease::Sine::out, ceph::ease::Sine::inOut) {}

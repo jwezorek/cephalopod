@@ -17,15 +17,17 @@ void Asteroids::initialize()
 		".\\data\\zarquon.json" 
 	);
 	setBackgroundColor(ceph::ColorRGB(0, 20, 40));
+	/*
 	addActors({
 		CreateStarLayer(-256.0f, 0.5f),
 		CreateStarLayer(-128.0f, 0.25f),
 		CreateStarLayer(-64.0f, 0.125f),
 		CreateStarLayer(-32.0f, 0.0625f)
 	});
+	*/
 	auto ship = std::make_shared<Ship>(sprite_sheet_);
 	ship->setPosition(100, 100);
-	ship->applyAction(
+	ship->getActions().applyAction(
 		std::make_shared<ceph::BackEasingAction>(ceph::EasingFnType::InOut, 
 			std::make_shared<ceph::MoveByAction>( 2.0, 800, 800)
 		)
@@ -33,6 +35,7 @@ void Asteroids::initialize()
 	addActor(ship);
 }
 
+/*
 std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float alpha)
 {
 	auto bounds = ceph::Game::getInstance().getLogicalRect();
@@ -57,3 +60,4 @@ std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float 
 
 	return layer;
 }
+*/

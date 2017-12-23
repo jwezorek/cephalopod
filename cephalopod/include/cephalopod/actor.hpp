@@ -6,6 +6,7 @@
 #include "types.hpp"
 #include "signals.hpp"
 #include "actions.hpp"
+#include "actionplayer.hpp"
 
 namespace ceph {
 
@@ -24,13 +25,11 @@ namespace ceph {
 		std::weak_ptr<Actor> parent_;
 		std::vector<std::shared_ptr<Actor>> children_;
 		std::unique_ptr<ActorImpl> impl_;
-		std::vector<std::shared_ptr<Action>> actions_;
+		ActionPlayer actions_;
 
 		virtual void drawThis(DrawingContext& rt) const = 0;
 		void detachFromScene();
 		void attachToScene(const std::shared_ptr<Scene>& scene);
-		void runAction(const std::shared_ptr<Action>& action);
-		void runActions();
 
 	public:
 		Actor();
@@ -42,14 +41,11 @@ namespace ceph {
 		bool isInScene() const;
 		bool hasParent() const;
 		bool isInSceneTopLevel() const;
+		bool hasActions() const;
 
 		std::weak_ptr<Actor> getParent() const;
 		std::weak_ptr<Actor> getTopLevelParent() const;
-
-		bool hasActions() const;
-		void applyAction(const std::shared_ptr<Action>& action);
-		void applyActions(std::initializer_list<std::shared_ptr<Action>> action);
-		void removeAction(const std::shared_ptr<Action>& action);
+		ActionPlayer& getActions();
 
 		virtual float getAlpha() const;
 		virtual void setAlpha(float alpha);

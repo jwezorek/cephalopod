@@ -30,15 +30,6 @@ namespace ceph {
 	};
 
 	template<typename T>
-	struct Vec2D {
-		T x, y;
-		Vec2D(T xx = 0, T yy = 0) :
-			x(xx), y(yy)
-		{
-		}
-	};
-
-	template<typename T>
 	struct Point {
 		T x, y;
 		Point(T xx = 0, T yy = 0) :
@@ -46,6 +37,21 @@ namespace ceph {
 		{
 		}
 	};
+
+	template<typename T>
+	using Vec2D = Point<T>;
+
+	template<typename T>
+	Vec2D<T> operator*(T k, Vec2D<T> v)
+	{
+		return Vec2D<T>(k * v.x, k * v.y);
+	}
+
+	template<typename T>
+	Vec2D<T> operator+(Vec2D<T> v1, Vec2D<T> v2)
+	{
+		return Vec2D<T>(v1.x + v2.x, v1.y + v2.y);
+	}
 
 	template<typename T>
 	struct Size {
