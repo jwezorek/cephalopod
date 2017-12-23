@@ -8,6 +8,7 @@
 #include "util.hpp"
 
 ceph::Actor::Actor() :
+	actions_(*this),
 	impl_(std::make_unique<ceph::ActorImpl>())
 {
 }

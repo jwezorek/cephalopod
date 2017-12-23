@@ -23,6 +23,7 @@ namespace ceph {
 	class Action : public Slot<Action>
 	{
 		friend class EasingAction;
+		friend class ActionPlayer;
 
 	private:
 		enum class State {
