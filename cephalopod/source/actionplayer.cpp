@@ -32,7 +32,6 @@ void  ceph::ActionPlayer::applyAction(const std::shared_ptr<ceph::Action>& actio
 {
 	if ( !hasActions() )
 		initial_actor_state_ = std::make_unique<ActorState>(parent_);
-	action->run(true);
 	actions_.push_back(action);
 }
 

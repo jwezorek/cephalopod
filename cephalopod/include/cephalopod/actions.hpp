@@ -1,23 +1,28 @@
 #pragma once
 
-#include <map>
-#include "signals.hpp"
 #include "types.hpp"
+#include "signals.hpp"
 
 namespace ceph {
 
 	class Actor;
 
-	struct ActorState
+	class ActorState
 	{
-		Vec2D<float> position;
-		float scale;
-		float rotation;
-		float alpha;
+	private:
+		Vec2D<float> translation_;
+		float scale_;
+		float rotation_;
+		float alpha_;
 
+	public:
 		ActorState();
 		ActorState(const Actor& actor);
-		ActorState& operator+=(Vec2D<float> psotion_offset);
+		ActorState& applyTranslation(Vec2D<float> trans);
+		Vec2D<float> getTranslation() const;
+		float getScale() const;
+		float getRotation() const;
+		float getAlpha() const;
 	};
 
 	class Action : public Slot<Action>
@@ -25,35 +30,13 @@ namespace ceph {
 		friend class EasingAction;
 		friend class ActionPlayer;
 
-	private:
-		enum class State {
-			Detached,
-			Running,
-			Paused,
-			Complete
-		};
-
 	protected:
-		State state_;
 		float duration_;
-		bool is_toplevel_;
-		std::vector<std::shared_ptr<Action>> children_;
-
-		void run(bool toplevel);
-		void setComplete();
 		virtual void update(ActorState& state, float t) = 0;
 
 	public:
 		Action(float duration);
-
-		void pause();
-		void unpause();
 		float getDuration() const;
-		bool isPaused() const;
-		bool isRunning() const;
-		bool isToplevel() const;
-		bool isComplete() const;
-
 		virtual ~Action();
 	};
 

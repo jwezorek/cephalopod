@@ -29,7 +29,7 @@ void Asteroids::initialize()
 	ship->setPosition(100, 100);
 	ship->getActions().applyAction(
 		std::make_shared<ceph::BackEasingAction>(ceph::EasingFnType::InOut, 
-			std::make_shared<ceph::MoveByAction>( 2.0, 800, 800)
+			std::make_shared<ceph::MoveByAction>( 2.0f, 800.0f, 800.0f )
 		)
 	);
 	addActor(ship);

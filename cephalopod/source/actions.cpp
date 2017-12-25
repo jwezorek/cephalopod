@@ -9,88 +9,56 @@
 #include <numeric>
 
 ceph::ActorState::ActorState() :
-	position(0.0f, 0.0f),
-	scale(1.0f),
-	rotation(0.0f),
-	alpha(1.0f)
+	translation_(0.0f, 0.0f),
+	scale_(1.0f),
+	rotation_(0.0f),
+	alpha_(1.0f)
 {
 }
 
 ceph::ActorState::ActorState(const Actor& actor) :
-	position( actor.getPosition() ),
-	scale( actor.getScale() ),
-	rotation( actor.getRotation() ),
-	alpha( actor.getAlpha() )
+	translation_( actor.getPosition() ),
+	scale_( actor.getScale() ),
+	rotation_( actor.getRotation() ),
+	alpha_( actor.getAlpha() )
 {
 }
 
-ceph::ActorState& ceph::ActorState::operator+=(ceph::Vec2D<float> position_offset)
+ceph::ActorState& ceph::ActorState::applyTranslation(ceph::Vec2D<float> translation)
 {
-	position = position + position_offset;
+	translation_ = translation_ + translation;
 	return *this;
 }
 
-ceph::Action::Action(float duration) :
-	state_( ceph::Action::State::Detached ),
-	duration_(duration),
-	is_toplevel_(false)
+ceph::Vec2D<float> ceph::ActorState::getTranslation() const
 {
+	return translation_;
 }
 
-void ceph::Action::run(bool toplevel)
+float ceph::ActorState::getScale() const
 {
-	if (state_ == ceph::Action::State::Detached || state_ == ceph::Action::State::Complete) {
-		state_ = ceph::Action::State::Running;
-		is_toplevel_ = toplevel;
-		for (auto& child : children_)
-			child->run(false);
-	}
+	return scale_;
 }
 
-void ceph::Action::setComplete()
+float ceph::ActorState::getRotation() const
 {
-	if (isRunning()) {
-		state_ = ceph::Action::State::Complete;
-		for (auto& child : children_)
-			child->setComplete();
-	}
+	return rotation_;
 }
 
-void ceph::Action::pause()
+float  ceph::ActorState::getAlpha() const
 {
-	state_ = ceph::Action::State::Paused;
+	return alpha_;
 }
 
-void ceph::Action::unpause()
+/*----------------------------------------------------------------------------------------------------*/
+
+ceph::Action::Action(float duration) : duration_(duration)
 {
-	if (isPaused())
-		state_ = ceph::Action::State::Running;
 }
 
 float ceph::Action::getDuration() const
 {
 	return duration_;
-}
-
-bool ceph::Action::isPaused() const
-{
-	return state_ == ceph::Action::State::Paused;
-}
-
-bool ceph::Action::isRunning() const
-{
-	return state_ == ceph::Action::State::Running ||
-		state_ == ceph::Action::State::Paused;
-}
-
-bool ceph::Action::isToplevel() const
-{
-	return is_toplevel_;
-}
-
-bool ceph::Action::isComplete() const
-{
-	return is_toplevel_;
 }
 
 ceph::Action::~Action()
@@ -101,7 +69,7 @@ ceph::Action::~Action()
 
 void ceph::MoveByAction::update(ActorState& state, float t)
 {
-	state += (t * offset_);
+	state.applyTranslation(t * offset_);
 }
 
 ceph::MoveByAction::MoveByAction(float duration, float x, float y) : Action(duration), offset_(x, y)

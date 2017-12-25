@@ -88,6 +88,12 @@ namespace ceph {
 		}
 
 	public:
+		// Signals are move only.
+		Signal() = default;
+		Signal(const Signal&) = delete;
+		Signal& operator=(const Signal&) = delete;
+		Signal(Signal&& a) = default;
+		Signal& operator=(Signal&& a) = default;
 
 		void fire(Args... args) {
 			for (auto& s : subscribers)
@@ -98,15 +104,6 @@ namespace ceph {
 		void connect(Slot<T>& t, void(T::*f)(Args... args)) {
 			t.connect(*this, f);
 		}
-
-		/*
-		template<class T, class D>
-		void connect(Slot<T>& t, void(D::*f)(Args... args)) {
-			//derived class slot...
-			auto& dt = *dynamic_cast<Slot<D>*>(&t);
-			dt.connect(*this, f);
-		}
-		*/
 
 		template<class T>
 		void connect(Slot<T>& t, const std::function<void(Args... args)>& f) {
