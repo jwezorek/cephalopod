@@ -59,6 +59,7 @@ void ceph::Actor::attachToScene(const std::shared_ptr<ceph::Scene>& scene)
 	scene_ = scene;
 	for (auto child : children_)
 		child->attachToScene(scene);
+	//TODO: new actions
 }
 
 bool ceph::Actor::isInScene() const
@@ -92,6 +93,11 @@ std::weak_ptr<ceph::Actor> ceph::Actor::getTopLevelParent() const
 	while (!parent.expired())
 		parent = parent.lock()->getParent();
 	return parent;
+}
+
+std::weak_ptr<ceph::Scene> ceph::Actor::getScene() const
+{
+	return scene_;
 }
 
 ceph::ActionPlayer& ceph::Actor::getActions()

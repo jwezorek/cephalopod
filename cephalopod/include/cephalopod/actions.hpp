@@ -17,6 +17,7 @@ namespace ceph {
 
 	public:
 		ActorState();
+		ActorState(const ActorState& actor) = default;
 		ActorState(const Actor& actor);
 		ActorState& applyTranslation(Vec2D<float> trans);
 		Vec2D<float> getTranslation() const;

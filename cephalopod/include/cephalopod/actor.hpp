@@ -45,6 +45,8 @@ namespace ceph {
 
 		std::weak_ptr<Actor> getParent() const;
 		std::weak_ptr<Actor> getTopLevelParent() const;
+		std::weak_ptr<Scene> getScene() const;
+
 		ActionPlayer& getActions();
 
 		virtual float getAlpha() const;

@@ -32,10 +32,11 @@ namespace ceph {
 		std::vector<ActionInProgress> actions_;
 
 		void update(float dt);
+		void setActorState(const ActorState& state);
+		void run();
 
 	public:
 		ActionPlayer(Actor& parent);
-		void run(Scene& scene);
 		bool hasActions() const;
 		bool isRunning() const;
 		void applyAction(const std::shared_ptr<ceph::Action>& action);
