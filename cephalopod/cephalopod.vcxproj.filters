@@ -39,9 +39,6 @@
     <ClInclude Include="source\util.hpp">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="signals.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\cephalopod\actor.hpp">
       <Filter>Header Files\include</Filter>
     </ClInclude>

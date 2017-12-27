@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include "signals.hpp"
 #include "actions.hpp"
 
@@ -9,6 +10,8 @@ namespace ceph {
 
 	class ActionPlayer : public Slot<ActionPlayer>
 	{
+		friend Scene;
+
 	private:
 
 		struct ActionInProgress
@@ -16,6 +19,8 @@ namespace ceph {
 			std::shared_ptr<Action> action;
 			float elapsed;
 			Signal<Action&> signal;
+			bool complete;
+			bool repeat;
 
 			// only moveable due to signal
 			ActionInProgress(const ActionInProgress&) = delete;
@@ -23,7 +28,11 @@ namespace ceph {
 			ActionInProgress(ActionInProgress&& a) = default;
 			ActionInProgress& operator=(ActionInProgress&& a) = default;
 
-			ActionInProgress(std::shared_ptr<Action> a) : action(a), elapsed(0.0f)
+			ActionInProgress(std::shared_ptr<Action> a) : 
+				action(a), 
+				elapsed(0.0f), 
+				complete(false), 
+				repeat(false)
 			{}
 		};
 

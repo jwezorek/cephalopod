@@ -71,6 +71,16 @@ namespace ceph {
 		template<class Receiver> friend class Slot;
 
 	private:
+		bool is_firing_;
+		class FiringLock
+		{
+		private:
+			bool* lock_;
+		public:
+			FiringLock(bool* l) : lock_(l) { *l = true; }
+			~FiringLock() { *lock_ = false; }
+		};
+
 		std::vector<std::unique_ptr<details::SubscriberBase<Args...>>> subscribers;
 
 		template<class T>
@@ -87,6 +97,14 @@ namespace ceph {
 			subscribers.erase(to_remove, subscribers.end());
 		}
 
+		void fireWithGuard(Args... args) {
+			FiringLock lock(&is_firing_);
+			for (auto& s : subscribers)
+				s->call(args...);
+		}
+
+		std::vector<std::function<void()>> deferred_disconnects_;
+
 	public:
 		// Signals are move only.
 		Signal() = default;
@@ -96,8 +114,12 @@ namespace ceph {
 		Signal& operator=(Signal&& a) = default;
 
 		void fire(Args... args) {
-			for (auto& s : subscribers)
-				s->call(args...);
+			fireWithGuard(args...);
+			while (!deferred_disconnects_.empty()) {
+				auto do_disconnect = deferred_disconnects_.back();
+				deferred_disconnects_.pop_back();
+				do_disconnect();
+			}
 		}
 
 		template<class T>
@@ -112,7 +134,15 @@ namespace ceph {
 
 		template<class T>
 		void disconnect(Slot<T>& t) {
-			t.disconnect(*this);
+			if (!is_firing_) {
+				t.disconnect(*this);
+			} else {
+				deferred_disconnects_.push_back(
+					[&]() {
+						this->disconnect(t);
+					}
+				);
+			}
 		}
 
 		~Signal() {

@@ -165,7 +165,6 @@
     <ClInclude Include="include\cephalopod\spritesheet.hpp" />
     <ClInclude Include="include\cephalopod\texture.hpp" />
     <ClInclude Include="include\cephalopod\types.hpp" />
-    <ClInclude Include="signals.hpp" />
     <ClInclude Include="source\actorimpl.hpp" />
     <ClInclude Include="source\easingfunctions.hpp" />
     <ClInclude Include="source\gameimpl.hpp" />

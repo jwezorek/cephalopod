@@ -8,7 +8,8 @@ void ceph::EasingAction::update(ActorState& state, float t)
 
 ceph::EasingAction::EasingAction(const std::shared_ptr<Action>& child, EasingFnType typ,
 		const ceph::EasingFunc& in, const ceph::EasingFunc& out, const ceph::EasingFunc& inout) :
-	Action(child->getDuration())
+	Action(child->getDuration()),
+	child_(child)
 {
 	switch (typ) {
 		case EasingFnType::In:
