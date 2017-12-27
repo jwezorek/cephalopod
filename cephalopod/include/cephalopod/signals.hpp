@@ -28,11 +28,11 @@ namespace ceph {
 				t(t),
 				func(
 					[t, f](Args...args) {(t->*f)(args...); }
-				) {
-			}
+				) 
+			{ }
 
-			Subscriber(T* t, const std::function<void(Args...)>& f) : t(t), func(f) {
-			}
+			Subscriber(T* t, const std::function<void(Args...)>& f) : t(t), func(f) 
+			{ }
 
 			void call(Args... args) override
 			{
@@ -71,14 +71,25 @@ namespace ceph {
 		template<class Receiver> friend class Slot;
 
 	private:
-		bool is_firing_;
+
+		int firing_count_ = 0;
+
 		class FiringLock
 		{
 		private:
-			bool* lock_;
+			Signal* parent_;
 		public:
-			FiringLock(bool* l) : lock_(l) { *l = true; }
-			~FiringLock() { *lock_ = false; }
+			FiringLock(Signal* parent) : parent_(parent) { (parent_->firing_count_)++; }
+			~FiringLock() 
+			{
+				if (--parent_->firing_count_ == 0) {
+					while (!parent_->deferred_ops_.empty()) {
+						auto do_signal_op = parent_->deferred_ops_.back();
+						parent_->deferred_ops_.pop_back();
+						do_signal_op();
+					}
+				}
+			}
 		};
 
 		std::vector<std::unique_ptr<details::SubscriberBase<Args...>>> subscribers;
@@ -97,13 +108,7 @@ namespace ceph {
 			subscribers.erase(to_remove, subscribers.end());
 		}
 
-		void fireWithGuard(Args... args) {
-			FiringLock lock(&is_firing_);
-			for (auto& s : subscribers)
-				s->call(args...);
-		}
-
-		std::vector<std::function<void()>> deferred_disconnects_;
+		std::vector<std::function<void()>> deferred_ops_;
 
 	public:
 		// Signals are move only.
@@ -114,30 +119,48 @@ namespace ceph {
 		Signal& operator=(Signal&& a) = default;
 
 		void fire(Args... args) {
-			fireWithGuard(args...);
-			while (!deferred_disconnects_.empty()) {
-				auto do_disconnect = deferred_disconnects_.back();
-				deferred_disconnects_.pop_back();
-				do_disconnect();
-			}
+			FiringLock lock(this);
+			for (auto& s : subscribers)
+				s->call(args...);
+		}
+
+		bool isFiring() const
+		{
+			return firing_count_ > 0;
 		}
 
 		template<class T>
 		void connect(Slot<T>& t, void(T::*f)(Args... args)) {
-			t.connect(*this, f);
+			if (!isFiring()) {
+				t.connect(*this, f);
+			} else {
+				deferred_ops_.push_back(
+					[&]() {
+						this->connect(t, f);
+					}
+				);
+			}
 		}
 
 		template<class T>
 		void connect(Slot<T>& t, const std::function<void(Args... args)>& f) {
-			t.connect(*this, f);
+			if (!isFiring()) {
+				t.connect(*this, f);
+			} else {
+				deferred_ops_.push_back(
+					[&]() {
+						this->connect(t, f);
+					}
+				);
+			}
 		}
 
 		template<class T>
 		void disconnect(Slot<T>& t) {
-			if (!is_firing_) {
+			if (! isFiring()) {
 				t.disconnect(*this);
 			} else {
-				deferred_disconnects_.push_back(
+				deferred_ops_.push_back(
 					[&]() {
 						this->disconnect(t);
 					}
