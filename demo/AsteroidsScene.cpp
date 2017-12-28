@@ -28,11 +28,10 @@ void Asteroids::initialize()
 	auto ship = std::make_shared<Ship>(sprite_sheet_);
 	ship->setPosition(100, 100);
 	ship->getActions().applyAction(
-		std::make_shared<ceph::CubicEasingAction>(ceph::EasingFnType::In,
-			std::make_shared<ceph::ElasticEasingAction>(ceph::EasingFnType::Out, 
-				std::make_shared<ceph::MoveByAction>( 4.0f, 450.0f, 450.0f )
-			)
-		)
+		std::make_shared<ceph::MoveByAction>(4.0f, 450.0f, 0.0f)
+	);
+	ship->getActions().applyAction(
+		std::make_shared<ceph::MoveByAction>(1.0f, 0.0f, 100.0f), true
 	);
 	addActor(ship);
 }

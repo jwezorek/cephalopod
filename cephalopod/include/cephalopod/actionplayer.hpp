@@ -28,11 +28,11 @@ namespace ceph {
 			ActionInProgress(ActionInProgress&& a) = default;
 			ActionInProgress& operator=(ActionInProgress&& a) = default;
 
-			ActionInProgress(std::shared_ptr<Action> a) : 
+			ActionInProgress(std::shared_ptr<Action> a, bool rep) : 
 				action(a), 
 				elapsed(0.0f), 
 				complete(false), 
-				repeat(false)
+				repeat(rep)
 			{}
 		};
 
@@ -40,6 +40,8 @@ namespace ceph {
 		std::unique_ptr<ActorState> initial_actor_state_;
 		std::vector<ActionInProgress> actions_;
 
+		void markActionAsComplete(ceph::ActionPlayer::ActionInProgress & aip);
+		void resetActions();
 		void update(float dt);
 		void setActorState(const ActorState& state);
 		void run();
@@ -48,7 +50,7 @@ namespace ceph {
 		ActionPlayer(Actor& parent);
 		bool hasActions() const;
 		bool isRunning() const;
-		void applyAction(const std::shared_ptr<ceph::Action>& action);
+		void applyAction(const std::shared_ptr<ceph::Action>& action, bool repeat = false);
 		void applyActions(std::initializer_list<std::shared_ptr<Action>> actions);
 		void removeAction(const std::shared_ptr<ceph::Action>& removee);
 	};

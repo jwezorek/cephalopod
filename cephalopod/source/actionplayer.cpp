@@ -3,6 +3,32 @@
 #include "../include/cephalopod/actions.hpp"
 #include "util.hpp"
 
+void ceph::ActionPlayer::markActionAsComplete(ceph::ActionPlayer::ActionInProgress& completed_action_info)
+{
+	auto& action = completed_action_info.action;
+	completed_action_info.complete = true;
+	completed_action_info.elapsed = 0.0f;
+
+	// make the action-complete signal go off...
+	completed_action_info.signal.fire( *action );
+
+	//burn the final state of the action into the cached state of the sprite...
+	action->update(*initial_actor_state_, 1.0f);
+}
+
+void ceph::ActionPlayer::resetActions()
+{
+	bool has_only_complete_actions = true;
+	for (auto& a : actions_) {
+		if (a.complete)
+			a.complete = false;
+		else
+			has_only_complete_actions = false;
+	}
+	if (has_only_complete_actions)
+		initial_actor_state_ = std::make_unique<ceph::ActorState>(parent_);
+}
+
 void ceph::ActionPlayer::update(float dt)
 {
 	bool has_completed_actions = false;
@@ -14,37 +40,31 @@ void ceph::ActionPlayer::update(float dt)
 
 		if (ai.elapsed == duration) {
 			has_completed_actions = true;
-			ai.complete = true;
+			markActionAsComplete(ai);
 		}
 	}
 	setActorState(state);
 	if (has_completed_actions)
 	{
-		auto completed_begin = std::remove_if(
-			actions_.begin(), actions_.end(),
-			[](ActionInProgress& aip) {
-				return aip.complete;
-			}
+		// actually delete the completed, non-repeating items...
+		actions_.erase(std::remove_if(
+				actions_.begin(), 
+				actions_.end(),
+				[](ActionInProgress& aip) {
+					return aip.complete && !aip.repeat;
+				}
+			), actions_.end()
 		);
-
-		for (auto i = completed_begin; i != actions_.end(); i++) {
-			auto& completed_action_info = *i;
-			auto& completed_action = i->action;
-
-			// make the action-complete signal go off...
-			completed_action_info.signal.fire( *completed_action );
-
-			//burn the final state of the action into the cached state of the sprite...
-			completed_action->update( *initial_actor_state_, 1.0f);
-		}
-
-		// actually delete the completed items in the vector
-		actions_.erase(completed_begin, actions_.end());
-
-		if (actions_.empty())
-		{
+		//actions now contains nothing or a mixture of incomplete actions and complete actions that are repeat-enabled.
+		if (actions_.empty()) {
+			// if there are no more actions then unhook the action player object from the scene's update event
+			initial_actor_state_ = nullptr;
 			auto scene = parent_.getScene().lock();
 			scene->updateEvent.disconnect(*this);
+		} else {
+			// toggle the complete flag of repeating items and if there are only repeating items
+			// left, re-set the cached state...
+			resetActions();
 		}
 	}
 }
@@ -79,10 +99,10 @@ bool ceph::ActionPlayer::hasActions() const
 	return !actions_.empty();
 }
 
-void  ceph::ActionPlayer::applyAction(const std::shared_ptr<ceph::Action>& action)
+void ceph::ActionPlayer::applyAction(const std::shared_ptr<ceph::Action>& action, bool repeat)
 {
 	bool wasRunning = isRunning();
-	actions_.push_back(action);
+	actions_.push_back({action, repeat});
 	if (!wasRunning && parent_.isInScene()) 
 		run();
 }
