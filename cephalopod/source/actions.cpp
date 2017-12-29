@@ -67,7 +67,7 @@ ceph::Action::~Action()
 
 /*----------------------------------------------------------------------------------------------------*/
 
-void ceph::MoveByAction::update(ActorState& state, float t)
+void ceph::MoveByAction::update(ActorState& state, float t) const
 {
 	state.applyTranslation(t * offset_);
 }

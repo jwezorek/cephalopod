@@ -33,7 +33,7 @@ namespace ceph {
 
 	protected:
 		float duration_;
-		virtual void update(ActorState& state, float t) = 0;
+		virtual void update(ActorState& state, float t) const = 0;
 
 	public:
 		Action(float duration);
@@ -45,7 +45,7 @@ namespace ceph {
 	{
 	protected:
 		Vec2D<float> offset_;
-		void update(ActorState& state, float t) override;
+		void update(ActorState& state, float t) const override;
 	public:
 		MoveByAction(float duration, float x, float y);
 	};

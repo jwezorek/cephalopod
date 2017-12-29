@@ -1,8 +1,8 @@
 #pragma once
 
-#include <algorithm>
 #include "signals.hpp"
 #include "actions.hpp"
+#include "actionconstraints.hpp"
 
 namespace ceph {
 
@@ -39,11 +39,13 @@ namespace ceph {
 		Actor& parent_;
 		std::unique_ptr<ActorState> initial_actor_state_;
 		std::vector<ActionInProgress> actions_;
+		std::vector<std::shared_ptr<ActionConstraint>> constraints_;
 
 		void markActionAsComplete(ceph::ActionPlayer::ActionInProgress & aip);
 		void resetActions();
 		void update(float dt);
 		void setActorState(const ActorState& state);
+		void applyConstraints(Actor& actor, const ActorState& prevState);
 		void run();
 
 	public:
@@ -52,6 +54,7 @@ namespace ceph {
 		bool isRunning() const;
 		void applyAction(const std::shared_ptr<ceph::Action>& action, bool repeat = false);
 		void applyActions(std::initializer_list<std::shared_ptr<Action>> actions);
+		void applyConstraint(const std::shared_ptr<ActionConstraint>& constraint);
 		void removeAction(const std::shared_ptr<ceph::Action>& removee);
 	};
 

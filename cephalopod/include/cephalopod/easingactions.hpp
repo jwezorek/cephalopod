@@ -18,7 +18,7 @@ namespace ceph
 	protected:
 		EasingFunc func_;
 		std::shared_ptr<Action> child_;
-		virtual void update(ActorState& state, float t) override;
+		virtual void update(ActorState& state, float t) const override;
 	public:
 		EasingAction(const std::shared_ptr<Action>& child, EasingFnType typ,
 			const EasingFunc& in, const EasingFunc& out, const EasingFunc& inout);

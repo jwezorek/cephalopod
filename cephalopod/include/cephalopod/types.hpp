@@ -54,6 +54,12 @@ namespace ceph {
 	}
 
 	template<typename T>
+	Vec2D<T> operator-(Vec2D<T> v1, Vec2D<T> v2)
+	{
+		return Vec2D<T>(v1.x - v2.x, v1.y - v2.y);
+	}
+
+	template<typename T>
 	struct Size {
 		T wd;
 		T hgt;

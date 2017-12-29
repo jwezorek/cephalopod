@@ -1,7 +1,7 @@
 #include "../include/cephalopod/easingactions.hpp"
 #include "easingfunctions.hpp"
 
-void ceph::EasingAction::update(ActorState& state, float t)
+void ceph::EasingAction::update(ActorState& state, float t) const
 {
 	child_->update(state, func_(t));
 }

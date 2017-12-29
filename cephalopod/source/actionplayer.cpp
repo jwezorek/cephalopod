@@ -43,7 +43,11 @@ void ceph::ActionPlayer::update(float dt)
 			markActionAsComplete(ai);
 		}
 	}
+
+	ceph::ActorState prev(parent_);
 	setActorState(state);
+	applyConstraints(parent_, prev);
+
 	if (has_completed_actions)
 	{
 		// actually delete the completed, non-repeating items...
@@ -69,12 +73,19 @@ void ceph::ActionPlayer::update(float dt)
 	}
 }
 
-void  ceph::ActionPlayer::setActorState(const ActorState& state)
+void ceph::ActionPlayer::setActorState(const ActorState& state)
 {
 	parent_.setPosition(state.getTranslation());
 	parent_.setAlpha(state.getAlpha());
 	parent_.setRotation(state.getRotation());
 	parent_.setScale(state.getScale());
+}
+
+
+void ceph::ActionPlayer::applyConstraints(Actor& actor, const ActorState& prevState)
+{
+	for (const auto& constraint : constraints_)
+		constraint->apply(actor, prevState);
 }
 
 ceph::ActionPlayer::ActionPlayer(Actor& parent) : 
@@ -107,10 +118,15 @@ void ceph::ActionPlayer::applyAction(const std::shared_ptr<ceph::Action>& action
 		run();
 }
 
-void  ceph::ActionPlayer::applyActions(std::initializer_list<std::shared_ptr<Action>> actions)
+void ceph::ActionPlayer::applyActions(std::initializer_list<std::shared_ptr<Action>> actions)
 {
 	for (auto& action : actions)
 		applyAction(action);
+}
+
+void ceph::ActionPlayer::applyConstraint(const std::shared_ptr<ceph::ActionConstraint>& constraint)
+{
+	constraints_.push_back(constraint);
 }
 
 void  ceph::ActionPlayer::removeAction(const std::shared_ptr<ceph::Action>& removee)

@@ -3,6 +3,7 @@
 #include "cephalopod/texture.hpp"
 #include "cephalopod/game.hpp"
 #include "cephalopod/actions.hpp"
+#include "cephalopod/actionconstraints.hpp"
 #include "cephalopod/easingactions.hpp"
 #include "cephalopod/group.hpp"
 #include "cephalopod/sprite.hpp"
@@ -26,12 +27,13 @@ void Asteroids::initialize()
 	});
 	*/
 	auto ship = std::make_shared<Ship>(sprite_sheet_);
-	ship->setPosition(100, 100);
+
+	ship->setPosition(700, 300);
 	ship->getActions().applyAction(
-		std::make_shared<ceph::MoveByAction>(4.0f, 450.0f, 0.0f)
+		std::make_shared<ceph::MoveByAction>( 0.1f, 20.0f, 0.0f ), true
 	);
-	ship->getActions().applyAction(
-		std::make_shared<ceph::MoveByAction>(1.0f, 0.0f, 100.0f), true
+	ship->getActions().applyConstraint(
+		std::make_shared<ceph::WrapTorroidally>()
 	);
 	addActor(ship);
 }
