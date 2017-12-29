@@ -42,6 +42,7 @@ namespace ceph {
 		bool hasParent() const;
 		bool isInSceneTopLevel() const;
 		bool hasActions() const;
+		void runActions();
 
 		std::weak_ptr<Actor> getParent() const;
 		std::weak_ptr<Actor> getTopLevelParent() const;

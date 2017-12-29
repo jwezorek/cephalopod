@@ -20,6 +20,10 @@ namespace ceph {
 		ActorState(const ActorState& actor) = default;
 		ActorState(const Actor& actor);
 		ActorState& applyTranslation(Vec2D<float> trans);
+		ActorState& applyRotation(float theta);
+		ActorState& applyScale(float scale);
+		ActorState& applyAlpha(float alpha);
+
 		Vec2D<float> getTranslation() const;
 		float getScale() const;
 		float getRotation() const;
@@ -48,6 +52,15 @@ namespace ceph {
 		void update(ActorState& state, float t) const override;
 	public:
 		MoveByAction(float duration, float x, float y);
+	};
+
+	class RotateByAction : public Action
+	{
+	protected:
+		float theta_;
+		void update(ActorState& state, float t) const override;
+	public:
+		RotateByAction(float duration, float theta);
 	};
 }
 

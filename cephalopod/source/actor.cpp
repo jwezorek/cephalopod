@@ -79,7 +79,20 @@ bool ceph::Actor::isInSceneTopLevel() const
 
 bool ceph::Actor::hasActions() const
 {
-	return actions_.hasActions();
+	if (actions_.hasActions())
+		return true;
+	for (const auto& child : children_)
+		if (child->hasActions())
+			return true;
+	return false;
+}
+
+void ceph::Actor::runActions()
+{
+	if (actions_.hasActions())
+		actions_.run();
+	for (auto& child : children_)
+		child->runActions();
 }
 
 std::weak_ptr<ceph::Actor> ceph::Actor::getParent() const

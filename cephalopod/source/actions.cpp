@@ -30,6 +30,25 @@ ceph::ActorState& ceph::ActorState::applyTranslation(ceph::Vec2D<float> translat
 	return *this;
 }
 
+ceph::ActorState& ceph::ActorState::applyRotation(float theta)
+{
+	rotation_ += theta;
+	rotation_ = static_cast<float>(std::fmod(rotation_, 2.0*M_PI));
+	return *this;
+}
+
+ceph::ActorState& ceph::ActorState::applyScale(float scale)
+{
+	scale_ *= scale;
+	return *this;
+}
+
+ceph::ActorState& ceph::ActorState::applyAlpha(float alpha)
+{
+	alpha_ *= alpha_;
+	return *this;
+}
+
 ceph::Vec2D<float> ceph::ActorState::getTranslation() const
 {
 	return translation_;
@@ -74,5 +93,14 @@ void ceph::MoveByAction::update(ActorState& state, float t) const
 
 ceph::MoveByAction::MoveByAction(float duration, float x, float y) : Action(duration), offset_(x, y)
 {
+}
+
+ceph::RotateByAction::RotateByAction(float duration, float theta) : Action(duration), theta_(theta)
+{
+}
+
+void ceph::RotateByAction::update(ActorState & state, float t) const
+{
+	state.applyRotation(t * theta_);
 }
 

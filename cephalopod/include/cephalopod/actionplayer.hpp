@@ -11,6 +11,7 @@ namespace ceph {
 	class ActionPlayer : public Slot<ActionPlayer>
 	{
 		friend Scene;
+		friend Actor;
 
 	private:
 

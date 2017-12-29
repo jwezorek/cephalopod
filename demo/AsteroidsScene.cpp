@@ -18,14 +18,14 @@ void Asteroids::initialize()
 		".\\data\\zarquon.json" 
 	);
 	setBackgroundColor(ceph::ColorRGB(0, 20, 40));
-	/*
+	
 	addActors({
 		CreateStarLayer(-256.0f, 0.5f),
 		CreateStarLayer(-128.0f, 0.25f),
 		CreateStarLayer(-64.0f, 0.125f),
 		CreateStarLayer(-32.0f, 0.0625f)
 	});
-	*/
+
 	auto ship = std::make_shared<Ship>(sprite_sheet_);
 
 	ship->setPosition(700, 300);
@@ -38,7 +38,6 @@ void Asteroids::initialize()
 	addActor(ship);
 }
 
-/*
 std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float alpha)
 {
 	auto bounds = ceph::Game::getInstance().getLogicalRect();
@@ -52,15 +51,19 @@ std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float 
 		auto star_id = "star_" + std::to_string(star_distr(eng));
 		auto star = std::make_shared<ceph::Sprite>(sprite_sheet_, star_id);
 		star->setAnchorPt(0.5f, 0.5f);
-		star->setPosition( x_distr( eng ), y_distr( eng ) );
+		star->setPosition( static_cast<float>(x_distr( eng )), static_cast<float>(y_distr( eng )) );
 		star->setAlpha(alpha);
-		star->applyActions({
-			std::make_shared<ceph::MoveWithWrappingAction>(horz_speed, 0),
-			std::make_shared<ceph::RotateAction>(0.75f)
-		});
+		star->getActions().applyAction(
+			std::make_shared<ceph::MoveByAction>(2.0f, horz_speed, 0), true
+		);
+		star->getActions().applyAction(
+			std::make_shared<ceph::RotateByAction>(1.0f, 1.0f), true
+		);
+		star->getActions().applyConstraint(
+			std::make_shared<ceph::WrapTorroidally>()
+		);
 		layer->addChild(star);
 	}
 
 	return layer;
 }
-*/
