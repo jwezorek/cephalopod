@@ -20,10 +20,10 @@ void Asteroids::initialize()
 	setBackgroundColor(ceph::ColorRGB(0, 20, 40));
 	
 	addActors({
-		CreateStarLayer(-256.0f, 0.5f),
-		CreateStarLayer(-128.0f, 0.25f),
-		CreateStarLayer(-64.0f, 0.125f),
-		CreateStarLayer(-32.0f, 0.0625f)
+		CreateStarLayer( -256.0f, 0.5f ),
+		CreateStarLayer( -128.0f, 0.25f ),
+		CreateStarLayer( -64.0f, 0.125f ),
+		CreateStarLayer( -32.0f, 0.0625f )
 	});
 
 	auto ship = std::make_shared<Ship>(sprite_sheet_);

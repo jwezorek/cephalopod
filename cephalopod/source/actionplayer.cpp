@@ -44,9 +44,8 @@ void ceph::ActionPlayer::update(float dt)
 		}
 	}
 
-	ceph::ActorState prev(parent_);
 	setActorState(state);
-	applyConstraints(parent_, prev);
+	applyConstraints(parent_);
 
 	if (has_completed_actions)
 	{
@@ -82,10 +81,10 @@ void ceph::ActionPlayer::setActorState(const ActorState& state)
 }
 
 
-void ceph::ActionPlayer::applyConstraints(Actor& actor, const ActorState& prevState)
+void ceph::ActionPlayer::applyConstraints(Actor& actor)
 {
 	for (const auto& constraint : constraints_)
-		constraint->apply(actor, prevState);
+		constraint->apply(actor);
 }
 
 ceph::ActionPlayer::ActionPlayer(Actor& parent) : 
