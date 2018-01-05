@@ -1,8 +1,8 @@
 #pragma once
 
-#include "signals.hpp"
-#include "actions.hpp"
-#include "actionconstraints.hpp"
+#include "../include/cephalopod/signals.hpp"
+#include "../include/cephalopod/actions.hpp"
+#include "../include/cephalopod/actionconstraints.hpp"
 
 namespace ceph {
 

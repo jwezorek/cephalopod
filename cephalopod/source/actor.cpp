@@ -1,15 +1,14 @@
 #include "../include/cephalopod/actor.hpp"
 #include "../include/cephalopod/types.hpp"
 #include "../include/cephalopod/scene.hpp"
-#include "../include/cephalopod/actionplayer.hpp"
 #include "SFML/Graphics.hpp"
 #include "drawingcontext.hpp"
 #include "actorimpl.hpp"
+#include "actorstate.hpp"
 #include "util.hpp"
 
 ceph::Actor::Actor() :
-	actions_(*this),
-	impl_(std::make_unique<ceph::ActorImpl>())
+	impl_(std::make_unique<ceph::ActorImpl>(*this))
 {
 }
 
@@ -77,9 +76,17 @@ bool ceph::Actor::isInSceneTopLevel() const
 	return isInScene() && !hasParent();
 }
 
+void ceph::Actor::runActions()
+{
+	if (hasActions())
+		impl_->actions.run();
+	for (auto& child : children_)
+		child->runActions();
+}
+
 bool ceph::Actor::hasActions() const
 {
-	if (actions_.hasActions())
+	if (impl_->actions.hasActions())
 		return true;
 	for (const auto& child : children_)
 		if (child->hasActions())
@@ -87,12 +94,29 @@ bool ceph::Actor::hasActions() const
 	return false;
 }
 
-void ceph::Actor::runActions()
+bool ceph::Actor::isRunningActions() const
 {
-	if (actions_.hasActions())
-		actions_.run();
-	for (auto& child : children_)
-		child->runActions();
+	return impl_->actions.isRunning();
+}
+
+void ceph::Actor::applyAction(const std::shared_ptr<ceph::Action>& action, bool repeat)
+{
+	impl_->actions.applyAction(action, repeat);
+}
+
+void ceph::Actor::applyActions(std::initializer_list<std::shared_ptr<Action>> actions)
+{
+	impl_->actions.applyActions(actions);
+}
+
+void ceph::Actor::applyConstraint(const std::shared_ptr<ActionConstraint>& constraint)
+{
+	impl_->actions.applyConstraint( constraint );
+}
+
+void ceph::Actor::removeAction(const std::shared_ptr<ceph::Action>& removee)
+{
+	impl_->actions.removeAction( removee );
 }
 
 std::weak_ptr<ceph::Actor> ceph::Actor::getParent() const
@@ -111,11 +135,6 @@ std::weak_ptr<ceph::Actor> ceph::Actor::getTopLevelParent() const
 std::weak_ptr<ceph::Scene> ceph::Actor::getScene() const
 {
 	return scene_;
-}
-
-ceph::ActionPlayer& ceph::Actor::getActions()
-{
-	return actions_;
 }
 
 float ceph::Actor::getAlpha() const

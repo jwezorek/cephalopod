@@ -6,13 +6,14 @@
 #include "types.hpp"
 #include "signals.hpp"
 #include "actions.hpp"
-#include "actionplayer.hpp"
 
 namespace ceph {
 
 	class DrawingContext;
 	class ActorImpl;
 	class Scene;
+	class Action;
+	class ActionConstraint;
 
 	class Actor : public Slot<Actor>, std::enable_shared_from_this<Actor>
 	{
@@ -25,11 +26,11 @@ namespace ceph {
 		std::weak_ptr<Actor> parent_;
 		std::vector<std::shared_ptr<Actor>> children_;
 		std::unique_ptr<ActorImpl> impl_;
-		ActionPlayer actions_;
 
 		virtual void drawThis(DrawingContext& rt) const = 0;
 		void detachFromScene();
 		void attachToScene(const std::shared_ptr<Scene>& scene);
+		void runActions();
 
 	public:
 		Actor();
@@ -41,14 +42,17 @@ namespace ceph {
 		bool isInScene() const;
 		bool hasParent() const;
 		bool isInSceneTopLevel() const;
+
 		bool hasActions() const;
-		void runActions();
+		bool isRunningActions() const;
+		void applyAction(const std::shared_ptr<ceph::Action>& action, bool repeat = false);
+		void applyActions(std::initializer_list<std::shared_ptr<Action>> actions);
+		void applyConstraint(const std::shared_ptr<ActionConstraint>& constraint);
+		void removeAction(const std::shared_ptr<ceph::Action>& removee);
 
 		std::weak_ptr<Actor> getParent() const;
 		std::weak_ptr<Actor> getTopLevelParent() const;
 		std::weak_ptr<Scene> getScene() const;
-
-		ActionPlayer& getActions();
 
 		virtual float getAlpha() const;
 		virtual void setAlpha(float alpha);

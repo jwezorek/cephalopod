@@ -5,6 +5,7 @@
 #include "textureimpl.hpp"
 #include "sceneimpl.hpp"
 #include "util.hpp"
+#include "actorimpl.hpp"
 
 ceph::Scene::Scene()
 {

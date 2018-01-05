@@ -2,16 +2,20 @@
 
 #include "SFML/Graphics.hpp"
 #include "../include/cephalopod/actor.hpp"
+#include "actionplayer.hpp"
 
 namespace ceph
 {
 	class ActorImpl {
 	public:
+		Actor& actor;
 		Actor* parent;
 		float alpha;
 		Point<float> anchor;
 		Size<int> frame_sz;
 		sf::Transformable properties;
-		ActorImpl(const sf::Transformable& props = sf::Transformable());
+		ActionPlayer actions;
+
+		ActorImpl(Actor& a, const sf::Transformable& props = sf::Transformable());
 	};
 }

@@ -1,7 +1,8 @@
-#include "../include/cephalopod/actionplayer.hpp"
+#include "actionplayer.hpp"
 #include "../include/cephalopod/scene.hpp"
 #include "../include/cephalopod/actions.hpp"
 #include "util.hpp"
+#include "actorstate.hpp"
 
 void ceph::ActionPlayer::markActionAsComplete(ceph::ActionPlayer::ActionInProgress& completed_action_info)
 {
