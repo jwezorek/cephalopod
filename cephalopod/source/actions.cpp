@@ -27,7 +27,7 @@ ceph::Action::~Action()
 void ceph::MoveByAction::update(ActorState& state, float t) const
 {
 	auto amount = t * offset_;
-	state.transform.move(amount.x, amount.y);
+	state.translate(amount.x, amount.y);
 }
 
 ceph::MoveByAction::MoveByAction(float duration, float x, float y) : Action(duration), offset_(x, y)
@@ -40,6 +40,6 @@ ceph::RotateByAction::RotateByAction(float duration, float theta) : Action(durat
 
 void ceph::RotateByAction::update(ActorState & state, float t) const
 {
-	state.transform.rotate( ceph::radiansToDegrees(t * theta_) );
+	state.rotate( t * theta_ );
 }
 

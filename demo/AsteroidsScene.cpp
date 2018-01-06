@@ -9,7 +9,7 @@
 #include "cephalopod/sprite.hpp"
 
 std::random_device rd; // obtain a random number from hardware
-std::mt19937 eng(rd());
+std::mt19937 eng(2 /*rd()*/ );
 
 void Asteroids::initialize()
 {
@@ -25,7 +25,7 @@ void Asteroids::initialize()
 		CreateStarLayer( -64.0f, 0.125f ),
 		CreateStarLayer( -32.0f, 0.0625f )
 	});
-
+	
 	auto ship = std::make_shared<Ship>(sprite_sheet_);
 
 	ship->setPosition(700, 300);
@@ -33,7 +33,7 @@ void Asteroids::initialize()
 		std::make_shared<ceph::MoveByAction>( 0.1f, 20.0f, 0.0f ), true
 	);
 	ship->applyConstraint(
-		std::make_shared<ceph::WrapTorroidally>()
+		std::make_shared<ceph::WrapTorroidally>( 40.0, 40.0 )
 	);
 	addActor(ship);
 }
@@ -60,7 +60,7 @@ std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float 
 			std::make_shared<ceph::RotateByAction>(1.0f, 1.0f), true
 		);
 		star->applyConstraint(
-			std::make_shared<ceph::WrapTorroidally>()
+			std::make_shared<ceph::WrapTorroidally>(10.0f, 0)
 		);
 		layer->addChild(star);
 	}

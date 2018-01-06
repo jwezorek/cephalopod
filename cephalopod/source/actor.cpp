@@ -58,7 +58,6 @@ void ceph::Actor::attachToScene(const std::shared_ptr<ceph::Scene>& scene)
 	scene_ = scene;
 	for (auto child : children_)
 		child->attachToScene(scene);
-	//TODO: new actions
 }
 
 bool ceph::Actor::isInScene() const

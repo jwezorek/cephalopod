@@ -18,9 +18,21 @@ namespace ceph {
 	Point<float> lerpPtInRect(const Point<float>& pt, const Rect<float>& r);
 
 	template<typename T>
-	ceph::Rect<T> SfmlRectToCoyRect(sf::Rect<T>& rect)
+	Rect<T> SfmlRectToCoyRect(sf::Rect<T>& rect)
 	{
-		return ceph::Rect<T>(rect.left, rect.top, rect.width, rect.height);
+		return Rect<T>(rect.left, rect.top, rect.width, rect.height);
+	}
+
+	template<typename T>
+	Point<T> SfPtToCephPt(sf::Vector2<T> pt)
+	{
+		return ceph::Point<T>(pt.x, pt.y);
+	}
+
+	template<typename T>
+	sf::Vector2<T> CephPtToSfPt( Point<T> pt)
+	{
+		return sf::Vector2<T>(pt.x, pt.y);
 	}
 
 	template<typename T, typename U>

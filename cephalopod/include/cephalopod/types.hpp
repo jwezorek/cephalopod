@@ -126,5 +126,24 @@ namespace ceph {
 		{
 			return (x < r.x2() && x2() > r.x && y < r.y2() && y2() > r.y);
 		}
+
+		void inflate(T horz, T vert)
+		{
+			x -= horz;
+			y -= vert;
+			wd += 2 * horz;
+			hgt += 2 * vert;
+		}
+
+		bool contains(T px, T py)
+		{
+			float rx = x, ry = y;
+			return  (rx <= px) && (px <= rx + wd) && (ry <= py) && (py <= ry + hgt);
+		}
+
+		bool contains(const Point<T>& p)
+		{
+			return contains(p.x, p.y);
+		}
 	};
 }

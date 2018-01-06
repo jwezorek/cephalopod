@@ -16,6 +16,7 @@ void ceph::ActionPlayer::markActionAsComplete(ceph::ActionPlayer::ActionInProgre
 
 	//burn the final state of the action into the cached state of the sprite...
 	action->update(*initial_actor_state_, 1.0f);
+	applyConstraints(*initial_actor_state_);
 }
 
 void ceph::ActionPlayer::resetActions()
@@ -46,8 +47,8 @@ void ceph::ActionPlayer::update(float dt)
 		}
 	}
 
+	applyConstraints(state);
 	setActorState(state);
-	applyConstraints(parent_);
 
 	if (has_completed_actions)
 	{
@@ -77,16 +78,16 @@ void ceph::ActionPlayer::update(float dt)
 void ceph::ActionPlayer::setActorState(const ActorState& state)
 {
 	auto& transformable = parent_.impl_->properties;
-	transformable.setPosition( state.transform.getPosition() );
-	transformable.setRotation( state.transform.getRotation() );
-	transformable.setScale( state.transform.getScale() );
+	transformable.setPosition( state.getPosition() );
+	transformable.setRotation( state.getRotation() );
+	transformable.setScale( state.getScale() );
 }
 
 
-void ceph::ActionPlayer::applyConstraints(Actor& actor)
+void ceph::ActionPlayer::applyConstraints(ActorState& state)
 {
 	for (const auto& constraint : constraints_)
-		constraint->apply(actor);
+		constraint->apply(state);
 }
 
 ceph::ActionPlayer::ActionPlayer(Actor& parent) : 

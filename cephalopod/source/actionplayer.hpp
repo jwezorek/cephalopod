@@ -46,7 +46,7 @@ namespace ceph {
 		void resetActions();
 		void update(float dt);
 		void setActorState(const ActorState& state);
-		void applyConstraints(Actor& actor);
+		void applyConstraints(ActorState& state);
 		void run();
 
 	public:
