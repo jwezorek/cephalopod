@@ -3,6 +3,7 @@
 #include "../include/cephalopod/actions.hpp"
 #include "util.hpp"
 #include "actorstate.hpp"
+#include "actorimpl.hpp"
 
 void ceph::ActionPlayer::markActionAsComplete(ceph::ActionPlayer::ActionInProgress& completed_action_info)
 {
@@ -75,10 +76,10 @@ void ceph::ActionPlayer::update(float dt)
 
 void ceph::ActionPlayer::setActorState(const ActorState& state)
 {
-	parent_.setPosition(state.getTranslation());
-	parent_.setAlpha(state.getAlpha());
-	parent_.setRotation(state.getRotation());
-	parent_.setScale(state.getScale());
+	auto& transformable = parent_.impl_->properties;
+	transformable.setPosition( state.transform.getPosition() );
+	transformable.setRotation( state.transform.getRotation() );
+	transformable.setScale( state.transform.getScale() );
 }
 
 

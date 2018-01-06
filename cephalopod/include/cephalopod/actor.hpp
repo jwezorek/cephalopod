@@ -20,6 +20,8 @@ namespace ceph {
 		friend class Scene;
 		friend class Sprite;
 		friend class Group;
+		friend class ActorState;
+		friend class ActionPlayer;
 
 	protected:
 		std::weak_ptr<Scene> scene_;
