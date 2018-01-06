@@ -40,6 +40,6 @@ ceph::RotateByAction::RotateByAction(float duration, float theta) : Action(durat
 
 void ceph::RotateByAction::update(ActorState & state, float t) const
 {
-	state.transform.rotate(t * theta_);
+	state.transform.rotate( ceph::radiansToDegrees(t * theta_) );
 }
 
