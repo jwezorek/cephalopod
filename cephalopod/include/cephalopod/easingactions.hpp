@@ -2,6 +2,7 @@
 
 #include "actions.hpp"
 
+/*
 namespace ceph
 {
 	enum class EasingFnType
@@ -85,3 +86,4 @@ namespace ceph
 	};
 
 }
+*/

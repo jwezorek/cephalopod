@@ -1,44 +1,28 @@
 #pragma once
 
 #include "types.hpp"
-#include "signals.hpp"
+#include <functional>
 
 namespace ceph {
 
-	class Actor;
 	class ActorState;
+	using ActionFunction = std::function<void(ActorState&, float)>;
 
-	class Action : public Slot<Action>
+	class Action 
 	{
-		friend class EasingAction;
-		friend class ActionPlayer;
 
-	protected:
+	private:
 		float duration_;
-		virtual void update(ActorState& state, float t) const = 0;
-
+		ActionFunction function_;
+		
 	public:
-		Action(float duration);
+		Action(float d, ActionFunction f);
 		float getDuration() const;
-		virtual ~Action();
+		ActionFunction getFunction() const;
+		void operator()(ActorState& state, float t) const;
 	};
 
-	class MoveByAction : public Action
-	{
-	protected:
-		Vec2D<float> offset_;
-		void update(ActorState& state, float t) const override;
-	public:
-		MoveByAction(float duration, float x, float y);
-	};
-
-	class RotateByAction : public Action
-	{
-	protected:
-		float theta_;
-		void update(ActorState& state, float t) const override;
-	public:
-		RotateByAction(float duration, float theta);
-	};
+	Action createMoveByAction(float duration, float x, float y);
+	Action createRotateByAction(float duration, float theta);
 }
 

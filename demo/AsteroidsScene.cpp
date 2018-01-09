@@ -30,7 +30,7 @@ void Asteroids::initialize()
 
 	ship->setPosition(700, 300);
 	ship->applyAction(
-		std::make_shared<ceph::MoveByAction>( 0.1f, 20.0f, 0.0f ), true
+		ceph::createMoveByAction( 0.1f, 20.0f, 0.0f ), true
 	);
 	ship->applyConstraint(
 		std::make_shared<ceph::WrapTorroidally>( 40.0, 40.0 )
@@ -54,10 +54,10 @@ std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float 
 		star->setPosition( static_cast<float>(x_distr( eng )), static_cast<float>(y_distr( eng )) );
 		star->setAlpha(alpha);
 		star->applyAction(
-			std::make_shared<ceph::MoveByAction>(2.0f, horz_speed, 0), true
+			ceph::createMoveByAction(2.0f, horz_speed, 0), true
 		);
 		star->applyAction(
-			std::make_shared<ceph::RotateByAction>(1.0f, 1.0f), true
+			ceph::createRotateByAction(1.0f, 1.0f), true
 		);
 		star->applyConstraint(
 			std::make_shared<ceph::WrapTorroidally>(10.0f, 0)

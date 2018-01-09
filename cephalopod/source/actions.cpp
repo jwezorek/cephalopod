@@ -2,44 +2,51 @@
 #include <cmath>
 #include "../include/cephalopod/actions.hpp"
 #include "../include/cephalopod/actor.hpp"
-#include "../include/cephalopod/game.hpp"
 #include "../include/cephalopod/types.hpp"
 #include "actorstate.hpp"
 #include "util.hpp"
 #include <map>
 #include <numeric>
 
-ceph::Action::Action(float duration) : duration_(duration)
-{
+namespace {
+	
 }
+
+ceph::Action::Action(float d, ActionFunction f) : duration_(d), function_(f)
+{}
 
 float ceph::Action::getDuration() const
 {
 	return duration_;
 }
 
-ceph::Action::~Action()
+ceph::ActionFunction ceph::Action::getFunction() const
 {
+	return function_;
 }
 
-/*----------------------------------------------------------------------------------------------------*/
-
-void ceph::MoveByAction::update(ActorState& state, float t) const
+void ceph::Action::operator()(ceph::ActorState & state, float t) const
 {
-	auto amount = t * offset_;
-	state.translate(amount.x, amount.y);
+	function_(state, t);
 }
 
-ceph::MoveByAction::MoveByAction(float duration, float x, float y) : Action(duration), offset_(x, y)
+
+ceph::Action ceph::createMoveByAction(float duration, float x, float y)
 {
+	return ceph::Action(
+		duration,
+		[x, y](ceph::ActorState& state, float t) -> void {
+			state.translate( t*x, t*y);
+		}
+	);
 }
 
-ceph::RotateByAction::RotateByAction(float duration, float theta) : Action(duration), theta_(theta)
+ceph::Action ceph::createRotateByAction(float duration, float theta)
 {
+	return ceph::Action(
+		duration,
+		[theta](ceph::ActorState& state, float t) -> void {
+			state.rotate( t*theta );
+		}
+	);
 }
-
-void ceph::RotateByAction::update(ActorState & state, float t) const
-{
-	state.rotate( t * theta_ );
-}
-

@@ -1,3 +1,4 @@
+/*
 #include "../include/cephalopod/easingactions.hpp"
 #include "easingfunctions.hpp"
 
@@ -53,3 +54,4 @@ ceph::QuintEasingAction::QuintEasingAction(ceph::EasingFnType typ, const std::sh
 
 ceph::SineEasingAction::SineEasingAction(ceph::EasingFnType typ, const std::shared_ptr<ceph::Action>& child) :
 	ceph::EasingAction(child, typ, ceph::ease::Sine::in, ceph::ease::Sine::out, ceph::ease::Sine::inOut) {}
+	*/

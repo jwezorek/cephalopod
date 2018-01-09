@@ -17,7 +17,7 @@ namespace ceph {
 
 		struct ActionInProgress
 		{
-			std::shared_ptr<Action> action;
+			Action action;
 			float elapsed;
 			Signal<Action&> signal;
 			bool complete;
@@ -29,7 +29,7 @@ namespace ceph {
 			ActionInProgress(ActionInProgress&& a) = default;
 			ActionInProgress& operator=(ActionInProgress&& a) = default;
 
-			ActionInProgress(std::shared_ptr<Action> a, bool rep) : 
+			ActionInProgress(const Action& a, bool rep) : 
 				action(a), 
 				elapsed(0.0f), 
 				complete(false), 
@@ -53,10 +53,12 @@ namespace ceph {
 		ActionPlayer(Actor& parent);
 		bool hasActions() const;
 		bool isRunning() const;
-		void applyAction(const std::shared_ptr<ceph::Action>& action, bool repeat = false);
-		void applyActions(std::initializer_list<std::shared_ptr<Action>> actions);
+		void applyAction(int id, const ceph::Action& action, bool repeat = false);
+		void applyAction(const ceph::Action& action, bool repeat = false);
+		void applyActions(std::initializer_list<Action> actions);
 		void applyConstraint(const std::shared_ptr<ActionConstraint>& constraint);
-		void removeAction(const std::shared_ptr<ceph::Action>& removee);
+		void removeAction(int id);
+		void clearActions();
 	};
 
 }

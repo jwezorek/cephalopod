@@ -12,10 +12,10 @@ void ceph::ActionPlayer::markActionAsComplete(ceph::ActionPlayer::ActionInProgre
 	completed_action_info.elapsed = 0.0f;
 
 	// make the action-complete signal go off...
-	completed_action_info.signal.fire( *action );
+	completed_action_info.signal.fire( action );
 
 	//burn the final state of the action into the cached state of the sprite...
-	action->update(*initial_actor_state_, 1.0f);
+	action(*initial_actor_state_, 1.0f);
 	applyConstraints(*initial_actor_state_);
 }
 
@@ -37,9 +37,9 @@ void ceph::ActionPlayer::update(float dt)
 	bool has_completed_actions = false;
 	ceph::ActorState state( *initial_actor_state_ );
 	for (auto& ai: actions_) {
-		float duration = ai.action->getDuration();
+		float duration = ai.action.getDuration();
 		ai.elapsed = (ai.elapsed + dt < duration) ? ai.elapsed + dt : duration;
-		ai.action->update( state, ai.elapsed/duration );
+		ai.action( state, ai.elapsed/duration );
 
 		if (ai.elapsed == duration) {
 			has_completed_actions = true;
@@ -112,7 +112,7 @@ bool ceph::ActionPlayer::hasActions() const
 	return !actions_.empty();
 }
 
-void ceph::ActionPlayer::applyAction(const std::shared_ptr<ceph::Action>& action, bool repeat)
+void ceph::ActionPlayer::applyAction(const ceph::Action& action, bool repeat)
 {
 	bool wasRunning = isRunning();
 	actions_.push_back({action, repeat});
@@ -120,7 +120,7 @@ void ceph::ActionPlayer::applyAction(const std::shared_ptr<ceph::Action>& action
 		run();
 }
 
-void ceph::ActionPlayer::applyActions(std::initializer_list<std::shared_ptr<Action>> actions)
+void ceph::ActionPlayer::applyActions(std::initializer_list<Action> actions)
 {
 	for (auto& action : actions)
 		applyAction(action);
@@ -131,7 +131,7 @@ void ceph::ActionPlayer::applyConstraint(const std::shared_ptr<ceph::ActionConst
 	constraints_.push_back(constraint);
 }
 
-void  ceph::ActionPlayer::removeAction(const std::shared_ptr<ceph::Action>& removee)
+void  ceph::ActionPlayer::removeAction(int id)
 {
 
 }

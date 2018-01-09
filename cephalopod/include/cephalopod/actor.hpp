@@ -47,10 +47,12 @@ namespace ceph {
 
 		bool hasActions() const;
 		bool isRunningActions() const;
-		void applyAction(const std::shared_ptr<ceph::Action>& action, bool repeat = false);
-		void applyActions(std::initializer_list<std::shared_ptr<Action>> actions);
+		void applyAction(int id, const Action& action, bool repeat = false);
+		void applyAction(const Action& action, bool repeat = false);
+		void applyActions(std::initializer_list<Action> actions);
 		void applyConstraint(const std::shared_ptr<ActionConstraint>& constraint);
-		void removeAction(const std::shared_ptr<ceph::Action>& removee);
+		void removeAction(int id);
+		void clearActions();
 
 		std::weak_ptr<Actor> getParent() const;
 		std::weak_ptr<Actor> getTopLevelParent() const;
