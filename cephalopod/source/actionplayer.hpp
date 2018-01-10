@@ -17,6 +17,7 @@ namespace ceph {
 
 		struct ActionInProgress
 		{
+			int id;
 			Action action;
 			float elapsed;
 			Signal<Action&> signal;
@@ -29,12 +30,8 @@ namespace ceph {
 			ActionInProgress(ActionInProgress&& a) = default;
 			ActionInProgress& operator=(ActionInProgress&& a) = default;
 
-			ActionInProgress(const Action& a, bool rep) : 
-				action(a), 
-				elapsed(0.0f), 
-				complete(false), 
-				repeat(rep)
-			{}
+			ActionInProgress(int id, const Action& a, bool rep); 
+			float getPcntComplete() const;
 		};
 
 		Actor& parent_;
@@ -42,7 +39,8 @@ namespace ceph {
 		std::vector<ActionInProgress> actions_;
 		std::vector<std::shared_ptr<ActionConstraint>> constraints_;
 
-		void markActionAsComplete(ceph::ActionPlayer::ActionInProgress & aip);
+		void removeActions(const std::function<bool(const ActionInProgress&)> predicate);
+		void finalizeAction(ceph::ActionPlayer::ActionInProgress & aip, bool emit_signal = true);
 		void resetActions();
 		void update(float dt);
 		void setActorState(const ActorState& state);

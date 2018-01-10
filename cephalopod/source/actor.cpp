@@ -98,6 +98,11 @@ bool ceph::Actor::isRunningActions() const
 	return impl_->actions.isRunning();
 }
 
+void ceph::Actor::applyAction(int id, const ceph::Action& action, bool repeat)
+{
+	impl_->actions.applyAction(id, action, repeat);
+}
+
 void ceph::Actor::applyAction(const ceph::Action& action, bool repeat)
 {
 	impl_->actions.applyAction(action, repeat);
@@ -116,6 +121,10 @@ void ceph::Actor::applyConstraint(const std::shared_ptr<ActionConstraint>& const
 void ceph::Actor::removeAction(int id)
 {
 	impl_->actions.removeAction( id );
+}
+
+void ceph::Actor::clearActions()
+{
 }
 
 std::weak_ptr<ceph::Actor> ceph::Actor::getParent() const
