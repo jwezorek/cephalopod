@@ -8,10 +8,6 @@
 #include <map>
 #include <numeric>
 
-namespace {
-	
-}
-
 ceph::Action::Action(float d, ActionFunction f) : duration_(d), function_(f)
 {}
 
