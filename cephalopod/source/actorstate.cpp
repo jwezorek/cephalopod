@@ -25,6 +25,11 @@ void ceph::ActorState::translate(float x, float y)
 	transform_.move(x, y);
 }
 
+void ceph::ActorState::translate(const ceph::Vec2D<float>& v)
+{
+	translate(v.x, v.y);
+}
+
 void ceph::ActorState::rotate(float theta)
 {
 	transform_.rotate(radiansToDegrees(theta));

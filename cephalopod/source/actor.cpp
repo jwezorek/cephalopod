@@ -193,12 +193,18 @@ ceph::Point<float> ceph::Actor::getPosition() const
 
 void ceph::Actor::setPosition(const ceph::Point<float>& pt)
 {
-	impl_->properties.setPosition(sf::Vector2f(pt.x, pt.y));
+	if (!isRunningActions()) {
+		impl_->properties.setPosition(sf::Vector2f(pt.x, pt.y));
+	} else {
+		auto diff = pt - getPosition();
+		impl_->properties.setPosition(sf::Vector2f(pt.x, pt.y));
+		impl_->actions.translateCacheState(diff);
+	}
 }
 
 void ceph::Actor::setPosition(float x, float y)
 {
-	impl_->properties.setPosition(sf::Vector2f(x, y));
+	setPosition(ceph::Point<float>(x, y));
 }
 
 ceph::Point<float> ceph::Actor::getAnchorPt() const

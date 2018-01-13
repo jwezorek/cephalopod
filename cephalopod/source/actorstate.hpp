@@ -16,6 +16,7 @@ namespace ceph {
 	public:
 		ActorState(const Actor& actor);
 
+		void translate(const ceph::Vec2D<float>& v);
 		void translate(float x, float y);
 		void rotate(float theta);
 

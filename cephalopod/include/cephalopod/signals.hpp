@@ -191,10 +191,16 @@ namespace ceph {
 		}
 
 	public:
-
+		/*
 		template<class... Args>
 		void connect(Signal<Args...>& ev, void (Receiver::*listenerMethod)(Args... args)) {
 			ev.addSubscriber(new details::Subscriber<Receiver, Args...>(static_cast<Receiver*>(this), listenerMethod));
+			events.push_back(&ev);
+		}
+		*/
+		template<class U, class... Args>
+		void connect(Signal<Args...>& ev, void (U::*listenerMethod)(Args... args)) {
+			ev.addSubscriber(new details::Subscriber<U, Args...>(static_cast<U*>(this), listenerMethod));
 			events.push_back(&ev);
 		}
 

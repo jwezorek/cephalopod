@@ -185,4 +185,9 @@ void  ceph::ActionPlayer::clearActions()
 	);
 }
 
+void ceph::ActionPlayer::translateCacheState(const ceph::Vec2D<float> offset)
+{
+	initial_actor_state_->translate(offset);
+}
+
 
