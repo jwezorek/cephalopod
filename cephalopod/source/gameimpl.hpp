@@ -50,7 +50,7 @@ namespace ceph
 		Rect<float> getScreenRect() const override;
 		Rect<float> convertToScreenCoords(const Rect<float>& rect) const override;
 		Rect<float> convertFromScreenCoords(const Rect<float>& rect) const override;
-		Point<float> convertToScreenCoords(const Point<float>& rect) const override;
-		Point<float> convertFromScreenCoords(const Point<float>& rect)  const override;
+		Vec2D<float> convertToScreenCoords(const Vec2D<float>& rect) const override;
+		Vec2D<float> convertFromScreenCoords(const Vec2D<float>& rect)  const override;
 	};
 };

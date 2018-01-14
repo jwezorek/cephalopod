@@ -122,9 +122,20 @@ void ceph::Actor::removeAction(int id)
 {
 	impl_->actions.removeAction( id );
 }
+bool ceph::Actor::hasAction(int id) const
+{
+	return impl_->actions.hasAction(id);
+}
 
 void ceph::Actor::clearActions()
 {
+	impl_->actions.clearActions();
+}
+
+
+void ceph::Actor::enforceConstraints()
+{
+	impl_->actions.enforceConstraints();
 }
 
 std::weak_ptr<ceph::Actor> ceph::Actor::getParent() const
@@ -185,13 +196,13 @@ void ceph::Actor::setScale(float scale)
 	impl_->properties.scale(scale, scale);
 }
 
-ceph::Point<float> ceph::Actor::getPosition() const
+ceph::Vec2D<float> ceph::Actor::getPosition() const
 {
 	auto origin = impl_->properties.getPosition();
-	return ceph::Point<float>(origin.x, origin.y);
+	return ceph::Vec2D<float>(origin.x, origin.y);
 }
 
-void ceph::Actor::setPosition(const ceph::Point<float>& pt)
+void ceph::Actor::setPosition(const ceph::Vec2D<float>& pt)
 {
 	if (!isRunningActions()) {
 		impl_->properties.setPosition(sf::Vector2f(pt.x, pt.y));
@@ -204,23 +215,23 @@ void ceph::Actor::setPosition(const ceph::Point<float>& pt)
 
 void ceph::Actor::setPosition(float x, float y)
 {
-	setPosition(ceph::Point<float>(x, y));
+	setPosition(ceph::Vec2D<float>(x, y));
 }
 
-ceph::Point<float> ceph::Actor::getAnchorPt() const
+ceph::Vec2D<float> ceph::Actor::getAnchorPt() const
 {
 	auto origin = impl_->properties.getOrigin();
-	return ceph::Point<float>(origin.x / impl_->frame_sz.wd, origin.y / impl_->frame_sz.hgt);
+	return ceph::Vec2D<float>(origin.x / impl_->frame_sz.wd, origin.y / impl_->frame_sz.hgt);
 }
 
-void ceph::Actor::setAnchorPt(const ceph::Point<float>& pt)
+void ceph::Actor::setAnchorPt(const ceph::Vec2D<float>& pt)
 {
 	setAnchorPt(pt.x, pt.y);
 }
 
 void ceph::Actor::setAnchorPt(float x, float y)
 {
-	impl_->anchor = ceph::Point<float>(x,y);
+	impl_->anchor = ceph::Vec2D<float>(x,y);
 	impl_->properties.setOrigin(
 		x * static_cast<float>(impl_->frame_sz.wd),
 		y * static_cast<float>(impl_->frame_sz.hgt)

@@ -56,7 +56,9 @@ namespace ceph {
 		void applyActions(std::initializer_list<Action> actions);
 		void applyConstraint(const std::shared_ptr<ActionConstraint>& constraint);
 		void removeAction(int id);
+		bool hasAction(int id);
 		void clearActions();
+		void enforceConstraints();
 		void translateCacheState(const ceph::Vec2D<float> offset);
 	};
 

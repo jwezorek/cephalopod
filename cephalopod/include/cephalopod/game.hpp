@@ -29,8 +29,8 @@ namespace ceph
 
 		virtual Rect<float> convertToScreenCoords(const Rect<float>& rect) const = 0;
 		virtual Rect<float> convertFromScreenCoords(const Rect<float>& rect) const = 0;
-		virtual Point<float> convertToScreenCoords(const Point<float>& rect) const = 0;
-		virtual Point<float> convertFromScreenCoords(const Point<float>& rect) const = 0;
+		virtual Vec2D<float> convertToScreenCoords(const Vec2D<float>& rect) const = 0;
+		virtual Vec2D<float> convertFromScreenCoords(const Vec2D<float>& rect) const = 0;
 
 		virtual CoordinateMapping getCoordinateMapping() const = 0;
 

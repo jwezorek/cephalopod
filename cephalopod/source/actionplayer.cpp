@@ -160,7 +160,7 @@ void ceph::ActionPlayer::applyConstraint(const std::shared_ptr<ceph::ActionConst
 	constraints_.push_back(constraint);
 }
 
-void  ceph::ActionPlayer::removeAction(int id)
+void ceph::ActionPlayer::removeAction(int id)
 {
 	bool found_one = false;
 	for (auto& a : actions_) {
@@ -176,6 +176,18 @@ void  ceph::ActionPlayer::removeAction(int id)
 	}
 }
 
+bool ceph::ActionPlayer::hasAction(int id)
+{
+	return (
+		std::find_if(
+			actions_.cbegin(), actions_.cend(),
+			[id](const auto& aip) {
+				return aip.id == id;
+			}
+		) != actions_.cend()
+	);
+}
+
 void  ceph::ActionPlayer::clearActions()
 {
 	for(auto& ai : actions_)
@@ -183,6 +195,13 @@ void  ceph::ActionPlayer::clearActions()
 	removeActions(
 		[](const ActionInProgress& a)->bool {return true; }
 	);
+}
+
+void ceph::ActionPlayer::enforceConstraints()
+{
+	ceph::ActorState state( parent_ );
+	applyConstraints(state);
+	setActorState(state);
 }
 
 void ceph::ActionPlayer::translateCacheState(const ceph::Vec2D<float> offset)

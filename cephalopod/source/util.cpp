@@ -8,8 +8,6 @@
 #include "util.hpp"
 #include "TextureImpl.hpp"
 
-
-
 float ceph::radiansToDegrees(float radians)
 {
 	return radians * 180.0f / static_cast<float>(M_PI);
@@ -25,9 +23,9 @@ float ceph::lerp(float start, float end, float pcnt)
 	return (end - start) * pcnt + start;
 }
 
-ceph::Point<float> ceph::lerpPtInRect(const ceph::Point<float>& pt, const ceph::Rect<float>& r)
+ceph::Vec2D<float> ceph::lerpPtInRect(const ceph::Vec2D<float>& pt, const ceph::Rect<float>& r)
 {
-	return ceph::Point<float>(
+	return ceph::Vec2D<float>(
 		ceph::lerp(r.x, r.x2(), pt.x),
 		ceph::lerp(r.y, r.y2(), pt.y)
 	);

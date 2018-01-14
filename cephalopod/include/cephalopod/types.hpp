@@ -30,16 +30,20 @@ namespace ceph {
 	};
 
 	template<typename T>
-	struct Point {
+	struct Vec2D {
 		T x, y;
-		Point(T xx = 0, T yy = 0) :
+		Vec2D(T xx = 0, T yy = 0) :
 			x(xx), y(yy)
 		{
 		}
-	};
 
-	template<typename T>
-	using Vec2D = Point<T>;
+		template<typename T>
+		Vec2D<T>& operator+=(Vec2D<T> v)
+		{
+			*this = *this + v;
+			return *this;
+		}
+	};
 
 	template<typename T>
 	Vec2D<T> operator*(T k, Vec2D<T> v)
@@ -59,6 +63,8 @@ namespace ceph {
 		return Vec2D<T>(v1.x - v2.x, v1.y - v2.y);
 	}
 
+
+
 	template<typename T>
 	struct Size {
 		T wd;
@@ -75,7 +81,7 @@ namespace ceph {
 		T wd;
 		T hgt;
 
-		Rect(const Point<T> loc, const Size<T> sz) :
+		Rect(const Vec2D<T> loc, const Size<T> sz) :
 			x(loc.x), y(loc.y), wd(sz.wd), hgt(sz.hgt) {
 		}
 
@@ -83,9 +89,9 @@ namespace ceph {
 			x(xx), y(yy), wd(w), hgt(h) {
 		}
 
-		Point<T> getLocation() const
+		Vec2D<T> getLocation() const
 		{
-			return Point<T>(x, y);
+			return Vec2D<T>(x, y);
 		}
 
 		Size<T> getSize() const
@@ -141,7 +147,7 @@ namespace ceph {
 			return  (rx <= px) && (px <= rx + wd) && (ry <= py) && (py <= ry + hgt);
 		}
 
-		bool contains(const Point<T>& p)
+		bool contains(const Vec2D<T>& p)
 		{
 			return contains(p.x, p.y);
 		}

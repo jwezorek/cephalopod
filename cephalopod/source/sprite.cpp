@@ -65,7 +65,7 @@ void ceph::Sprite::drawThis(DrawingContext& dc) const
 	impl_->sfml_sprite_.setColor(color);
 }
 
-ceph::Point<float> ceph::Sprite::getGlobalPosition() const
+ceph::Vec2D<float> ceph::Sprite::getGlobalPosition() const
 {
 	auto p = getPosition();
 	auto& actor_impl = *(static_cast<const Actor*>(this)->impl_);
@@ -81,10 +81,10 @@ ceph::Point<float> ceph::Sprite::getGlobalPosition() const
 	}
 
 	auto sp = trans.transformPoint( sf::Vector2<float>(p.x,p.y) );
-	return ceph::Point<float>(sp.x, sp.y);
+	return ceph::Vec2D<float>(sp.x, sp.y);
 }
 
-void  ceph::Sprite::setGlobalPosition(const ceph::Point<float>& pt_global)
+void  ceph::Sprite::setGlobalPosition(const ceph::Vec2D<float>& pt_global)
 {
 	if (!hasParent()) {
 		setPosition(pt_global);

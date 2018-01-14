@@ -11,7 +11,7 @@ namespace ceph
 		Actor& actor;
 		Actor* parent;
 		float alpha;
-		Point<float> anchor;
+		Vec2D<float> anchor;
 		Size<int> frame_sz;
 		sf::Transformable properties;
 		ActionPlayer actions;

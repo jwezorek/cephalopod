@@ -30,14 +30,14 @@ namespace
 		return ceph::Rect<float>(r.left, r.top, r.width, r.height);
 	}
 
-	sf::Vector2<float> ToSfPoint(const ceph::Point<float>& p)
+	sf::Vector2<float> ToSfPoint(const ceph::Vec2D<float>& p)
 	{
 		return sf::Vector2<float>(p.x, p.y);
 	}
 
-	ceph::Point<float> ToCephPoint(const sf::Vector2<float>& p)
+	ceph::Vec2D<float> ToCephPoint(const sf::Vector2<float>& p)
 	{
-		return ceph::Point<float>(p.x,p.y);
+		return ceph::Vec2D<float>(p.x,p.y);
 	}
 }
 
@@ -290,12 +290,12 @@ ceph::Rect<float> ceph::GameImpl::convertFromScreenCoords(const ceph::Rect<float
 	return ToCephRect(coord_transform_.getInverse().transformRect(ToSfRect(rect)));
 }
 
-ceph::Point<float> ceph::GameImpl::convertToScreenCoords(const ceph::Point<float>& pt) const
+ceph::Vec2D<float> ceph::GameImpl::convertToScreenCoords(const ceph::Vec2D<float>& pt) const
 {
 	return ToCephPoint(coord_transform_.transformPoint(ToSfPoint(pt)));
 }
 
-ceph::Point<float> ceph::GameImpl::convertFromScreenCoords(const ceph::Point<float>& pt) const
+ceph::Vec2D<float> ceph::GameImpl::convertFromScreenCoords(const ceph::Vec2D<float>& pt) const
 {
 	return ToCephPoint(coord_transform_.getInverse().transformPoint(ToSfPoint(pt)));
 }

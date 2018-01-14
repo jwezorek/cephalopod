@@ -15,7 +15,7 @@ namespace ceph {
 	float distance(float x1, float y1, float x2, float y2);
 	float magnitude(float x, float y);
 	float magnitude(Vec2D<float> vec);
-	Point<float> lerpPtInRect(const Point<float>& pt, const Rect<float>& r);
+	Vec2D<float> lerpPtInRect(const Vec2D<float>& pt, const Rect<float>& r);
 
 	template<typename T>
 	Rect<T> SfmlRectToCoyRect(sf::Rect<T>& rect)
@@ -24,13 +24,13 @@ namespace ceph {
 	}
 
 	template<typename T>
-	Point<T> SfPtToCephPt(sf::Vector2<T> pt)
+	Vec2D<T> SfPtToCephPt(sf::Vector2<T> pt)
 	{
-		return ceph::Point<T>(pt.x, pt.y);
+		return ceph::Vec2D<T>(pt.x, pt.y);
 	}
 
 	template<typename T>
-	sf::Vector2<T> CephPtToSfPt( Point<T> pt)
+	sf::Vector2<T> CephPtToSfPt( Vec2D<T> pt)
 	{
 		return sf::Vector2<T>(pt.x, pt.y);
 	}

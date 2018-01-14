@@ -6,7 +6,7 @@ ceph::Group::Group() : impl_(std::make_unique<SpriteImpl>())
 {
 }
 
-ceph::Point<float> ceph::Group::getGlobalPosition() const
+ceph::Vec2D<float> ceph::Group::getGlobalPosition() const
 {
 	auto p = getPosition();
 	auto& actor_impl = *(static_cast<const Actor*>(this)->impl_);
@@ -22,10 +22,10 @@ ceph::Point<float> ceph::Group::getGlobalPosition() const
 	}
 
 	auto sp = trans.transformPoint(sf::Vector2<float>(p.x, p.y));
-	return ceph::Point<float>(sp.x, sp.y);
+	return ceph::Vec2D<float>(sp.x, sp.y);
 }
 
-void ceph::Group::setGlobalPosition(const Point<float>& pt_global)
+void ceph::Group::setGlobalPosition(const Vec2D<float>& pt_global)
 {
 	if (!hasParent()) {
 		setPosition(pt_global);

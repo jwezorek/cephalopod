@@ -52,7 +52,9 @@ namespace ceph {
 		void applyActions(std::initializer_list<Action> actions);
 		void applyConstraint(const std::shared_ptr<ActionConstraint>& constraint);
 		void removeAction(int id);
+		bool hasAction(int id) const;
 		void clearActions();
+		void enforceConstraints();
 
 		std::weak_ptr<Actor> getParent() const;
 		std::weak_ptr<Actor> getTopLevelParent() const;
@@ -70,14 +72,14 @@ namespace ceph {
 		virtual float getScale() const;
 		virtual void setScale(float scale);
 
-		virtual Point<float> getPosition() const;
-		virtual Point<float> getGlobalPosition() const = 0;
-		virtual void setGlobalPosition(const Point<float>& pt_global) = 0;
-		virtual void setPosition(const Point<float>& pt);
+		virtual Vec2D<float> getPosition() const;
+		virtual Vec2D<float> getGlobalPosition() const = 0;
+		virtual void setGlobalPosition(const Vec2D<float>& pt_global) = 0;
+		virtual void setPosition(const Vec2D<float>& pt);
 		virtual void setPosition(float x, float y);
 
-		virtual Point<float> getAnchorPt() const;
-		virtual void setAnchorPt(const Point<float>& pt);
+		virtual Vec2D<float> getAnchorPt() const;
+		virtual void setAnchorPt(const Vec2D<float>& pt);
 		virtual void setAnchorPt(float x, float y);
 
 		virtual Rect<float> getLocalBounds() const = 0;

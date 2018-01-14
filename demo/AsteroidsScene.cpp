@@ -29,9 +29,6 @@ void Asteroids::initialize()
 	auto ship = std::make_shared<Ship>(sprite_sheet_);
 
 	ship->setPosition(700, 300);
-	ship->applyAction(
-		ceph::createMoveByAction( 0.1f, 20.0f, 0.0f ), true
-	);
 	ship->applyConstraint(
 		std::make_shared<ceph::WrapTorroidally>( 40.0f, 40.0f )
 	);
