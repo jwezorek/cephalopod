@@ -34,8 +34,7 @@ namespace ceph {
 		T x, y;
 		Vec2D(T xx = 0, T yy = 0) :
 			x(xx), y(yy)
-		{
-		}
+		{ }
 
 		template<typename T>
 		Vec2D<T>& operator+=(Vec2D<T> v)
@@ -62,8 +61,6 @@ namespace ceph {
 	{
 		return Vec2D<T>(v1.x - v2.x, v1.y - v2.y);
 	}
-
-
 
 	template<typename T>
 	struct Size {

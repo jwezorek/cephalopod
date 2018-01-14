@@ -18,9 +18,7 @@ Ship::Ship(const std::shared_ptr<ceph::SpriteSheet>& ss) :
 	is_thruster_on_(false),
 	velocity_(0.0f,0.0f)
 {
-	ceph::Vec2D<float> pt(0.5f, 0.5f);
-	setAnchorPt(pt);
-
+	setAnchorPt(0.5f, 0.5f);
 	auto& key_evt = ceph::Game::getInstance().keyEvent;
 	connect( key_evt, &Ship::handleKey);
 }
@@ -40,25 +38,24 @@ void Ship::update(float dt)
 
 void Ship::handleRotationKey(bool key_down, Ship::RotationType direction)
 {
+	if (!key_down) {
+		removeAction(static_cast<int>(direction));
+		return;
+	}
+
 	bool is_left = direction == RotationType::Left;
 	auto rot_type = getRotationState();
 	auto opp_direction = is_left ? RotationType::Right : RotationType::Left;
-	if (key_down) {
-		if (rot_type == direction)
-			return;
-		if (rot_type == opp_direction)
-			removeAction( static_cast<int>(opp_direction) );
-		applyAction(
-			static_cast<int>(direction),
-			ceph::createRotateByAction(1.0f,  8.0f * ((is_left) ? -1.0f : 1.0f))
-		);
-	}
-	else {
-		removeAction(static_cast<int>(direction));
-	}
+
+	if (rot_type == direction)
+		return;
+	if (rot_type == opp_direction)
+		removeAction( static_cast<int>(opp_direction) );
+	applyAction(
+		static_cast<int>(direction),
+		ceph::createRotateByAction(1.0f,  8.0f * ((is_left) ? -1.0f : 1.0f))
+	);
 }
-
-
 void Ship::handleThrustKey(bool key_down)
 {
 	is_thruster_on_ = key_down;
@@ -66,7 +63,7 @@ void Ship::handleThrustKey(bool key_down)
 
 ceph::Vec2D<float> Ship::getDirection() const
 {
-	auto theta = getRotation() - M_PI / 2.0f;
+	float theta = getRotation() - static_cast<float>(M_PI / 2.0f);
 	return {
 		cosf(theta),
 		sinf(theta)
