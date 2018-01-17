@@ -89,7 +89,7 @@ std::shared_ptr<ceph::SpriteSheet> ceph::SpriteSheet::create(const std::string& 
 
 std::shared_ptr<ceph::Sprite> ceph::SpriteSheet::getSprite(const std::string& name) const
 {
-	return std::make_shared<ceph::Sprite>(shared_from_this(), name);
+	return ceph::Actor::create<ceph::Sprite>(shared_from_this(), name);
 }
 
 std::shared_ptr<ceph::Texture> ceph::SpriteSheet::getTexture() const

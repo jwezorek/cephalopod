@@ -44,10 +44,10 @@ std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float 
 	std::uniform_real_distribution<> x_distr(bounds.x, bounds.x2() - horz_speed);
 	std::uniform_real_distribution<> y_distr(bounds.y, bounds.y2());
 
-	auto layer = std::make_shared<ceph::Group>();
+	auto layer = ceph::Actor::create<ceph::Group>();
 	for (int i = 0; i < 85; i++) {
 		auto star_id = "star_" + std::to_string(star_distr(eng));
-		auto star = std::make_shared<ceph::Sprite>(sprite_sheet_, star_id);
+		auto star = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, star_id);
 		star->setAnchorPt(0.5f, 0.5f);
 		star->setPosition( static_cast<float>(x_distr( eng )), static_cast<float>(y_distr( eng )) );
 		star->setAlpha(alpha);

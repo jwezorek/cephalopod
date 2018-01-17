@@ -14,16 +14,20 @@ namespace ceph {
 
 	class Sprite : public Actor
 	{
+		friend class Actor;
+
 	private:
 		SpriteFrame sprite_frame_;
 		std::shared_ptr<const SpriteSheet> sprite_sheet_;
 		std::unique_ptr<SpriteImpl> impl_;
 
 	protected:
-		virtual void drawThis(DrawingContext& rt) const; 
-	public:
+
+		virtual void drawThis(DrawingContext& rt) const;
 		Sprite(const std::shared_ptr<Texture>& texture);
 		Sprite(const std::shared_ptr<const SpriteSheet>& sheet, const std::string& frame_name);
+
+	public:
 
 		void setFrame(const std::string& frame_name);
 

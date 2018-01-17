@@ -34,8 +34,11 @@ namespace ceph {
 		void attachToScene(const std::shared_ptr<Scene>& scene);
 		void runActions();
 
-	public:
 		Actor();
+
+	public:
+
+		virtual void initialize() {}
 
 		void addChild(const std::shared_ptr<Actor>&);
 		void addChildren(std::initializer_list<std::shared_ptr<Actor>> children);
@@ -89,6 +92,15 @@ namespace ceph {
 		virtual void draw(DrawingContext& rt) const;
 		
 		virtual ~Actor();
+
+		template<typename A, typename... Args>
+		static std::shared_ptr<A> create(Args... construction_args)
+		{
+			auto a = std::shared_ptr<A>(new A(construction_args...));
+			a->initialize();
+			return a;
+		}
+
 	};
 
 }
