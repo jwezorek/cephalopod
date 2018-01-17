@@ -46,3 +46,7 @@ ceph::Rect<float> ceph::Group::getGlobalBounds() const
 {
 	return getTotalGlobalBounds();
 }
+
+ceph::Group::~Group()
+{
+}

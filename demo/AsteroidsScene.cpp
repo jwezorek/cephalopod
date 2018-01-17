@@ -26,7 +26,7 @@ void Asteroids::initialize()
 		CreateStarLayer( -32.0f, 0.0625f )
 	});
 	
-	auto ship = std::make_shared<Ship>(sprite_sheet_);
+	auto ship = ceph::Actor::create<Ship>(sprite_sheet_);
 
 	ship->setPosition(700, 300);
 	ship->applyConstraint(

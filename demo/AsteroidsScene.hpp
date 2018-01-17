@@ -11,11 +11,9 @@ class Asteroids : public ceph::Scene
 private:
 	std::shared_ptr<ceph::SpriteSheet> sprite_sheet_;
 	std::shared_ptr<Ship> ship_;
-	std::shared_ptr<Alien> alien_;
 
 	std::shared_ptr<ceph::Actor> CreateStarLayer(float horz_speed, float alpha);
 
 public:
 	void initialize() override;
-	void Test();
 };

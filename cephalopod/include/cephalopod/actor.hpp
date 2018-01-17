@@ -23,6 +23,9 @@ namespace ceph {
 		friend class ActorState;
 		friend class ActionPlayer;
 
+	private:
+		Actor();
+
 	protected:
 		std::weak_ptr<Scene> scene_;
 		std::weak_ptr<Actor> parent_;
@@ -33,8 +36,6 @@ namespace ceph {
 		void detachFromScene();
 		void attachToScene(const std::shared_ptr<Scene>& scene);
 		void runActions();
-
-		Actor();
 
 	public:
 

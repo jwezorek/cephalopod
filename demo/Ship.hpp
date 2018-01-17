@@ -3,8 +3,9 @@
 #include "cephalopod/types.hpp"
 #include "cephalopod/sprite.hpp"
 #include "cephalopod/events.hpp"
+#include "cephalopod/group.hpp"
 
-class Ship : public ceph::Sprite
+class Ship : public ceph::Group
 {
 	enum class RotationType {
 		None = -1,
@@ -12,6 +13,7 @@ class Ship : public ceph::Sprite
 		Right = 1
 	};
 
+	std::shared_ptr<ceph::SpriteSheet> sprites_;
 	bool is_thruster_on_;
 	ceph::Vec2D<float> velocity_;
 
@@ -19,10 +21,12 @@ class Ship : public ceph::Sprite
 	void handleRotationKey(bool key_down, RotationType direction);
 	void handleThrustKey(bool key_down);
 	ceph::Vec2D<float> getDirection() const;
+	
 
 public:
-	Ship(const std::shared_ptr<ceph::SpriteSheet>& ss);
 
+	Ship(const std::shared_ptr<ceph::SpriteSheet>& ss);
+	void initialize();
 	void update(float dt);
 	void handleKey(bool isPressed, ceph::KeyCode key, unsigned char modifiers);
 };

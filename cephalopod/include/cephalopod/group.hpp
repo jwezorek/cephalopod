@@ -24,5 +24,6 @@ namespace ceph {
 		void setGlobalPosition(const Vec2D<float>& pt_global) override;
 		Rect<float> getLocalBounds() const override;
 		Rect<float> getGlobalBounds() const override;
+		virtual ~Group();
 	};
 }
