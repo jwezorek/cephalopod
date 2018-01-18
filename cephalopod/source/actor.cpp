@@ -12,12 +12,15 @@ ceph::Actor::Actor() :
 {
 }
 
-void ceph::Actor::addChild(const std::shared_ptr<ceph::Actor>& actor)
+void ceph::Actor::addChild(const std::shared_ptr<ceph::Actor>& child)
 {
-	actor->parent_ = shared_from_this();
-	children_.push_back(actor);
-	if (isInScene())
-		actor->attachToScene(scene_.lock());
+	child->parent_ = shared_from_this();
+	children_.push_back(child);
+	if (isInScene()) {
+		child->attachToScene(scene_.lock());
+		if (child->hasActions())
+			child->runActions();
+	}
 }
 
 void ceph::Actor::addChildren(std::initializer_list<std::shared_ptr<Actor>> children)

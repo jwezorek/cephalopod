@@ -32,16 +32,20 @@ ceph::ColorRGB ceph::Scene::getBackgroundColor() const
 	return bkgd_color_;
 }
 
-void ceph::Scene::addActor(const std::shared_ptr<ceph::Actor>& child)
+void ceph::Scene::addActor(const std::shared_ptr<ceph::Actor>& child, bool add_on_top)
 {
-	stage_.push_back(child);
+	if (add_on_top)
+		stage_.push_back(child);
+	else
+		stage_.push_front(child);
+
 	child->attachToScene( shared_from_this() );
 
 	if (child->isInSceneTopLevel() && child->hasActions())
 		child->runActions();
 }
 
-void ceph::Scene::addActors(std::initializer_list<std::shared_ptr<Actor>> children)
+void ceph::Scene::addActors(std::initializer_list<std::shared_ptr<Actor>> children, bool add_on_top)
 {
 	for (const auto& child : children)
 		addActor(child);

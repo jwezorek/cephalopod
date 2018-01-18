@@ -26,6 +26,10 @@ void ceph::Action::operator()(ceph::ActorState & state, float t) const
 	function_(state, t);
 }
 
+ceph::Action ceph::createMoveByAction(float duration, const ceph::Vec2D<float>& vec)
+{
+	return ceph::createMoveByAction(duration, vec.x, vec.y);
+}
 
 ceph::Action ceph::createMoveByAction(float duration, float x, float y)
 {

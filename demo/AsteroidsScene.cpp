@@ -7,6 +7,7 @@
 #include "cephalopod/easingactions.hpp"
 #include "cephalopod/group.hpp"
 #include "cephalopod/sprite.hpp"
+#include "Ship.hpp"
 
 std::random_device rd; // obtain a random number from hardware
 std::mt19937 eng( rd()  );
@@ -26,6 +27,10 @@ void Asteroids::initialize()
 		CreateStarLayer( -32.0f, 0.0625f )
 	});
 	
+	addActor(
+		bkgd_layer_ = ceph::Actor::create<ceph::Group>()
+	);
+	
 	auto ship = ceph::Actor::create<Ship>(sprite_sheet_);
 
 	ship->setPosition(700, 300);
@@ -34,6 +39,11 @@ void Asteroids::initialize()
 	);
 	addActor(ship);
 	ship->connect(updateEvent, &Ship::update);
+}
+
+std::shared_ptr<ceph::Group> Asteroids::getBkgdLayer() const
+{
+	return bkgd_layer_;
 }
 
 std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float alpha)

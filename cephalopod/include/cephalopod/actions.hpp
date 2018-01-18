@@ -22,6 +22,7 @@ namespace ceph {
 		void operator()(ActorState& state, float t) const;
 	};
 
+	Action createMoveByAction(float duration, const Vec2D<float>& vec);
 	Action createMoveByAction(float duration, float x, float y);
 	Action createRotateByAction(float duration, float theta);
 }

@@ -2,18 +2,23 @@
 
 #include <memory>
 #include "cephalopod/scene.hpp"
-#include "cephalopod/actor.hpp"
-#include "Ship.hpp"
-#include "Alien.hpp"
+
+class Ship;
+namespace ceph {
+	class Group;
+	class SpriteSheet;
+}
 
 class Asteroids : public ceph::Scene
 {
 private:
 	std::shared_ptr<ceph::SpriteSheet> sprite_sheet_;
 	std::shared_ptr<Ship> ship_;
+	std::shared_ptr<ceph::Group> bkgd_layer_;
 
 	std::shared_ptr<ceph::Actor> CreateStarLayer(float horz_speed, float alpha);
 
 public:
 	void initialize() override;
+	std::shared_ptr<ceph::Group> getBkgdLayer() const;
 };

@@ -1,8 +1,9 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include "Ship.hpp"
 #include "cephalopod/types.hpp"
 #include "cephalopod/game.hpp"
+#include "Ship.hpp"
+#include "AsteroidsScene.hpp"
 
 Ship::RotationType Ship::getRotationState() const
 {
@@ -69,11 +70,28 @@ void Ship::handleThrustKey(bool key_down)
 
 ceph::Vec2D<float> Ship::getDirection() const
 {
-	float theta = getRotation() - static_cast<float>(M_PI / 2.0f);
+	float theta = getRotation();
 	return {
 		cosf(theta),
 		sinf(theta)
 	};
+}
+
+void Ship::shoot()
+{
+	auto direction = getDirection();
+	auto start_position = getPosition() + 40.0f * direction;
+	auto bullet = ceph::Actor::create<ceph::Sprite>(sprites_, "zap");
+	bullet->setAnchorPt(0.5f, 0.5f);
+	bullet->setPosition(start_position);
+	bullet->setRotation(getRotation());
+
+	bullet->applyAction(
+		ceph::createMoveByAction(1.0, 600.0f * direction)
+	);
+
+	auto bkgd = std::static_pointer_cast<Asteroids>(scene_.lock())->getBkgdLayer();
+	bkgd->addChild(bullet);
 }
 
 void Ship::handleKey(bool is_key_down, ceph::KeyCode key, unsigned char modifiers)
@@ -87,6 +105,10 @@ void Ship::handleKey(bool is_key_down, ceph::KeyCode key, unsigned char modifier
 			return;
 		case  ceph::KeyCode::Up:
 			handleThrustKey(is_key_down);
+			return;
+		case ceph::KeyCode::Space:
+			if (is_key_down)
+				shoot();
 			return;
 	}
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include <deque>
 #include <memory>
 #include <functional>
 #include <initializer_list>
@@ -24,7 +24,7 @@ namespace ceph {
 
 	private:
 		std::unique_ptr<SceneImpl> impl_;
-		std::vector<std::shared_ptr<Actor>> stage_;
+		std::deque<std::shared_ptr<Actor>> stage_;
 		ColorRGB bkgd_color_;
 
 	protected:
@@ -41,8 +41,8 @@ namespace ceph {
 		void setBackgroundColor(const ColorRGB& tex);
 		ColorRGB getBackgroundColor() const;
 
-		void addActor(const std::shared_ptr<Actor>& child);
-		void addActors(std::initializer_list<std::shared_ptr<Actor>> children);
+		void addActor(const std::shared_ptr<Actor>& child, bool add_on_top = true);
+		void addActors(std::initializer_list<std::shared_ptr<Actor>> children, bool add_on_top = true);
 		void removeActor(const std::shared_ptr<Actor>& child);
 
 		template<typename T>

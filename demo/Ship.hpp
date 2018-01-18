@@ -21,7 +21,7 @@ class Ship : public ceph::Group
 	void handleRotationKey(bool key_down, RotationType direction);
 	void handleThrustKey(bool key_down);
 	ceph::Vec2D<float> getDirection() const;
-	
+	void shoot();
 
 public:
 
