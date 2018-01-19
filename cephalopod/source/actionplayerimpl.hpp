@@ -1,5 +1,5 @@
 #pragma once
-
+#include <memory>
 #include "../include/cephalopod/signals.hpp"
 #include "../include/cephalopod/actions.hpp"
 #include "../include/cephalopod/actionconstraints.hpp"
@@ -35,7 +35,17 @@ namespace ceph {
 			float getPcntComplete() const;
 		};
 
-		Actor& parent_;
+		class ActorLock
+		{
+		private:
+			std::shared_ptr<Actor> owner_;
+		public:
+			ActorLock(const std::weak_ptr<Actor>& owner) : owner_(owner.lock())
+			{}
+			~ActorLock() { owner_.reset(); }
+		};
+
+		std::weak_ptr<Actor> parent_;
 		std::unique_ptr<ActorState> initial_actor_state_;
 		std::vector<ActionInProgress> actions_;
 		std::vector<std::shared_ptr<ActionConstraint>> constraints_;
@@ -49,7 +59,8 @@ namespace ceph {
 		void run();
 
 	public:
-		ActionPlayerImpl(Actor& parent);
+		ActionPlayerImpl();
+		void initialize(const std::shared_ptr<Actor> actor);
 		bool hasActions() const;
 		bool isRunning() const;
 		void applyAction(int id, const ceph::Action& action, bool repeat = false);

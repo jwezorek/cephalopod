@@ -100,12 +100,20 @@ namespace ceph {
 		}
 
 		void removeSubscriber(void* t) override {
-			auto to_remove = std::remove_if(
-				subscribers.begin(),
-				subscribers.end(),
-				[t](auto& elt) { return elt->getInstance() == t; }
-			);
-			subscribers.erase(to_remove, subscribers.end());
+			if ( !isFiring() ) {
+				auto to_remove = std::remove_if(
+					subscribers.begin(),
+					subscribers.end(),
+					[t](auto& elt) { return elt->getInstance() == t; }
+				);
+				subscribers.erase(to_remove, subscribers.end());
+			} else {
+				deferred_ops_.push_back(
+					[&]() {
+						this->removeSubscriber(t);
+					}
+				);
+			}
 		}
 
 		std::vector<std::function<void()>> deferred_ops_;

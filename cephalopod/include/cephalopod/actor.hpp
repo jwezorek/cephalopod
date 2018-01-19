@@ -16,7 +16,7 @@ namespace ceph {
 	class Action;
 	class ActionConstraint;
 
-	class Actor : public Slot<Actor>, std::enable_shared_from_this<Actor>
+	class Actor : public Slot<Actor>, public std::enable_shared_from_this<Actor>
 	{
 		friend class Scene;
 		friend class Sprite;
@@ -37,6 +37,7 @@ namespace ceph {
 		void detachFromScene();
 		void attachToScene(const std::shared_ptr<Scene>& scene);
 		void runActions();
+		void initializeImpl(const std::shared_ptr<Actor> parent);
 
 	public:
 
@@ -91,6 +92,7 @@ namespace ceph {
 		static std::shared_ptr<A> create(Args... construction_args)
 		{
 			auto a = std::shared_ptr<A>(new A(construction_args...));
+			a->initializeImpl(a);
 			a->initialize();
 			return a;
 		}

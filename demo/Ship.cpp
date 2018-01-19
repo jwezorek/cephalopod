@@ -91,10 +91,19 @@ void Ship::shoot()
 	bullet->setRotation(getRotation());
 
 	bullet->getActions().applyAction(
-		ceph::createMoveByAction(1.0, 600.0f * direction)
+		BULLET_EXPIRED,
+		ceph::createMoveByAction( 1.0, 600.0f * direction )
 	);
 
 	auto bkgd = std::static_pointer_cast<Asteroids>(scene_.lock())->getBkgdLayer();
+	bullet->getActions().getCompletionSignal(BULLET_EXPIRED).connect(
+		*bullet,
+		[bullet,bkgd](int i) {
+			bkgd->removeChild(bullet);
+		}
+	);
+
+	
 	bkgd->addChild(bullet);
 }
 
@@ -112,6 +121,7 @@ void Ship::handleKey(bool is_key_down, ceph::KeyCode key, unsigned char modifier
 			return;
 		case ceph::KeyCode::Space:
 			if (is_key_down)
+				//scene_.lock()->removeActor( shared_from_this() );
 				shoot();
 			return;
 	}

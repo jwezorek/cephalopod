@@ -1,6 +1,7 @@
 #include "actionplayerimpl.hpp"
 #include "../include/cephalopod/scene.hpp"
 #include "../include/cephalopod/actions.hpp"
+#include "../include/cephalopod/game.hpp"
 #include "util.hpp"
 #include "actorstate.hpp"
 #include "actorimpl.hpp"
@@ -44,7 +45,7 @@ void ceph::ActionPlayerImpl::resetActions()
 			has_only_complete_actions = false;
 	}
 	if (has_only_complete_actions)
-		initial_actor_state_ = std::make_unique<ceph::ActorState>(parent_);
+		initial_actor_state_ = std::make_unique<ceph::ActorState>(*(parent_.lock()));
 }
 
 void ceph::ActionPlayerImpl::removeActions(const std::function<bool(const ActionInProgress&)> predicate)
@@ -61,7 +62,7 @@ void ceph::ActionPlayerImpl::removeActions(const std::function<bool(const Action
 	if (actions_.empty()) {
 		// if there are no more actions then unhook the action player object from the scene's update event
 		initial_actor_state_ = nullptr;
-		auto scene = parent_.getScene().lock();
+		auto scene = ceph::Game::getInstance().getActiveScene();
 		scene->updateActionsEvent.disconnect(*this);
 	}
 	else {
@@ -73,6 +74,8 @@ void ceph::ActionPlayerImpl::removeActions(const std::function<bool(const Action
 
 void ceph::ActionPlayerImpl::update(float dt)
 {
+	ActorLock lock(parent_);
+
 	bool has_completed_actions = false;
 	ceph::ActorState state( *initial_actor_state_ );
 	for (auto& ai: actions_) {
@@ -101,7 +104,7 @@ void ceph::ActionPlayerImpl::update(float dt)
 
 void ceph::ActionPlayerImpl::setActorState(const ActorState& state)
 {
-	auto& transformable = parent_.impl_->properties;
+	auto& transformable = parent_.lock()->impl_->properties;
 	transformable.setPosition( state.getPosition() );
 	transformable.setRotation( state.getRotation() );
 	transformable.setScale( state.getScale() );
@@ -114,21 +117,25 @@ void ceph::ActionPlayerImpl::applyConstraints(ActorState& state)
 		constraint->apply(state);
 }
 
-ceph::ActionPlayerImpl::ActionPlayerImpl(Actor& parent) :
-	parent_(parent)
+ceph::ActionPlayerImpl::ActionPlayerImpl() 
 {
+}
+
+void ceph::ActionPlayerImpl::initialize(const std::shared_ptr<ceph::Actor> actor)
+{
+	parent_ = actor;
 }
 
 void ceph::ActionPlayerImpl::run()
 {
-	auto scene = parent_.getScene().lock();
+	auto scene = parent_.lock()->getScene().lock();
 	scene->updateActionsEvent.connect(*this, &ceph::ActionPlayerImpl::update);
-	initial_actor_state_ = std::make_unique<ceph::ActorState>(parent_);
+	initial_actor_state_ = std::make_unique<ceph::ActorState>(*parent_.lock());
 }
 
 bool ceph::ActionPlayerImpl::isRunning() const
 {
-	return hasActions() && parent_.isInScene();
+	return hasActions() && parent_.lock()->isInScene();
 }
 
 bool ceph::ActionPlayerImpl::hasActions() const
@@ -140,7 +147,7 @@ void ceph::ActionPlayerImpl::applyAction(int id, const ceph::Action& action, boo
 {
 	bool wasRunning = isRunning();
 	actions_.push_back({id, action, repeat });
-	if (!wasRunning && parent_.isInScene())
+	if (!wasRunning && parent_.lock()->isInScene())
 		run();
 }
 
@@ -216,7 +223,7 @@ void ceph::ActionPlayerImpl::clearConstraints()
 
 void ceph::ActionPlayerImpl::enforceConstraints()
 {
-	ceph::ActorState state( parent_ );
+	ceph::ActorState state( *parent_.lock() );
 	applyConstraints(state);
 	setActorState(state);
 }

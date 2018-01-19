@@ -34,8 +34,8 @@ namespace ceph
 
 		virtual CoordinateMapping getCoordinateMapping() const = 0;
 
-
 		virtual void addDebugRect(const Rect<float>& rect) = 0;
+		virtual  std::shared_ptr<ceph::Scene> getActiveScene() const  = 0;
 
 		Signal<bool, KeyCode, unsigned char> keyEvent;
 

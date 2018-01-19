@@ -91,6 +91,11 @@ void ceph::Actor::runActions()
 		child->runActions();
 }
 
+void ceph::Actor::initializeImpl(const std::shared_ptr<Actor> parent)
+{
+	impl_->actions.initialize(parent);
+}
+
 bool ceph::Actor::hasActions() const
 {
 	if (impl_->actions.hasActions())

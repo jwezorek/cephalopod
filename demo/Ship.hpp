@@ -12,6 +12,7 @@ class Ship : public ceph::Group
 		Left = 0,
 		Right = 1
 	};
+	static constexpr int BULLET_EXPIRED = 2;
 
 	std::shared_ptr<ceph::SpriteSheet> sprites_;
 	bool is_thruster_on_;
