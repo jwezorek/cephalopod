@@ -21,7 +21,7 @@ namespace ceph {
 		template<class T, class... Args>
 		class Subscriber : public details::SubscriberBase<Args...> {
 		private:
-			void* t;
+			T* t;
 			std::function<void(Args...)> func;
 		public:
 			Subscriber(T* t, void(T::*f)(Args...)) :

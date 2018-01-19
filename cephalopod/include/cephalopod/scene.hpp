@@ -21,6 +21,7 @@ namespace ceph {
 	{
 		friend class GameImpl;
 		friend class Actor;
+		friend class ActionPlayerImpl;
 
 	private:
 		std::unique_ptr<SceneImpl> impl_;

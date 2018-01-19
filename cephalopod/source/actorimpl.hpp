@@ -2,7 +2,7 @@
 
 #include "SFML/Graphics.hpp"
 #include "../include/cephalopod/actor.hpp"
-#include "actionplayer.hpp"
+#include "actionplayerimpl.hpp"
 
 namespace ceph
 {
@@ -14,7 +14,7 @@ namespace ceph
 		Vec2D<float> anchor;
 		Size<int> frame_sz;
 		sf::Transformable properties;
-		ActionPlayer actions;
+		ActionPlayerImpl actions;
 
 		ActorImpl(Actor& a, const sf::Transformable& props = sf::Transformable());
 	};

@@ -3,12 +3,13 @@
 #include "../include/cephalopod/signals.hpp"
 #include "../include/cephalopod/actions.hpp"
 #include "../include/cephalopod/actionconstraints.hpp"
+#include "../include/cephalopod/actionplayer.hpp"
 
 namespace ceph {
 
 	class Scene;
 
-	class ActionPlayer : public Slot<ActionPlayer>
+	class ActionPlayerImpl : public Slot<ActionPlayerImpl>, public ActionPlayer
 	{
 		friend Scene;
 		friend Actor;
@@ -20,7 +21,7 @@ namespace ceph {
 			int id;
 			Action action;
 			float elapsed;
-			Signal<Action&> signal;
+			Signal<int> signal;
 			bool complete;
 			bool repeat;
 
@@ -40,7 +41,7 @@ namespace ceph {
 		std::vector<std::shared_ptr<ActionConstraint>> constraints_;
 
 		void removeActions(const std::function<bool(const ActionInProgress&)> predicate);
-		void finalizeAction(ceph::ActionPlayer::ActionInProgress & aip, bool emit_signal = true);
+		void finalizeAction(ActionInProgress & aip, bool emit_signal = true);
 		void resetActions();
 		void update(float dt);
 		void setActorState(const ActorState& state);
@@ -48,7 +49,7 @@ namespace ceph {
 		void run();
 
 	public:
-		ActionPlayer(Actor& parent);
+		ActionPlayerImpl(Actor& parent);
 		bool hasActions() const;
 		bool isRunning() const;
 		void applyAction(int id, const ceph::Action& action, bool repeat = false);
@@ -56,8 +57,11 @@ namespace ceph {
 		void applyActions(std::initializer_list<Action> actions);
 		void applyConstraint(const std::shared_ptr<ActionConstraint>& constraint);
 		void removeAction(int id);
+		Signal<int>& getCompletionSignal(int id);
+
 		bool hasAction(int id);
 		void clearActions();
+		void clearConstraints();
 		void enforceConstraints();
 		void translateCacheState(const ceph::Vec2D<float> offset);
 	};

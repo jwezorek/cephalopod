@@ -7,9 +7,10 @@
 
 Ship::RotationType Ship::getRotationState() const
 {
-	if (hasAction(static_cast<int>(RotationType::Left)))
+	auto& actions = getActions();
+	if (actions.hasAction(static_cast<int>(RotationType::Left)))
 		return RotationType::Left;
-	else if (hasAction(static_cast<int>(RotationType::Right)))
+	else if (actions.hasAction(static_cast<int>(RotationType::Right)))
 		return RotationType::Right;
 	return RotationType::None;
 }
@@ -40,13 +41,14 @@ void Ship::update(float dt)
 	auto old_position = getPosition();
 	setPosition(old_position + dt * velocity_ );
 
-	enforceConstraints();
+	getActions().enforceConstraints();
 }
 
 void Ship::handleRotationKey(bool key_down, Ship::RotationType direction)
 {
+	auto& actions = getActions();
 	if (!key_down) {
-		removeAction(static_cast<int>(direction));
+		actions.removeAction(static_cast<int>(direction));
 		return;
 	}
 
@@ -56,9 +58,11 @@ void Ship::handleRotationKey(bool key_down, Ship::RotationType direction)
 
 	if (rot_type == direction)
 		return;
+
 	if (rot_type == opp_direction)
-		removeAction( static_cast<int>(opp_direction) );
-	applyAction(
+		actions.removeAction( static_cast<int>(opp_direction) );
+
+	actions.applyAction(
 		static_cast<int>(direction),
 		ceph::createRotateByAction(1.0f,  8.0f * ((is_left) ? -1.0f : 1.0f))
 	);
@@ -86,7 +90,7 @@ void Ship::shoot()
 	bullet->setPosition(start_position);
 	bullet->setRotation(getRotation());
 
-	bullet->applyAction(
+	bullet->getActions().applyAction(
 		ceph::createMoveByAction(1.0, 600.0f * direction)
 	);
 

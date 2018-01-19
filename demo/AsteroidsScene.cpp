@@ -26,15 +26,15 @@ void Asteroids::initialize()
 		CreateStarLayer( -64.0f, 0.125f ),
 		CreateStarLayer( -32.0f, 0.0625f )
 	});
-	
+
 	addActor(
 		bkgd_layer_ = ceph::Actor::create<ceph::Group>()
 	);
-	
+
 	auto ship = ceph::Actor::create<Ship>(sprite_sheet_);
 
 	ship->setPosition(700, 300);
-	ship->applyConstraint(
+	ship->getActions().applyConstraint(
 		std::make_shared<ceph::WrapTorroidally>( 40.0f, 40.0f )
 	);
 	addActor(ship);
@@ -58,16 +58,17 @@ std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float 
 	for (int i = 0; i < 85; i++) {
 		auto star_id = "star_" + std::to_string(star_distr(eng));
 		auto star = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, star_id);
+		auto& star_actions = star->getActions();
 		star->setAnchorPt(0.5f, 0.5f);
 		star->setPosition( static_cast<float>(x_distr( eng )), static_cast<float>(y_distr( eng )) );
 		star->setAlpha(alpha);
-		star->applyAction(
+		star_actions.applyAction(
 			ceph::createMoveByAction(2.0f, horz_speed, 0), true
 		);
-		star->applyAction(
+		star_actions.applyAction(
 			ceph::createRotateByAction(1.0f, 1.0f), true
 		);
-		star->applyConstraint(
+		star_actions.applyConstraint(
 			std::make_shared<ceph::WrapTorroidally>(10.0f, 0.0f)
 		);
 		layer->addChild(star);

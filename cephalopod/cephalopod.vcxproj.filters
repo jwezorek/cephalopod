@@ -87,10 +87,13 @@
     <ClInclude Include="include\cephalopod\actionconstraints.hpp">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="source\actionplayer.hpp">
+    <ClInclude Include="source\actorstate.hpp">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="source\actorstate.hpp">
+    <ClInclude Include="include\cephalopod\actionplayer.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="source\actionplayerimpl.hpp">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
   </ItemGroup>
@@ -143,13 +146,13 @@
     <ClCompile Include="source\group.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\actionplayer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\actionconstraints.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\actorstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\actionplayerimpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -6,6 +6,7 @@
 #include "types.hpp"
 #include "signals.hpp"
 #include "actions.hpp"
+#include "actionplayer.hpp"
 
 namespace ceph {
 
@@ -21,7 +22,7 @@ namespace ceph {
 		friend class Sprite;
 		friend class Group;
 		friend class ActorState;
-		friend class ActionPlayer;
+		friend class ActionPlayerImpl;
 
 	private:
 		Actor();
@@ -49,16 +50,8 @@ namespace ceph {
 		bool hasParent() const;
 		bool isInSceneTopLevel() const;
 
+		ActionPlayer& getActions() const;
 		bool hasActions() const;
-		bool isRunningActions() const;
-		void applyAction(int id, const Action& action, bool repeat = false);
-		void applyAction(const Action& action, bool repeat = false);
-		void applyActions(std::initializer_list<Action> actions);
-		void applyConstraint(const std::shared_ptr<ActionConstraint>& constraint);
-		void removeAction(int id);
-		bool hasAction(int id) const;
-		void clearActions();
-		void enforceConstraints();
 
 		std::weak_ptr<Actor> getParent() const;
 		std::weak_ptr<Actor> getTopLevelParent() const;

@@ -78,6 +78,11 @@ bool ceph::Actor::isInSceneTopLevel() const
 	return isInScene() && !hasParent();
 }
 
+ceph::ActionPlayer& ceph::Actor::getActions() const
+{
+	return impl_->actions;
+}
+
 void ceph::Actor::runActions()
 {
 	if (hasActions())
@@ -94,51 +99,6 @@ bool ceph::Actor::hasActions() const
 		if (child->hasActions())
 			return true;
 	return false;
-}
-
-bool ceph::Actor::isRunningActions() const
-{
-	return impl_->actions.isRunning();
-}
-
-void ceph::Actor::applyAction(int id, const ceph::Action& action, bool repeat)
-{
-	impl_->actions.applyAction(id, action, repeat);
-}
-
-void ceph::Actor::applyAction(const ceph::Action& action, bool repeat)
-{
-	impl_->actions.applyAction(action, repeat);
-}
-
-void ceph::Actor::applyActions(std::initializer_list<Action> actions)
-{
-	impl_->actions.applyActions(actions);
-}
-
-void ceph::Actor::applyConstraint(const std::shared_ptr<ActionConstraint>& constraint)
-{
-	impl_->actions.applyConstraint( constraint );
-}
-
-void ceph::Actor::removeAction(int id)
-{
-	impl_->actions.removeAction( id );
-}
-bool ceph::Actor::hasAction(int id) const
-{
-	return impl_->actions.hasAction(id);
-}
-
-void ceph::Actor::clearActions()
-{
-	impl_->actions.clearActions();
-}
-
-
-void ceph::Actor::enforceConstraints()
-{
-	impl_->actions.enforceConstraints();
 }
 
 std::weak_ptr<ceph::Actor> ceph::Actor::getParent() const
@@ -207,7 +167,7 @@ ceph::Vec2D<float> ceph::Actor::getPosition() const
 
 void ceph::Actor::setPosition(const ceph::Vec2D<float>& pt)
 {
-	if (!isRunningActions()) {
+	if (! impl_->actions.isRunning()) {
 		impl_->properties.setPosition(sf::Vector2f(pt.x, pt.y));
 	} else {
 		auto diff = pt - getPosition();

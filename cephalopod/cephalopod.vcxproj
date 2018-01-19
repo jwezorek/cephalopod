@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\cephalopod\actionconstraints.hpp" />
+    <ClInclude Include="include\cephalopod\actionplayer.hpp" />
     <ClInclude Include="include\cephalopod\actions.hpp" />
     <ClInclude Include="include\cephalopod\actor.hpp" />
     <ClInclude Include="include\cephalopod\easingactions.hpp" />
@@ -165,7 +166,7 @@
     <ClInclude Include="include\cephalopod\spritesheet.hpp" />
     <ClInclude Include="include\cephalopod\texture.hpp" />
     <ClInclude Include="include\cephalopod\types.hpp" />
-    <ClInclude Include="source\actionplayer.hpp" />
+    <ClInclude Include="source\actionplayerimpl.hpp" />
     <ClInclude Include="source\actorimpl.hpp" />
     <ClInclude Include="source\actorstate.hpp" />
     <ClInclude Include="source\easingfunctions.hpp" />
@@ -178,7 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\actionconstraints.cpp" />
-    <ClCompile Include="source\actionplayer.cpp" />
+    <ClCompile Include="source\actionplayerimpl.cpp" />
     <ClCompile Include="source\actions.cpp" />
     <ClCompile Include="source\actor.cpp" />
     <ClCompile Include="source\actorimpl.cpp" />
