@@ -2,6 +2,7 @@
 
 #include "types.hpp"
 #include <functional>
+#include <vector>
 
 namespace ceph {
 
@@ -28,5 +29,16 @@ namespace ceph {
 	Action createRotateByAction(float duration, float theta);
 	Action createFadeByAction(float duration, float alpha);
 	Action createFadeOutAction(float duration, const Actor& actor);
+
+	Action createSimultaneousActions(std::initializer_list<Action> actions);
+	Action createSimultaneousActions(const std::shared_ptr<std::vector<Action>>& actions);
+
+	template<class It>
+	Action createSimultaneousActions(It first, It last)
+	{
+		return createSimultaneousActions(
+			std::make_shared<std::vector<Action>>(first, last)
+		);
+	}
 }
 

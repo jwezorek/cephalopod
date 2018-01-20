@@ -93,7 +93,10 @@ void Ship::shoot()
 
 	bullet->getActions().applyAction(
 		FLYING_BULLET_ACTION,
-		ceph::createMoveByAction( 1.0, 600.0f * direction )
+		ceph::createSimultaneousActions({
+			ceph::createMoveByAction(1.0, 600.0f * direction),
+			ceph::createFadeOutAction(1.0, *bullet)
+		})
 	);
 
 	auto bkgd = std::static_pointer_cast<Asteroids>(scene_.lock())->getBkgdLayer();

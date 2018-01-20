@@ -34,7 +34,6 @@ void ceph::Actor::addChildren(std::initializer_list<std::shared_ptr<Actor>> chil
 
 void ceph::Actor::removeChild(const std::shared_ptr<ceph::Actor>& actor)
 {
-	auto old_child = actor;
 	auto i = std::find(children_.begin(), children_.end(), actor);
 	if (i == children_.end())
 		return;
@@ -47,7 +46,7 @@ void ceph::Actor::removeChild(const std::shared_ptr<ceph::Actor>& actor)
 
 	if (scene != nullptr || scene == Game::getInstance().getActiveScene())
 	{
-		scene->impl_->dropped_actors_.push_back(old_child);
+		scene->impl_->dropped_actors_.push_back(actor);
 	}
 }
 

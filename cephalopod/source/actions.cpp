@@ -66,3 +66,27 @@ ceph::Action ceph::createFadeOutAction(float duration, const ceph::Actor& actor)
 {
 	return ceph::createFadeByAction(duration, -actor.getAlpha());
 }
+
+ceph::Action ceph::createSimultaneousActions(std::initializer_list<ceph::Action> actions)
+{
+	return ceph::createSimultaneousActions(actions.begin(), actions.end());
+}
+
+ceph::Action ceph::createSimultaneousActions(const std::shared_ptr<std::vector<ceph::Action>>& actions)
+{
+	float duration = std::max_element (
+			actions->begin(), actions->end(),
+			[](auto& a1, auto& a2) { return a1.getDuration() < a2.getDuration(); }
+		)->getDuration(); 
+
+	return ceph::Action(
+		duration,
+		[actions, duration](ceph::ActorState& state, float t) -> void {
+			for (auto action : *actions) {
+				float action_t = (t * duration) / action.getDuration();
+				action_t = (action_t <= 1.0f) ? action_t : 1.0f;
+				action(state, action_t);
+			}
+		}
+	);
+}
