@@ -3,6 +3,7 @@
 #include "cephalopod/types.hpp"
 #include "cephalopod/game.hpp"
 #include "cephalopod/actionconstraints.hpp"
+#include "cephalopod/easingactions.hpp"
 #include "Ship.hpp"
 #include "AsteroidsScene.hpp"
 
@@ -93,9 +94,14 @@ void Ship::shoot()
 
 	bullet->getActions().applyAction(
 		FLYING_BULLET_ACTION,
-		ceph::createSimultaneousActions({
-			ceph::createMoveByAction(1.0, 600.0f * direction),
-			ceph::createFadeOutAction(1.0, *bullet)
+		ceph::createActionSequence({
+			ceph::createMoveByAction(0.75, 450.0f * direction),
+			ceph::createSimultaneousActions({
+				ceph::createMoveByAction(0.25, 150.0f * direction),
+				ceph::createEasingAction<ceph::EasingFunctionType::Bouncy, ceph::EasingType::Out>(
+					ceph::createFadeOutAction(0.25, *bullet)
+				)
+			})
 		})
 	);
 

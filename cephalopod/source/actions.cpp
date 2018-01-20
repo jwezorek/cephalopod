@@ -90,3 +90,35 @@ ceph::Action ceph::createSimultaneousActions(const std::shared_ptr<std::vector<c
 		}
 	);
 }
+
+ceph::Action ceph::createActionSequence(std::initializer_list<ceph::Action> actions)
+{
+	return ceph::createActionSequence(actions.begin(), actions.end());
+}
+
+ceph::Action ceph::createActionSequence(const std::shared_ptr<std::vector<ceph::Action>>& actions)
+{
+	float duration = std::accumulate(
+		actions->begin(), actions->end(), 0.0f,
+		[](float sum, ceph::Action& a)->float { return sum + a.getDuration(); }
+	);
+	return ceph::Action(
+		duration,
+		[actions, duration](ceph::ActorState& state, float t) -> void {
+				float time = t * duration;
+				float action_start = 0.0f;
+				for (auto action : *actions) {
+					float action_end = action_start + action.getDuration();
+					float action_t = 0.0f;
+					if (time >= action_start && time <= action_end)
+						action_t = (time - action_start) / action.getDuration();
+					else if (time > action_end)
+						action_t = 1.0f;
+					else if (time < action_start)
+						return;
+					action(state, action_t);
+					action_start += action.getDuration();
+				}
+			}
+		);
+}

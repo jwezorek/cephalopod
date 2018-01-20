@@ -40,5 +40,16 @@ namespace ceph {
 			std::make_shared<std::vector<Action>>(first, last)
 		);
 	}
+
+	Action createActionSequence(std::initializer_list<Action> actions);
+	Action createActionSequence(const std::shared_ptr<std::vector<Action>>& actions);
+
+	template<class It>
+	Action createActionSequence(It first, It last)
+	{
+		return createActionSequence(
+			std::make_shared<std::vector<Action>>(first, last)
+		);
+	}
 }
 
