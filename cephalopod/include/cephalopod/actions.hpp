@@ -5,6 +5,7 @@
 
 namespace ceph {
 
+	class Actor;
 	class ActorState;
 	using ActionFunction = std::function<void(ActorState&, float)>;
 
@@ -25,5 +26,7 @@ namespace ceph {
 	Action createMoveByAction(float duration, const Vec2D<float>& vec);
 	Action createMoveByAction(float duration, float x, float y);
 	Action createRotateByAction(float duration, float theta);
+	Action createFadeByAction(float duration, float alpha);
+	Action createFadeOutAction(float duration, const Actor& actor);
 }
 

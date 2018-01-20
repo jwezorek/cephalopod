@@ -50,3 +50,19 @@ ceph::Action ceph::createRotateByAction(float duration, float theta)
 		}
 	);
 }
+
+ceph::Action ceph::createFadeByAction(float duration, float alpha)
+{
+	return ceph::Action(
+		duration,
+		[alpha](ceph::ActorState& state, float t) -> void {
+			float old_alpha = state.getAlpha();
+			state.setAlpha( old_alpha + t*alpha);
+		}
+	);
+}
+
+ceph::Action ceph::createFadeOutAction(float duration, const ceph::Actor& actor)
+{
+	return ceph::createFadeByAction(duration, -actor.getAlpha());
+}

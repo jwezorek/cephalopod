@@ -5,9 +5,10 @@
 #include "util.hpp"
 #include "../include/cephalopod/actor.hpp"
 
-ceph::ActorState::ActorState(const ceph::Actor& actor)
+ceph::ActorState::ActorState(const ceph::Actor& actor) : 
+	alpha_(actor.getAlpha()),
+	transform_(actor.impl_->properties)
 {
-	transform_ = actor.impl_->properties;
 	auto parent = actor.getParent();
 	sf::Transform trans;
 	while (!parent.expired())
@@ -59,4 +60,14 @@ float ceph::ActorState::getRotation() const
 sf::Vector2f ceph::ActorState::getScale() const
 {
 	return  transform_.getScale();
+}
+
+void ceph::ActorState::setAlpha(float alpha) 
+{
+	alpha_ = alpha;
+}
+
+float ceph::ActorState::getAlpha() const
+{
+	return alpha_;
 }

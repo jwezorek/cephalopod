@@ -12,6 +12,7 @@ namespace ceph {
 	private:
 		sf::Transform local_to_global_transform_;
 		sf::Transformable transform_;
+		float alpha_;
 
 	public:
 		ActorState(const Actor& actor);
@@ -20,6 +21,8 @@ namespace ceph {
 		void translate(float x, float y);
 		void rotate(float theta);
 
+		void setAlpha(float alpha);
+		float getAlpha() const;
 		sf::Vector2f getGlobalPosition() const;
 		void setGlobalPosition(const sf::Vector2f& pt);
 

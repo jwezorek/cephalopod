@@ -136,6 +136,8 @@ float ceph::Actor::getAlpha() const
 
 void ceph::Actor::setAlpha(float alpha)
 {
+	alpha = (alpha > 1.0f) ? 1.0f : alpha;
+	alpha = (alpha < 0.0f) ? 0.0f : alpha;
 	impl_->alpha = alpha;
 }
 

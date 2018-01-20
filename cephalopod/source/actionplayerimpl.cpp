@@ -104,6 +104,7 @@ void ceph::ActionPlayerImpl::setActorState(const ActorState& state)
 	transformable.setPosition( state.getPosition() );
 	transformable.setRotation( state.getRotation() );
 	transformable.setScale( state.getScale() );
+	parent_.setAlpha(state.getAlpha());
 }
 
 
