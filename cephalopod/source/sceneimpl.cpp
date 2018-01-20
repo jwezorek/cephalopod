@@ -4,7 +4,7 @@
 #include "textureimpl.hpp"
 #include "util.hpp"
 
-ceph::SceneImpl::SceneImpl()
+ceph::SceneImpl::SceneImpl() : dropped_actors_()
 {
 	coordinate_mapping_mode_ = ceph::CoordinateMapping::StretchToFit;
 }

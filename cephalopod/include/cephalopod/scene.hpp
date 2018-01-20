@@ -31,6 +31,7 @@ namespace ceph {
 	protected:
 		Signal<float> updateActionsEvent;
 
+		void endGameLoopIteration();
 		Scene();
 
 	public:

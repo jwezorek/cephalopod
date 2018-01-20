@@ -33,7 +33,7 @@ namespace ceph
 		virtual Vec2D<float> convertFromScreenCoords(const Vec2D<float>& rect) const = 0;
 
 		virtual CoordinateMapping getCoordinateMapping() const = 0;
-
+		virtual std::shared_ptr<Scene> getActiveScene() const = 0;
 
 		virtual void addDebugRect(const Rect<float>& rect) = 0;
 

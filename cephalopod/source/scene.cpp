@@ -12,6 +12,11 @@ ceph::Scene::Scene()
 	impl_ = std::make_unique<SceneImpl>();
 }
 
+void ceph::Scene::endGameLoopIteration()
+{
+	impl_->dropped_actors_.clear();
+}
+
 void ceph::Scene::setBackground(const std::shared_ptr<Texture>& tex)
 {
 	setBackground(tex, ceph::Game::getInstance().getCoordinateMapping());

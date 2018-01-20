@@ -18,7 +18,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		}
 	);
 
-	//game->initialize(ceph::ScreenMode::WindowedWithTitleBar, 800, 800, "foo");
+	//game->initialize(ceph::ScreenMode::WindowedWithTitleBar, 1280, 1024, "foo");
 	//game->setLogicalCoordinates(ceph::CoordinateMapping::UseBlackBars, ceph::Size<float>(500.0, 500.0f), ceph::CoordinateSystem::CenterOriginAscendingY);
 	game->initialize(ceph::ScreenMode::FullScreenExclusive);
 

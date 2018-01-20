@@ -2,6 +2,7 @@
 #include <cmath>
 #include "cephalopod/types.hpp"
 #include "cephalopod/game.hpp"
+#include "cephalopod/actionconstraints.hpp"
 #include "Ship.hpp"
 #include "AsteroidsScene.hpp"
 
@@ -91,10 +92,18 @@ void Ship::shoot()
 	bullet->setRotation(getRotation());
 
 	bullet->getActions().applyAction(
-		ceph::createMoveByAction(1.0, 600.0f * direction)
+		FLYING_BULLET_ACTION,
+		ceph::createMoveByAction( 1.0, 600.0f * direction )
 	);
 
 	auto bkgd = std::static_pointer_cast<Asteroids>(scene_.lock())->getBkgdLayer();
+	bullet->getActions().getCompletionSignal(FLYING_BULLET_ACTION).connect(
+		*bullet,
+		[bullet,bkgd](int i) {
+			bkgd->removeChild(bullet);
+		}
+	);
+	
 	bkgd->addChild(bullet);
 }
 

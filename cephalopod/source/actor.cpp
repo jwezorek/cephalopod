@@ -1,11 +1,14 @@
 #include "../include/cephalopod/actor.hpp"
 #include "../include/cephalopod/types.hpp"
 #include "../include/cephalopod/scene.hpp"
+#include "../include/cephalopod/Game.hpp"
+#include "../include/cephalopod/Scene.hpp"
 #include "SFML/Graphics.hpp"
 #include "drawingcontext.hpp"
 #include "actorimpl.hpp"
 #include "actorstate.hpp"
 #include "util.hpp"
+#include "sceneimpl.hpp"
 
 ceph::Actor::Actor() :
 	impl_(std::make_unique<ceph::ActorImpl>(*this))
@@ -31,14 +34,21 @@ void ceph::Actor::addChildren(std::initializer_list<std::shared_ptr<Actor>> chil
 
 void ceph::Actor::removeChild(const std::shared_ptr<ceph::Actor>& actor)
 {
+	auto old_child = actor;
 	auto i = std::find(children_.begin(), children_.end(), actor);
 	if (i == children_.end())
 		return;
 
+	auto scene = actor->getScene().lock();
+
 	(*i)->parent_ = std::weak_ptr<Actor>();
 	(*i)->detachFromScene();
-
 	children_.erase(i);
+
+	if (scene != nullptr || scene == Game::getInstance().getActiveScene())
+	{
+		scene->impl_->dropped_actors_.push_back(old_child);
+	}
 }
 
 void ceph::Actor::detach()

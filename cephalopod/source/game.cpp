@@ -226,6 +226,7 @@ void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 			drawBlackBars();
 
 		window_->display();
+		active_scene_->endGameLoopIteration();
 	}
 }
 
@@ -298,6 +299,11 @@ ceph::Vec2D<float> ceph::GameImpl::convertToScreenCoords(const ceph::Vec2D<float
 ceph::Vec2D<float> ceph::GameImpl::convertFromScreenCoords(const ceph::Vec2D<float>& pt) const
 {
 	return ToCephPoint(coord_transform_.getInverse().transformPoint(ToSfPoint(pt)));
+}
+
+std::shared_ptr<ceph::Scene> ceph::GameImpl::getActiveScene() const
+{
+	return active_scene_;
 }
 
 ceph::GameImpl* ceph::GameImpl::instance_ = nullptr;

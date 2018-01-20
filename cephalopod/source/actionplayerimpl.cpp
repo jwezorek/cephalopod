@@ -1,6 +1,7 @@
 #include "actionplayerimpl.hpp"
 #include "../include/cephalopod/scene.hpp"
 #include "../include/cephalopod/actions.hpp"
+#include "../include/cephalopod/game.hpp"
 #include "util.hpp"
 #include "actorstate.hpp"
 #include "actorimpl.hpp"
@@ -61,10 +62,8 @@ void ceph::ActionPlayerImpl::removeActions(const std::function<bool(const Action
 	if (actions_.empty()) {
 		// if there are no more actions then unhook the action player object from the scene's update event
 		initial_actor_state_ = nullptr;
-		auto scene = parent_.getScene().lock();
-		scene->updateActionsEvent.disconnect(*this);
-	}
-	else {
+		Game::getInstance().getActiveScene()->updateActionsEvent.disconnect(*this);
+	} else {
 		// toggle the complete flag of repeating items and if there are only repeating items
 		// left, re-set the cached state...
 		resetActions();

@@ -52,5 +52,6 @@ namespace ceph
 		Rect<float> convertFromScreenCoords(const Rect<float>& rect) const override;
 		Vec2D<float> convertToScreenCoords(const Vec2D<float>& rect) const override;
 		Vec2D<float> convertFromScreenCoords(const Vec2D<float>& rect)  const override;
+		std::shared_ptr<Scene> getActiveScene() const override;
 	};
 };

@@ -16,6 +16,7 @@ namespace ceph
 		std::shared_ptr<Texture> bkgd_tex_;
 		sf::Transform bkgd_mat_;
 		ceph::CoordinateMapping coordinate_mapping_mode_;
+		std::vector<std::shared_ptr<Actor>> dropped_actors_;
 
 		SceneImpl();
 		void drawBackground(const DrawingContext& rt);
