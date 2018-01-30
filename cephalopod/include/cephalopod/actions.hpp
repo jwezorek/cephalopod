@@ -51,5 +51,29 @@ namespace ceph {
 			std::make_shared<std::vector<Action>>(first, last)
 		);
 	}
+
+	Action createAnimationAction(std::initializer_list<std::tuple<std::string, float>> frames);
+	Action createAnimationAction(const std::shared_ptr<std::vector<std::tuple<std::string, float>>>& frames);
+
+	template<class It>
+	Action createAnimationAction(It first, It last)
+	{
+		return createAnimationAction(
+			std::make_shared<std::vector<std::tuple<std::string, float>>>(first, last)
+		);
+	}
+
+
+	Action createAnimationAction(float frame_duration, std::initializer_list<std::string> frames);
+
+	template<class It>
+	Action createAnimationAction(float time_step, It first, It last)
+	{
+		auto tuples = std::make_shared<std::vector<std::tuple<std::string, float>>>();
+		std::transform( first, last, std::back_inserter(*tuples),
+			[time_step](const std::string& f) {return std::make_tuple(f, time_step); }
+		);
+		return createAnimationAction(tuples);
+	}
 }
 

@@ -62,6 +62,16 @@ sf::Vector2f ceph::ActorState::getScale() const
 	return  transform_.getScale();
 }
 
+std::string ceph::ActorState::getSpriteFrame() const
+{
+	return sprite_frame_;
+}
+
+void ceph::ActorState::setSpriteFrame(const std::string & sprite_frame)
+{
+	sprite_frame_ = sprite_frame;
+}
+
 void ceph::ActorState::setAlpha(float alpha) 
 {
 	alpha_ = alpha;

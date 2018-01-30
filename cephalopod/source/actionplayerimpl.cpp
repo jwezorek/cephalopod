@@ -2,6 +2,7 @@
 #include "../include/cephalopod/scene.hpp"
 #include "../include/cephalopod/actions.hpp"
 #include "../include/cephalopod/game.hpp"
+#include "../include/cephalopod/sprite.hpp"
 #include "util.hpp"
 #include "actorstate.hpp"
 #include "actorimpl.hpp"
@@ -105,6 +106,11 @@ void ceph::ActionPlayerImpl::setActorState(const ActorState& state)
 	transformable.setRotation( state.getRotation() );
 	transformable.setScale( state.getScale() );
 	parent_.setAlpha(state.getAlpha());
+
+	auto sprite_frame = state.getSpriteFrame();
+	if (!sprite_frame.empty()) {
+		static_cast<ceph::Sprite*>(&parent_)->setFrame(sprite_frame);
+	}
 }
 
 

@@ -39,6 +39,54 @@ void Asteroids::initialize()
 	);
 	addActor(ship);
 	ship->connect(updateEvent, &Ship::update);
+
+	auto asteroid = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, "big_asteroid_0");
+	asteroid->getActions().applyAction(
+		ceph::createMoveByAction(1.0f, ceph::Vec2D<float>(100.0f, 100.0f)),
+		true
+	);
+	asteroid->getActions().applyAction(
+		ceph::createAnimationAction(0.025f, {
+			"big_asteroid_0", 
+			"big_asteroid_1",
+			"big_asteroid_2",
+			"big_asteroid_3",
+			"big_asteroid_4",
+			"big_asteroid_5",
+			"big_asteroid_6",
+			"big_asteroid_7",
+			"big_asteroid_8",
+			"big_asteroid_9",
+			"big_asteroid_10",
+			"big_asteroid_11",
+			"big_asteroid_12",
+			"big_asteroid_13",
+			"big_asteroid_14",
+			"big_asteroid_15",
+			"big_asteroid_16",
+			"big_asteroid_17",
+			"big_asteroid_18",
+			"big_asteroid_19",
+			"big_asteroid_20",
+			"big_asteroid_21",
+			"big_asteroid_22",
+			"big_asteroid_23",
+			"big_asteroid_24",
+			"big_asteroid_25",
+			"big_asteroid_26",
+			"big_asteroid_27",
+			"big_asteroid_28",
+			"big_asteroid_29",
+			"big_asteroid_30",
+			"big_asteroid_31",
+		}),
+		true
+	);
+
+	asteroid->getActions().applyConstraint(
+		std::make_shared<ceph::WrapTorroidally>(100.0f, 100.0f)
+	);
+	addActor(asteroid);
 }
 
 std::shared_ptr<ceph::Group> Asteroids::getBkgdLayer() const

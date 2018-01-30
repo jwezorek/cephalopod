@@ -13,6 +13,7 @@ namespace ceph {
 		sf::Transform local_to_global_transform_;
 		sf::Transformable transform_;
 		float alpha_;
+		std::string sprite_frame_;
 
 	public:
 		ActorState(const Actor& actor);
@@ -29,5 +30,8 @@ namespace ceph {
 		sf::Vector2f getPosition() const;
 		float getRotation() const;
 		sf::Vector2f getScale() const;
+
+		std::string getSpriteFrame() const;
+		void setSpriteFrame(const std::string& sprite_frame);
 	};
 }

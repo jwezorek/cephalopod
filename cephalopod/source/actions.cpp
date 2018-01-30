@@ -122,3 +122,39 @@ ceph::Action ceph::createActionSequence(const std::shared_ptr<std::vector<ceph::
 			}
 		);
 }
+
+ceph::Action ceph::createAnimationAction(std::initializer_list<std::tuple<std::string, float>> frames)
+{
+	return ceph::createAnimationAction(frames.begin(), frames.end());
+}
+
+ceph::Action ceph::createAnimationAction(const std::shared_ptr<std::vector<std::tuple<std::string, float>>>& frames)
+{
+	float duration = std::accumulate(
+		frames->begin(), frames->end(), 0.0f,
+		[](float sum, std::tuple<std::string, float>& pair)->float { return sum + std::get<1>(pair); }
+	);
+	return ceph::Action(
+			duration,
+			[frames, duration](ceph::ActorState& state, float t) -> void {
+			float time = t * duration;
+			float frame_start = 0.0f;
+			std::string frame_name;
+			for (auto frame_pair : *frames) {
+				float frame_duration = std::get<1>(frame_pair);
+				float frame_end = frame_start + frame_duration;
+
+				if (time >= frame_start && time <= frame_end)
+					frame_name = std::get<0>(frame_pair);
+
+				frame_start += frame_duration;
+			}
+			state.setSpriteFrame(frame_name);
+		}
+	);
+}
+
+ceph::Action ceph::createAnimationAction(float frame_duration, std::initializer_list<std::string> frames)
+{
+	return ceph::createAnimationAction(frame_duration, frames.begin(), frames.end());
+}
