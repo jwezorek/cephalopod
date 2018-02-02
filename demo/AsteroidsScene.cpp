@@ -18,7 +18,7 @@ void Asteroids::initialize()
 		".\\data\\zarquon.png",
 		".\\data\\zarquon.json" 
 	);
-	setBackgroundColor(ceph::ColorRGB(0, 20, 40));
+	setBackgroundColor(ceph::ColorRGB(10, 30, 90));
 	
 	addActors({
 		CreateStarLayer( -256.0f, 0.5f ),
@@ -40,53 +40,7 @@ void Asteroids::initialize()
 	addActor(ship);
 	ship->connect(updateEvent, &Ship::update);
 
-	auto asteroid = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, "big_asteroid_0");
-	asteroid->getActions().applyAction(
-		ceph::createMoveByAction(1.0f, ceph::Vec2D<float>(100.0f, 100.0f)),
-		true
-	);
-	asteroid->getActions().applyAction(
-		ceph::createAnimationAction(0.025f, {
-			"big_asteroid_0", 
-			"big_asteroid_1",
-			"big_asteroid_2",
-			"big_asteroid_3",
-			"big_asteroid_4",
-			"big_asteroid_5",
-			"big_asteroid_6",
-			"big_asteroid_7",
-			"big_asteroid_8",
-			"big_asteroid_9",
-			"big_asteroid_10",
-			"big_asteroid_11",
-			"big_asteroid_12",
-			"big_asteroid_13",
-			"big_asteroid_14",
-			"big_asteroid_15",
-			"big_asteroid_16",
-			"big_asteroid_17",
-			"big_asteroid_18",
-			"big_asteroid_19",
-			"big_asteroid_20",
-			"big_asteroid_21",
-			"big_asteroid_22",
-			"big_asteroid_23",
-			"big_asteroid_24",
-			"big_asteroid_25",
-			"big_asteroid_26",
-			"big_asteroid_27",
-			"big_asteroid_28",
-			"big_asteroid_29",
-			"big_asteroid_30",
-			"big_asteroid_31",
-		}),
-		true
-	);
-
-	asteroid->getActions().applyConstraint(
-		std::make_shared<ceph::WrapTorroidally>(100.0f, 100.0f)
-	);
-	addActor(asteroid);
+	addAsteroid( "medium_asteroid_", 24 );
 }
 
 std::shared_ptr<ceph::Group> Asteroids::getBkgdLayer() const
@@ -103,7 +57,7 @@ std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float 
 	std::uniform_real_distribution<> y_distr(bounds.y, bounds.y2());
 
 	auto layer = ceph::Actor::create<ceph::Group>();
-	for (int i = 0; i < 85; i++) {
+	for (int i = 0; i < 45; i++) {
 		auto star_id = "star_" + std::to_string(star_distr(eng));
 		auto star = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, star_id);
 		auto& star_actions = star->getActions();
@@ -123,4 +77,27 @@ std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float 
 	}
 
 	return layer;
+}
+
+void Asteroids::addAsteroid(const std::string& frame_prefix, int n )
+{
+	auto asteroid = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, frame_prefix + "0");
+	asteroid->getActions().applyAction(
+		ceph::createMoveByAction(1.0f, ceph::Vec2D<float>(100.0f, 100.0f)),
+		true
+	);
+
+	std::vector<std::string> frames;
+	for (int i = 0; i < n; i++)
+		frames.push_back(frame_prefix + std::to_string(i));
+
+	asteroid->getActions().applyAction(
+		ceph::createAnimationAction(0.025f, frames.begin(), frames.end()),
+		true
+	);
+	
+	asteroid->getActions().applyConstraint(
+		std::make_shared<ceph::WrapTorroidally>(100.0f, 100.0f)
+	);
+	addActor(asteroid);
 }
