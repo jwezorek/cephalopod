@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <random>
 #include "AsteroidsScene.hpp"
 #include "cephalopod/texture.hpp"
@@ -18,7 +20,7 @@ void Asteroids::initialize()
 		".\\data\\zarquon.png",
 		".\\data\\zarquon.json" 
 	);
-	setBackgroundColor(ceph::ColorRGB(10, 30, 90));
+	setBackgroundColor(ceph::ColorRGB(10, 30, 60));
 	
 	addActors({
 		CreateStarLayer( -256.0f, 0.5f ),
@@ -40,7 +42,10 @@ void Asteroids::initialize()
 	addActor(ship);
 	ship->connect(updateEvent, &Ship::update);
 
-	addAsteroid( "medium_asteroid_", 24 );
+	for (int i = 0; i < 5; i++) {
+		auto asteroid = createAsteroid();
+		addActor(asteroid);
+	}
 }
 
 std::shared_ptr<ceph::Group> Asteroids::getBkgdLayer() const
@@ -79,17 +84,35 @@ std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float 
 	return layer;
 }
 
-void Asteroids::addAsteroid(const std::string& frame_prefix, int n )
+std::shared_ptr<ceph::Sprite> Asteroids::createAsteroid()
 {
-	auto asteroid = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, frame_prefix + "0");
+	static const std::vector<std::tuple<std::string, int>> asteroid_sprites = {
+		{"red_asteroid", 32}, {"blue_asteroid", 24}, {"green_asteroid", 24}
+	};
+
+	const auto& sprite_frame_info = asteroid_sprites[std::uniform_int_distribution<>(0, asteroid_sprites.size()-1)(eng)];
+	auto frame_prefix = std::get<0>(sprite_frame_info);
+	auto num_frames = std::get<1>(sprite_frame_info);
+
+	auto bounds = ceph::Game::getInstance().getLogicalRect();
+	std::uniform_real_distribution<> x_distr(bounds.x, bounds.x2());
+	std::uniform_real_distribution<> y_distr(bounds.y, bounds.y2());
+	std::uniform_real_distribution<> rot_distr(0.0f, 2.0f*M_PI);
+
+
+	auto asteroid = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, frame_prefix + "_0");
+	asteroid->setPosition(x_distr(eng), y_distr(eng));
+
+	auto theta = rot_distr(eng);
 	asteroid->getActions().applyAction(
-		ceph::createMoveByAction(1.0f, ceph::Vec2D<float>(100.0f, 100.0f)),
+		ceph::createMoveByAction(1.0f, 100.0f * ceph::Vec2D<float>(cosf(theta), sinf(theta))),
 		true
 	);
+	asteroid->setRotation(rot_distr(eng));
 
 	std::vector<std::string> frames;
-	for (int i = 0; i < n; i++)
-		frames.push_back(frame_prefix + std::to_string(i));
+	for (int i = 0; i < num_frames; i++)
+		frames.push_back(frame_prefix + "_" + std::to_string(i));
 
 	asteroid->getActions().applyAction(
 		ceph::createAnimationAction(0.025f, frames.begin(), frames.end()),

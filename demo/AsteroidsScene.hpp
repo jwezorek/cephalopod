@@ -17,7 +17,7 @@ private:
 	std::shared_ptr<ceph::Group> bkgd_layer_;
 
 	std::shared_ptr<ceph::Actor> CreateStarLayer(float horz_speed, float alpha);
-	void addAsteroid(const std::string& frame_prefix, int n);
+	std::shared_ptr<ceph::Sprite> createAsteroid();
 
 public:
 	void initialize() override;
