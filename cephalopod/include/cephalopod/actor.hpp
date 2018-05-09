@@ -16,7 +16,7 @@ namespace ceph {
 	class Action;
 	class ActionConstraint;
 
-	class Actor : public Slot<Actor>, std::enable_shared_from_this<Actor>
+	class Actor : public Slot<Actor>, public std::enable_shared_from_this<Actor>
 	{
 		friend class Scene;
 		friend class Sprite;

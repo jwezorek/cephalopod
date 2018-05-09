@@ -62,6 +62,7 @@ std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float 
 	std::uniform_real_distribution<> y_distr(bounds.y, bounds.y2());
 
 	auto layer = ceph::Actor::create<ceph::Group>();
+
 	for (int i = 0; i < 45; i++) {
 		auto star_id = "star_" + std::to_string(star_distr(eng));
 		auto star = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, star_id);
@@ -99,7 +100,6 @@ std::shared_ptr<ceph::Sprite> Asteroids::createAsteroid()
 	std::uniform_real_distribution<> y_distr(bounds.y, bounds.y2());
 	std::uniform_real_distribution<> rot_distr(0.0f, 2.0f*M_PI);
 
-
 	auto asteroid = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, frame_prefix + "_0");
 	asteroid->setPosition(x_distr(eng), y_distr(eng));
 
@@ -122,5 +122,9 @@ std::shared_ptr<ceph::Sprite> Asteroids::createAsteroid()
 	asteroid->getActions().applyConstraint(
 		std::make_shared<ceph::WrapTorroidally>(100.0f, 100.0f)
 	);
+
+	//asteroid->setScale(0.25f);
+
 	addActor(asteroid);
+	return asteroid;
 }

@@ -17,7 +17,7 @@ namespace ceph {
 	typedef std::function<void(Actor&, float)> UpdateHandlerFunc;
 	typedef std::function<void(Actor&, bool, KeyCode, unsigned char)> KeyEventHandlerFunc;
 
-	class Scene : public Slot<Scene>, std::enable_shared_from_this<Scene>
+	class Scene : public Slot<Scene>, public std::enable_shared_from_this<Scene>
 	{
 		friend class GameImpl;
 		friend class Actor;

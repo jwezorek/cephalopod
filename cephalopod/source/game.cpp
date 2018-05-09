@@ -211,6 +211,7 @@ void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 		}
 
 		auto elapsed = clock.getElapsedTime().asSeconds();
+		//OutputDebugStringA((std::to_string(elapsed) + "\n").c_str());
 		active_scene_->updateActionsEvent.fire(elapsed);
 		active_scene_->updateEvent.fire(elapsed);
 		clock.restart();
