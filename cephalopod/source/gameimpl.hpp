@@ -32,6 +32,8 @@ namespace ceph
 			ceph::CoordinateMapping mapping_mode,
 			const ceph::Size<float>& log_sz, const ceph::Size<int>& scr_sz);
 
+		void render();
+
 	public:
 
 		GameImpl();

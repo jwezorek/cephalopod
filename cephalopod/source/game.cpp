@@ -20,6 +20,11 @@ namespace
 {
 	static std::vector<sf::RectangleShape*> debug_rects;
 
+	sf::Color CephToSfColor(const ceph::ColorRGB& cc)
+	{
+		return sf::Color(cc.r, cc.g, cc.b, 255);
+	}
+
 	sf::Rect<float> ToSfRect(const ceph::Rect<float>& r)
 	{
 		return sf::Rect<float>(r.x, r.y, r.wd, r.hgt);
@@ -125,6 +130,20 @@ std::tuple<sf::Transform, std::vector<sf::RectangleShape>> ceph::GameImpl::getCo
 	return std::tuple<sf::Transform, std::vector<sf::RectangleShape>>( mapping, bars );
 }
 
+void ceph::GameImpl::render()
+{
+	window_->clear(CephToSfColor(active_scene_->getBackgroundColor()));
+
+	active_scene_->draw(ceph::DrawingContext(*window_, coord_transform_));
+	for (auto rs : debug_rects)
+		window_->draw(*rs);
+
+	if (coord_mapping_mode_ == ceph::CoordinateMapping::UseBlackBars)
+		drawBlackBars();
+
+	window_->display();
+}
+
 ceph::GameImpl::GameImpl() {
 	ceph::GameImpl::instance_ = this;
 }
@@ -192,11 +211,6 @@ void ceph::GameImpl::drawBlackBars()
 	}
 }
 
-sf::Color CephToSfColor(const ceph::ColorRGB& cc)
-{
-	return sf::Color(cc.r, cc.g, cc.b, 255);
-}
-
 void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 	active_scene_ = startingScene;
 
@@ -210,23 +224,11 @@ void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 			handleInput(event);
 		}
 
-		auto elapsed = clock.getElapsedTime().asSeconds();
-		//OutputDebugStringA((std::to_string(elapsed) + "\n").c_str());
+		auto elapsed = clock.restart().asSeconds();
 		active_scene_->updateActionsEvent.fire(elapsed);
 		active_scene_->updateEvent.fire(elapsed);
-		clock.restart();
 
-		window_->clear( CephToSfColor(active_scene_->getBackgroundColor()) );
-
-		active_scene_->draw( ceph::DrawingContext( *window_, coord_transform_));
-
-		for (auto rs : debug_rects)
-			window_->draw(*rs);
-
-		if (coord_mapping_mode_ == ceph::CoordinateMapping::UseBlackBars)
-			drawBlackBars();
-
-		window_->display();
+		render();
 		active_scene_->endGameLoopIteration();
 	}
 }
