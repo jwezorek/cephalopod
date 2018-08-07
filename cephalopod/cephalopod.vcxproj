@@ -169,6 +169,7 @@
     <ClInclude Include="source\actionplayerimpl.hpp" />
     <ClInclude Include="source\actorimpl.hpp" />
     <ClInclude Include="source\actorstate.hpp" />
+    <ClInclude Include="source\clock.hpp" />
     <ClInclude Include="source\easingfunctions.hpp" />
     <ClInclude Include="source\gameimpl.hpp" />
     <ClInclude Include="source\json11.hpp" />
@@ -184,6 +185,7 @@
     <ClCompile Include="source\actor.cpp" />
     <ClCompile Include="source\actorimpl.cpp" />
     <ClCompile Include="source\actorstate.cpp" />
+    <ClCompile Include="source\clock.cpp" />
     <ClCompile Include="source\drawingcontext.hpp" />
     <ClCompile Include="source\easingactions.cpp" />
     <ClCompile Include="source\easingfunctions.cpp" />

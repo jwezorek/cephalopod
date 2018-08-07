@@ -15,6 +15,7 @@
 #include "drawingcontext.hpp"
 #include "util.hpp"
 #include "gameimpl.hpp"
+#include "clock.hpp"
 
 namespace
 {
@@ -215,7 +216,7 @@ void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 	active_scene_ = startingScene;
 
 	sf::Event event;
-	sf::Clock clock;
+	ceph::Clock clock;
 	
 	while (window_->isOpen()) {
 		while (window_->pollEvent(event)) {
@@ -224,7 +225,7 @@ void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 			handleInput(event);
 		}
 
-		auto elapsed = clock.restart().asSeconds();
+		auto elapsed = clock.restart();
 		active_scene_->updateActionsEvent.fire(elapsed);
 		active_scene_->updateEvent.fire(elapsed);
 

@@ -96,6 +96,9 @@
     <ClInclude Include="source\actionplayerimpl.hpp">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
+    <ClInclude Include="source\clock.hpp">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\game.cpp">
@@ -153,6 +156,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\actionplayerimpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\clock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

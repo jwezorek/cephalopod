@@ -115,7 +115,7 @@ std::shared_ptr<ceph::Sprite> Asteroids::createAsteroid()
 		frames.push_back(frame_prefix + "_" + std::to_string(i));
 
 	asteroid->getActions().applyAction(
-		ceph::createAnimationAction(0.025f, frames.begin(), frames.end()),
+		ceph::createAnimationAction(0.05f, frames.begin(), frames.end()),
 		true
 	);
 	
