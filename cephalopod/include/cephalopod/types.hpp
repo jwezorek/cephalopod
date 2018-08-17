@@ -30,14 +30,14 @@ namespace ceph {
 	};
 
 	template<typename T>
-	struct Vec2D {
+	struct Vec2 {
 		T x, y;
-		Vec2D(T xx = 0, T yy = 0) :
+		Vec2(T xx = 0, T yy = 0) :
 			x(xx), y(yy)
 		{ }
 
 		template<typename T>
-		Vec2D<T>& operator+=(Vec2D<T> v)
+		Vec2<T>& operator+=(Vec2<T> v)
 		{
 			*this = *this + v;
 			return *this;
@@ -45,31 +45,22 @@ namespace ceph {
 	};
 
 	template<typename T>
-	Vec2D<T> operator*(T k, Vec2D<T> v)
+	Vec2<T> operator*(T k, Vec2<T> v)
 	{
-		return Vec2D<T>(k * v.x, k * v.y);
+		return Vec2<T>(k * v.x, k * v.y);
 	}
 
 	template<typename T>
-	Vec2D<T> operator+(Vec2D<T> v1, Vec2D<T> v2)
+	Vec2<T> operator+(Vec2<T> v1, Vec2<T> v2)
 	{
-		return Vec2D<T>(v1.x + v2.x, v1.y + v2.y);
+		return Vec2<T>(v1.x + v2.x, v1.y + v2.y);
 	}
 
 	template<typename T>
-	Vec2D<T> operator-(Vec2D<T> v1, Vec2D<T> v2)
+	Vec2<T> operator-(Vec2<T> v1, Vec2<T> v2)
 	{
-		return Vec2D<T>(v1.x - v2.x, v1.y - v2.y);
+		return Vec2<T>(v1.x - v2.x, v1.y - v2.y);
 	}
-
-	template<typename T>
-	struct Size {
-		T wd;
-		T hgt;
-
-		Size(T w = 0, T h = 0) : wd(w), hgt(h)
-		{}
-	};
 
 	template<typename T>
 	struct Rect {
@@ -78,22 +69,22 @@ namespace ceph {
 		T wd;
 		T hgt;
 
-		Rect(const Vec2D<T> loc, const Size<T> sz) :
-			x(loc.x), y(loc.y), wd(sz.wd), hgt(sz.hgt) {
+		Rect(const Vec2<T> loc, const Vec2<T> sz) :
+			x(loc.x), y(loc.y), wd(sz.x), hgt(sz.y) {
 		}
 
 		Rect(T xx = 0, T yy = 0, T w = 0, T h = 0) :
 			x(xx), y(yy), wd(w), hgt(h) {
 		}
 
-		Vec2D<T> getLocation() const
+		Vec2<T> getLocation() const
 		{
-			return Vec2D<T>(x, y);
+			return Vec2<T>(x, y);
 		}
 
-		Size<T> getSize() const
+		Vec2<T> getSize() const
 		{
-			return Size<T>(wd, hgt);
+			return Vec2<T>(wd, hgt);
 		}
 
 		T x2() const
@@ -144,9 +135,14 @@ namespace ceph {
 			return  (rx <= px) && (px <= rx + wd) && (ry <= py) && (py <= ry + hgt);
 		}
 
-		bool contains(const Vec2D<T>& p)
+		bool contains(const Vec2<T>& p)
 		{
 			return contains(p.x, p.y);
+		}
+
+		bool isEmpty() const
+		{
+			return area() == 0;
 		}
 	};
 }

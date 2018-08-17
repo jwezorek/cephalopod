@@ -11,7 +11,6 @@
 
 namespace ceph {
 
-	class SceneImpl;
 	class GameImpl;
 
 	typedef std::function<void(Actor&, float)> UpdateHandlerFunc;
@@ -21,11 +20,12 @@ namespace ceph {
 	{
 		friend class GameImpl;
 		friend class Actor;
-		friend class ActionPlayerImpl;
+		friend class ActionPlayer;
 
 	private:
-		std::unique_ptr<SceneImpl> impl_;
+
 		std::deque<std::shared_ptr<Actor>> stage_;
+		std::list<std::shared_ptr<Actor>> dropped_actors_;
 		ColorRGB bkgd_color_;
 
 	protected:
@@ -50,7 +50,7 @@ namespace ceph {
 		template<typename T>
 		void addActor(const std::shared_ptr<T>& child) { addActor(std::static_pointer_cast<Actor>(child)); }
 
-		void draw(DrawingContext&& rt);
+		void draw(DrawingContext& rt);
 
 		Signal<float> updateEvent;
 

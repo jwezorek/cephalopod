@@ -25,7 +25,7 @@ namespace ceph {
 		void operator()(ActorState& state, float t) const;
 	};
 
-	Action createMoveByAction(float duration, const Vec2D<float>& vec);
+	Action createMoveByAction(float duration, const Vec2<float>& vec);
 	Action createMoveByAction(float duration, float x, float y);
 	Action createRotateByAction(float duration, float theta);
 	Action createFadeByAction(float duration, float alpha);
@@ -54,6 +54,7 @@ namespace ceph {
 	}
 
 	Action createAnimationAction(std::initializer_list<std::tuple<std::string, float>> frames);
+	/*
 	Action createAnimationAction(const std::shared_ptr<std::vector<std::tuple<std::string, float>>>& frames);
 
 	template<class It>
@@ -76,5 +77,5 @@ namespace ceph {
 		);
 		return createAnimationAction(tuples);
 	}
+	*/
 }
-

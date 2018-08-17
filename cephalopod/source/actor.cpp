@@ -3,15 +3,10 @@
 #include "../include/cephalopod/scene.hpp"
 #include "../include/cephalopod/Game.hpp"
 #include "../include/cephalopod/Scene.hpp"
-#include "SFML/Graphics.hpp"
-#include "drawingcontext.hpp"
-#include "actorimpl.hpp"
-#include "actorstate.hpp"
+#include "../include/cephalopod/actorstate.hpp"
 #include "util.hpp"
-#include "sceneimpl.hpp"
 
-ceph::Actor::Actor() :
-	impl_(std::make_unique<ceph::ActorImpl>(*this))
+ceph::Actor::Actor() : actions_(*this)
 {
 }
 
@@ -45,9 +40,7 @@ void ceph::Actor::removeChild(const std::shared_ptr<ceph::Actor>& actor)
 	children_.erase(i);
 
 	if (scene != nullptr || scene == Game::getInstance().getActiveScene())
-	{
-		scene->impl_->dropped_actors_.push_back(actor);
-	}
+		scene->dropped_actors_.push_back(actor);
 }
 
 void ceph::Actor::detach()
@@ -87,22 +80,27 @@ bool ceph::Actor::isInSceneTopLevel() const
 	return isInScene() && !hasParent();
 }
 
-ceph::ActionPlayer& ceph::Actor::getActions() const
+ceph::ActorState  ceph::Actor::getState() const
 {
-	return impl_->actions;
+	return state_;
+}
+
+ceph::ActionPlayer& ceph::Actor::getActions()
+{
+	return actions_;
 }
 
 void ceph::Actor::runActions()
 {
 	if (hasActions())
-		impl_->actions.run();
+		actions_.run();
 	for (auto& child : children_)
 		child->runActions();
 }
 
 bool ceph::Actor::hasActions() const
 {
-	if (impl_->actions.hasActions())
+	if (actions_.hasActions())
 		return true;
 	for (const auto& child : children_)
 		if (child->hasActions())
@@ -130,86 +128,80 @@ std::weak_ptr<ceph::Scene> ceph::Actor::getScene() const
 
 float ceph::Actor::getAlpha() const
 {
-	return impl_->alpha;
+	return state_.getAlpha();
 }
 
 void ceph::Actor::setAlpha(float alpha)
 {
 	alpha = (alpha > 1.0f) ? 1.0f : alpha;
 	alpha = (alpha < 0.0f) ? 0.0f : alpha;
-	impl_->alpha = alpha;
+	state_.setAlpha(alpha);
 }
 
 float ceph::Actor::getRotation() const
 {
-	return ceph::degreesToRadians(impl_->properties.getRotation());
+	return state_.getRotation();
 }
 
 void ceph::Actor::setRotation(float radians)
 {
-	impl_->properties.setRotation(ceph::radiansToDegrees(radians));
+	state_.setRotation(radians);
 }
 
-float ceph::Actor::getRotationDegrees() const
+ceph::Vec2<float> ceph::Actor::getScale() const
 {
-	return impl_->properties.getRotation();
-}
-
-void ceph::Actor::setRotationDegrees(float degrees)
-{
-	impl_->properties.setRotation(degrees);
-}
-
-float ceph::Actor::getScale() const
-{
-	return impl_->properties.getScale().x;
+	return state_.getScale();
 }
 
 void ceph::Actor::setScale(float scale)
 {
-	impl_->properties.scale(scale, scale);
+	state_.setScale(ceph::Vec2<float>(scale, scale));
 }
 
-ceph::Vec2D<float> ceph::Actor::getPosition() const
+void ceph::Actor::setScale(const ceph::Vec2<float>& s)
 {
-	auto origin = impl_->properties.getPosition();
-	return ceph::Vec2D<float>(origin.x, origin.y);
+	state_.setScale(s);
 }
 
-void ceph::Actor::setPosition(const ceph::Vec2D<float>& pt)
+ceph::Vec2<float> ceph::Actor::getPosition() const
 {
-	if (! impl_->actions.isRunning()) {
-		impl_->properties.setPosition(sf::Vector2f(pt.x, pt.y));
-	} else {
-		auto diff = pt - getPosition();
-		impl_->properties.setPosition(sf::Vector2f(pt.x, pt.y));
-		impl_->actions.translateCacheState(diff);
-	}
+	return state_.getPosition();
+}
+
+void ceph::Actor::setPosition(const ceph::Vec2<float>& pt)
+{
+	//if (! impl_->actions.isRunning()) {
+	state_.setPosition(pt);
+	//} else {
+	//	auto diff = pt - getPosition();
+	//	impl_->properties.setPosition(sf::Vector2f(pt.x, pt.y));
+	//	impl_->actions.translateCacheState(diff);
+	//}
 }
 
 void ceph::Actor::setPosition(float x, float y)
 {
-	setPosition(ceph::Vec2D<float>(x, y));
+	setPosition(ceph::Vec2<float>(x, y));
 }
 
-ceph::Vec2D<float> ceph::Actor::getAnchorPt() const
+ceph::Vec2<float> ceph::Actor::getAnchorPt() const
 {
-	auto origin = impl_->properties.getOrigin();
-	return ceph::Vec2D<float>(origin.x / impl_->frame_sz.wd, origin.y / impl_->frame_sz.hgt);
+	return state_.getAnchorPt();
 }
 
-void ceph::Actor::setAnchorPt(const ceph::Vec2D<float>& pt)
+ceph::Vec2<float> ceph::Actor::getAnchorPcnt() const
 {
-	setAnchorPt(pt.x, pt.y);
+	return state_.getAnchorPcnt();
 }
 
-void ceph::Actor::setAnchorPt(float x, float y)
+void ceph::Actor::setAnchorPcnt(const ceph::Vec2<float>& pt)
 {
-	impl_->anchor = ceph::Vec2D<float>(x,y);
-	impl_->properties.setOrigin(
-		x * static_cast<float>(impl_->frame_sz.wd),
-		y * static_cast<float>(impl_->frame_sz.hgt)
-	);
+	state_.setAnchorPcnt(pt.x, pt.y);
+}
+
+void ceph::Actor::setAnchorPcnt(float x, float y)
+{
+	state_.setAnchorPcnt(ceph::Vec2<float>(x, y));
 }
 
 ceph::Rect<float> ceph::Actor::getTotalGlobalBounds() const
@@ -223,15 +215,14 @@ ceph::Rect<float> ceph::Actor::getTotalGlobalBounds() const
 void ceph::Actor::draw(DrawingContext& dcParent) const 
 {
 	DrawingContext dc(
-		dcParent.target, 
-		dcParent.transform * impl_->properties.getTransform(), 
-		dcParent.alpha * impl_->alpha
+		dcParent.graphics,
+		dcParent.transformation * state_.getTransformationMatrix(),
+		dcParent.alpha * state_.getAlpha() 
 	);
 	drawThis(dc);
-	dc.transform *= sf::Transform().translate(impl_->properties.getOrigin());
-	for (const auto& child : children_) {
+	dc.transformation *= ceph::Mat3x3().translate(state_.getAnchorPt());
+	for (const auto& child : children_)
 		child->draw(dc);
-	}
 }
 
 ceph::Actor::~Actor()

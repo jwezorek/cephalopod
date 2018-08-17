@@ -3,10 +3,8 @@
 #include "Windows.h"
 #endif
 #include <cmath>
-#include <SFML/Graphics.hpp>
 #include "../include/cephalopod/types.hpp"
 #include "util.hpp"
-#include "TextureImpl.hpp"
 
 float ceph::radiansToDegrees(float radians)
 {
@@ -23,9 +21,9 @@ float ceph::lerp(float start, float end, float pcnt)
 	return (end - start) * pcnt + start;
 }
 
-ceph::Vec2D<float> ceph::lerpPtInRect(const ceph::Vec2D<float>& pt, const ceph::Rect<float>& r)
+ceph::Vec2<float> ceph::lerpPtInRect(const ceph::Vec2<float>& pt, const ceph::Rect<float>& r)
 {
-	return ceph::Vec2D<float>(
+	return ceph::Vec2<float>(
 		ceph::lerp(r.x, r.x2(), pt.x),
 		ceph::lerp(r.y, r.y2(), pt.y)
 	);
@@ -43,7 +41,7 @@ float ceph::magnitude(float x, float y)
 	return distance(0, 0, x, y);
 }
 
-float ceph::magnitude(Vec2D<float> vec)
+float ceph::magnitude(Vec2<float> vec)
 {
 	return magnitude(vec.x, vec.y);
 }

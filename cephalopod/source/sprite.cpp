@@ -1,44 +1,11 @@
+#include <memory>
 #include "../include/cephalopod/sprite.hpp"
 #include "../include/cephalopod/types.hpp"
 #include "../include/cephalopod/game.hpp"
 #include "gameimpl.hpp"
-#include "textureimpl.hpp"
-#include "spriteimpl.hpp"
-#include "drawingcontext.hpp"
-#include "actorimpl.hpp"
-#include "SFML/Graphics.hpp"
-
-/*--------------------------------------------------------------------------------*/
-
-sf::IntRect ToSfmlRect(const ceph::Rect<int>& r)
-{
-	return sf::IntRect(r.x, r.y, r.wd, r.hgt);
-}
-
-ceph::SpriteImpl::SpriteImpl() :
-	sfml_sprite_()
-{
-}
-
-ceph::SpriteImpl::SpriteImpl(const std::shared_ptr<ceph::Texture>& texture) :
-	sfml_sprite_(texture->impl_->sfml_impl_)
-{
-}
-
-ceph::SpriteImpl::SpriteImpl(const std::shared_ptr<ceph::Texture>& texture, const ceph::Rect<int>& r) :
-	sfml_sprite_(texture->impl_->sfml_impl_, ToSfmlRect(r) )
-{
-}
-
-ceph::SpriteImpl::SpriteImpl(const ceph::SpriteFrame& frame) :
-	sfml_sprite_( frame.getTexture()->impl_->sfml_impl_, ToSfmlRect(frame.getRect()) )
-{
-}
-
-/*--------------------------------------------------------------------------------*/
+#include "../include/cephalopod/drawingcontext.hpp"
 
 ceph::Sprite::Sprite(const std::shared_ptr<Texture>& texture):
-	impl_(std::make_unique<SpriteImpl>(texture)),
 	sprite_frame_(texture)
 {
 }
@@ -52,20 +19,55 @@ ceph::Sprite::Sprite(const std::shared_ptr<const SpriteSheet>& sheet, const std:
 void ceph::Sprite::setFrame(const std::string& frame_name)
 {
 	sprite_frame_ = sprite_sheet_->getSpriteFrame(frame_name);
-	impl_ = std::make_unique<SpriteImpl>(sprite_frame_);
-	ceph::Actor::impl_->frame_sz = sprite_frame_.getRect().getSize();
+	state_.setSpriteFrame(frame_name, sprite_frame_.getSize());
+}
+
+ceph::Vec2<float> ceph::Sprite::getGlobalPosition() const
+{
+	return ceph::Vec2<float>();
+}
+
+void ceph::Sprite::setGlobalPosition(const ceph::Vec2<float>& pt_global)
+{
+}
+
+ceph::Rect<float> ceph::Sprite::getLocalBounds() const
+{
+	auto sprite_sz = sprite_frame_.getSize();
+	auto transformation = state_.getTransformationMatrix() * 
+		ceph::Mat3x3().scale(static_cast<float>(sprite_sz.x), static_cast<float>(sprite_sz.y));
+	return transformation.apply( ceph::Rect<float>(0, 0, 1, 1) );
+}
+
+ceph::Rect<float> ceph::Sprite::getGlobalBounds() const
+{
+	auto bounds = getLocalBounds();
+	auto parent = getParent().lock();
+	ceph::Mat3x3 transform;
+	while (parent) {
+		transform = parent->state_.getTransformationMatrix() * ceph::Mat3x3().translate(parent->getAnchorPt()) * transform;
+		parent = parent->getParent().lock();
+	}
+
+	return transform.apply(bounds);
 }
 
 void ceph::Sprite::drawThis(DrawingContext& dc) const
 {
-	auto color = impl_->sfml_sprite_.getColor();
-	sf::Uint8 alpha_byte = static_cast<sf::Uint8>(std::round(dc.alpha * 255.0));
-	impl_->sfml_sprite_.setColor(sf::Color(255, 255, 255, alpha_byte));
-	dc.target.draw( impl_->sfml_sprite_, dc.transform);
-	impl_->sfml_sprite_.setColor(color);
+	auto curr_tex = dc.graphics.GetCurrentTexture();
+	auto sprite_sheet_tex = sprite_sheet_->getTexture();
+
+	if (curr_tex.get() != sprite_sheet_tex.get())
+		dc.graphics.SetCurrentTexture(sprite_sheet_tex);
+
+	auto sprite_sz = sprite_frame_.getSize();
+	auto matrix = dc.transformation * ceph::Mat3x3().scale(static_cast<float>(sprite_sz.x), static_cast<float>(sprite_sz.y));
+	dc.graphics.Blit(matrix, sprite_frame_.getRect(), dc.alpha);
 }
 
-ceph::Vec2D<float> ceph::Sprite::getGlobalPosition() const
+//TODO
+/*
+ceph::Vec2<float> ceph::Sprite::getGlobalPosition() const
 {
 	auto p = getPosition();
 	auto& actor_impl = *(static_cast<const Actor*>(this)->impl_);
@@ -81,10 +83,10 @@ ceph::Vec2D<float> ceph::Sprite::getGlobalPosition() const
 	}
 
 	auto sp = trans.transformPoint( sf::Vector2<float>(p.x,p.y) );
-	return ceph::Vec2D<float>(sp.x, sp.y);
+	return ceph::Vec2<float>(sp.x, sp.y);
 }
 
-void  ceph::Sprite::setGlobalPosition(const ceph::Vec2D<float>& pt_global)
+void  ceph::Sprite::setGlobalPosition(const ceph::Vec2<float>& pt_global)
 {
 	if (!hasParent()) {
 		setPosition(pt_global);
@@ -120,6 +122,7 @@ ceph::Rect<float> ceph::Sprite::getGlobalBounds() const
 	bounds = trans.transformRect(bounds);
 	return ceph::Rect<float>(bounds.left, bounds.top, bounds.width, bounds.height);
 }
+*/
 
 ceph::Sprite::~Sprite()
 {

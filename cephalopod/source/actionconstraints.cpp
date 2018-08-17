@@ -1,3 +1,4 @@
+/*
 #include "../include/cephalopod/actionconstraints.hpp"
 #include "../include/cephalopod/game.hpp"
 #include "util.hpp"
@@ -31,3 +32,4 @@ void ceph::WrapTorroidally::apply(ceph::ActorState& state) const
 		state.setGlobalPosition(ceph::CephPtToSfPt(new_position) );
 	}
 }
+*/

@@ -1,9 +1,10 @@
+
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include "../include/cephalopod/actions.hpp"
 #include "../include/cephalopod/actor.hpp"
 #include "../include/cephalopod/types.hpp"
-#include "actorstate.hpp"
+#include "../include/cephalopod/actorstate.hpp"
 #include "util.hpp"
 #include <map>
 #include <numeric>
@@ -26,7 +27,7 @@ void ceph::Action::operator()(ceph::ActorState & state, float t) const
 	function_(state, t);
 }
 
-ceph::Action ceph::createMoveByAction(float duration, const ceph::Vec2D<float>& vec)
+ceph::Action ceph::createMoveByAction(float duration, const ceph::Vec2<float>& vec)
 {
 	return ceph::createMoveByAction(duration, vec.x, vec.y);
 }
@@ -123,6 +124,7 @@ ceph::Action ceph::createActionSequence(const std::shared_ptr<std::vector<ceph::
 		);
 }
 
+/*
 ceph::Action ceph::createAnimationAction(std::initializer_list<std::tuple<std::string, float>> frames)
 {
 	return ceph::createAnimationAction(frames.begin(), frames.end());
@@ -158,3 +160,4 @@ ceph::Action ceph::createAnimationAction(float frame_duration, std::initializer_
 {
 	return ceph::createAnimationAction(frame_duration, frames.begin(), frames.end());
 }
+*/

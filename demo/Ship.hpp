@@ -16,12 +16,12 @@ class Ship : public ceph::Group
 
 	std::shared_ptr<ceph::SpriteSheet> sprites_;
 	bool is_thruster_on_;
-	ceph::Vec2D<float> velocity_;
+	ceph::Vec2<float> velocity_;
 
 	RotationType getRotationState() const;
 	void handleRotationKey(bool key_down, RotationType direction);
 	void handleThrustKey(bool key_down);
-	ceph::Vec2D<float> getDirection() const;
+	ceph::Vec2<float> getDirection() const;
 	void shoot();
 
 public:

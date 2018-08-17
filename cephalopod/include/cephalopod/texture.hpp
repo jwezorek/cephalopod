@@ -1,24 +1,26 @@
 #pragma once
 
 #include <memory>
-#include <string>
 #include "types.hpp"
 
 namespace ceph
 {
-	class TextureImpl;
+	class Image;
 
-	class Texture 
-	{
-		friend class SpriteImpl;
-		friend class SceneImpl;
+    class Texture
+    {
 	private:
-		std::unique_ptr<TextureImpl> impl_;
+
+		int wd_, hgt_;
+		unsigned int id_;
+
 	public:
-		Texture();
-		Texture(const std::string& filepath, bool invert_y_ = false);
-		Size<int> getSize() const;
+		Texture(const ceph::Image& bitmap, bool useSmoothing = true, bool useRepeat = false);
+		int getWidth() const;
+		int getHeight() const;
 		Rect<int> getBounds() const;
+		Vec2<int> getSize() const;
+		void bind();
 		~Texture();
-	};
-}
+    };
+};

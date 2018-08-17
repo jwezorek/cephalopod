@@ -4,6 +4,7 @@
 #include "actor.hpp"
 #include "types.hpp"
 #include "signals.hpp"
+#include "drawingcontext.hpp"
 
 namespace ceph {
 
@@ -14,16 +15,14 @@ namespace ceph {
 		friend class Actor;
 
 	protected:
-
-		std::unique_ptr<SpriteImpl> impl_;
 		void drawThis(DrawingContext& rt) const override {}
 		Group();
 
 	public:
-		Vec2D<float> getGlobalPosition() const override;
-		void setGlobalPosition(const Vec2D<float>& pt_global) override;
-		Rect<float> getLocalBounds() const override;
-		Rect<float> getGlobalBounds() const override;
+		//Vec2<float> getGlobalPosition() const override;
+		//void setGlobalPosition(const Vec2<float>& pt_global) override;
+		//Rect<float> getLocalBounds() const override;
+		//Rect<float> getGlobalBounds() const override;
 		virtual ~Group();
 	};
 }

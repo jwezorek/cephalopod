@@ -4,7 +4,7 @@
 #include "../include/cephalopod/sprite.hpp"
 #include "../include/cephalopod/types.hpp"
 #include "../include/cephalopod/spritesheet.hpp"
-#include "TextureImpl.hpp"
+#include "../include/cephalopod/image.hpp"
 #include "json11.hpp"
 
 namespace {
@@ -73,10 +73,11 @@ void ceph::SpriteSheet::parseAtlasJson(const std::string& atlas_path)
 
 ceph::SpriteSheet::SpriteSheet(const std::string& tex_path, const std::string& atlas_path, bool invert_y) : inverted_y_(invert_y)
 {
-	texture_ = std::make_shared<ceph::Texture>( tex_path, invert_y);
+	ceph::Image img(tex_path);
+	texture_ = std::make_shared<ceph::Texture>(tex_path);
 	parseAtlasJson(atlas_path);
 	if (inverted_y_) {
-		int tex_hgt = texture_->getSize().hgt;
+		int tex_hgt = texture_->getSize().y;
 		for (auto& item : atlas_)
 			item.second->rect = InvertRectVertically(tex_hgt, item.second->rect);
 	}

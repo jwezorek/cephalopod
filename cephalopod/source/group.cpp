@@ -1,12 +1,11 @@
 #include "../include/cephalopod/group.hpp"
-#include "actorimpl.hpp"
-#include "spriteimpl.hpp"
 
-ceph::Group::Group() : impl_(std::make_unique<SpriteImpl>())
+ceph::Group::Group() 
 {
 }
 
-ceph::Vec2D<float> ceph::Group::getGlobalPosition() const
+/*
+ceph::Vec2<float> ceph::Group::getGlobalPosition() const
 {
 	auto p = getPosition();
 	auto& actor_impl = *(static_cast<const Actor*>(this)->impl_);
@@ -22,10 +21,10 @@ ceph::Vec2D<float> ceph::Group::getGlobalPosition() const
 	}
 
 	auto sp = trans.transformPoint(sf::Vector2<float>(p.x, p.y));
-	return ceph::Vec2D<float>(sp.x, sp.y);
+	return ceph::Vec2<float>(sp.x, sp.y);
 }
 
-void ceph::Group::setGlobalPosition(const Vec2D<float>& pt_global)
+void ceph::Group::setGlobalPosition(const Vec2<float>& pt_global)
 {
 	if (!hasParent()) {
 		setPosition(pt_global);
@@ -46,6 +45,7 @@ ceph::Rect<float> ceph::Group::getGlobalBounds() const
 {
 	return getTotalGlobalBounds();
 }
+*/
 
 ceph::Group::~Group()
 {

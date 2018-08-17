@@ -26,7 +26,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="UserMacros">
-    <SfmlDir>C:\SFML-2.4.2\</SfmlDir>
+    <GlfwDir>C:\GLFW\</GlfwDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -78,23 +78,31 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SfmlDir)\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(GlfwDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>winmm.lib;opengl32.lib;vorbis.lib; vorbisfile.lib;ogg.lib; flac.lib;jpeg.lib;freetype.lib;sfml-graphics-s-d.lib; sfml-system-s-d.lib; sfml-window-s-d.lib; sfml-audio-s-d.lib;</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;opengl32.lib;glfw3.lib;</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SfmlDir)\lib;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GlfwDir)\lib-vc2015;</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -104,11 +112,16 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SfmlDir)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GlfwDir)\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
+    <Lib>
+      <AdditionalDependencies>winmm.lib;opengl32.lib;glfw3.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GlfwDir)\lib-vc2015;</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -118,8 +131,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>SFML_STATIC;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SfmlDir)\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(GlfwDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,10 +140,10 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>winmm.lib;sfml-graphics-s.lib; sfml-system-s.lib; sfml-window-s.lib; sfml-audio-s.lib;vorbis.lib; vorbisfile.lib;ogg.lib; flac.lib;opengl32.lib;jpeg.lib;freetype.lib;</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;opengl32.lib;glfw3.lib;</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SfmlDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GlfwDir)\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,23 +155,32 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SfmlDir)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GlfwDir)\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Lib>
+      <AdditionalDependencies>winmm.lib;opengl32.lib;glfw3.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GlfwDir)\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\cephalopod\actionconstraints.hpp" />
     <ClInclude Include="include\cephalopod\actionplayer.hpp" />
     <ClInclude Include="include\cephalopod\actions.hpp" />
     <ClInclude Include="include\cephalopod\actor.hpp" />
+    <ClInclude Include="include\cephalopod\actorstate.hpp" />
+    <ClInclude Include="include\cephalopod\drawingcontext.hpp" />
     <ClInclude Include="include\cephalopod\easingactions.hpp" />
     <ClInclude Include="include\cephalopod\events.hpp" />
     <ClInclude Include="include\cephalopod\game.hpp" />
     <ClInclude Include="include\cephalopod\group.hpp" />
+    <ClInclude Include="include\cephalopod\image.hpp" />
+    <ClInclude Include="include\cephalopod\mat3x3.hpp" />
     <ClInclude Include="include\cephalopod\scene.hpp" />
     <ClInclude Include="include\cephalopod\signals.hpp" />
     <ClInclude Include="include\cephalopod\sprite.hpp" />
@@ -166,34 +188,33 @@
     <ClInclude Include="include\cephalopod\spritesheet.hpp" />
     <ClInclude Include="include\cephalopod\texture.hpp" />
     <ClInclude Include="include\cephalopod\types.hpp" />
-    <ClInclude Include="source\actionplayerimpl.hpp" />
-    <ClInclude Include="source\actorimpl.hpp" />
-    <ClInclude Include="source\actorstate.hpp" />
     <ClInclude Include="source\clock.hpp" />
     <ClInclude Include="source\easingfunctions.hpp" />
     <ClInclude Include="source\gameimpl.hpp" />
+    <ClInclude Include="source\glad.h" />
+    <ClInclude Include="source\graphics.hpp" />
     <ClInclude Include="source\json11.hpp" />
-    <ClInclude Include="source\sceneimpl.hpp" />
-    <ClInclude Include="source\spriteimpl.hpp" />
-    <ClInclude Include="source\textureimpl.hpp" />
+    <ClInclude Include="source\khrplatform.h" />
+    <ClInclude Include="source\stb_image.h" />
     <ClInclude Include="source\util.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\actionconstraints.cpp" />
-    <ClCompile Include="source\actionplayerimpl.cpp" />
+    <ClCompile Include="source\actionplayer.cpp" />
     <ClCompile Include="source\actions.cpp" />
     <ClCompile Include="source\actor.cpp" />
-    <ClCompile Include="source\actorimpl.cpp" />
     <ClCompile Include="source\actorstate.cpp" />
     <ClCompile Include="source\clock.cpp" />
-    <ClCompile Include="source\drawingcontext.hpp" />
     <ClCompile Include="source\easingactions.cpp" />
     <ClCompile Include="source\easingfunctions.cpp" />
     <ClCompile Include="source\game.cpp" />
+    <ClCompile Include="source\glad.c" />
+    <ClCompile Include="source\graphics.cpp" />
     <ClCompile Include="source\group.cpp" />
+    <ClCompile Include="source\image.cpp" />
     <ClCompile Include="source\json11.cpp" />
+    <ClCompile Include="source\mat3x3.cpp" />
     <ClCompile Include="source\scene.cpp" />
-    <ClCompile Include="source\sceneimpl.cpp" />
     <ClCompile Include="source\sprite.cpp" />
     <ClCompile Include="source\spriteframe.cpp" />
     <ClCompile Include="source\spritesheet.cpp" />

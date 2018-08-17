@@ -1,13 +1,12 @@
-#include "actionplayerimpl.hpp"
 #include "../include/cephalopod/scene.hpp"
 #include "../include/cephalopod/actions.hpp"
 #include "../include/cephalopod/game.hpp"
 #include "../include/cephalopod/sprite.hpp"
+#include "../include/cephalopod/actorstate.hpp"
+#include "../include/cephalopod/actionplayer.hpp"
 #include "util.hpp"
-#include "actorstate.hpp"
-#include "actorimpl.hpp"
 
-ceph::ActionPlayerImpl::ActionInProgress::ActionInProgress(int id, const ceph::Action & a, bool rep) :
+ceph::ActionPlayer::ActionInProgress::ActionInProgress(int id, const ceph::Action & a, bool rep) :
 	id(id),
 	action(a),
 	elapsed(0.0f),
@@ -16,17 +15,17 @@ ceph::ActionPlayerImpl::ActionInProgress::ActionInProgress(int id, const ceph::A
 {
 }
 
-float ceph::ActionPlayerImpl::ActionInProgress::getPcntComplete() const
+float ceph::ActionPlayer::ActionInProgress::getPcntComplete() const
 {
 	return elapsed / action.getDuration();
 }
 
-void ceph::ActionPlayerImpl::finalizeAction(ceph::ActionPlayerImpl::ActionInProgress& completed_action_info, bool emit_signal)
+void ceph::ActionPlayer::finalizeAction(ceph::ActionPlayer::ActionInProgress& completed_action_info, bool emit_signal)
 {
 	auto& action = completed_action_info.action;
 	//burn the final state of the action into the cached state of the sprite...
 	action(*initial_actor_state_, completed_action_info.getPcntComplete());
-	applyConstraints(*initial_actor_state_);
+	//applyConstraints(*initial_actor_state_);
 
 	completed_action_info.complete = true;
 	completed_action_info.elapsed = 0.0f;
@@ -36,7 +35,7 @@ void ceph::ActionPlayerImpl::finalizeAction(ceph::ActionPlayerImpl::ActionInProg
 		completed_action_info.signal.fire(completed_action_info.id);
 }
 
-void ceph::ActionPlayerImpl::resetActions()
+void ceph::ActionPlayer::resetActions()
 {
 	bool has_only_complete_actions = true;
 	for (auto& a : actions_) {
@@ -46,10 +45,10 @@ void ceph::ActionPlayerImpl::resetActions()
 			has_only_complete_actions = false;
 	}
 	if (has_only_complete_actions)
-		initial_actor_state_ = std::make_unique<ceph::ActorState>(parent_);
+		initial_actor_state_ = std::make_unique<ceph::ActorState>(parent_.getState());
 }
 
-void ceph::ActionPlayerImpl::removeActions(const std::function<bool(const ActionInProgress&)> predicate)
+void ceph::ActionPlayer::removeActions(const std::function<bool(const ActionInProgress&)> predicate)
 {
 	actions_.erase(
 		std::remove_if(
@@ -71,7 +70,7 @@ void ceph::ActionPlayerImpl::removeActions(const std::function<bool(const Action
 	}
 }
 
-void ceph::ActionPlayerImpl::update(float dt)
+void ceph::ActionPlayer::update(float dt)
 {
 	bool has_completed_actions = false;
 	ceph::ActorState state( *initial_actor_state_ );
@@ -86,7 +85,7 @@ void ceph::ActionPlayerImpl::update(float dt)
 		}
 	}
 
-	applyConstraints(state);
+	//applyConstraints(state);
 	setActorState(state);
 
 	if (has_completed_actions) {
@@ -99,12 +98,11 @@ void ceph::ActionPlayerImpl::update(float dt)
 	}
 }
 
-void ceph::ActionPlayerImpl::setActorState(const ActorState& state)
+void ceph::ActionPlayer::setActorState(const ActorState& state)
 {
-	auto& transformable = parent_.impl_->properties;
-	transformable.setPosition( state.getPosition() );
-	transformable.setRotation( state.getRotation() );
-	transformable.setScale( state.getScale() );
+	parent_.setPosition( state.getPosition() );
+	parent_.setRotation( state.getRotation() );
+	parent_.setScale( state.getScale() );
 	parent_.setAlpha(state.getAlpha());
 
 	auto sprite_frame = state.getSpriteFrame();
@@ -113,36 +111,37 @@ void ceph::ActionPlayerImpl::setActorState(const ActorState& state)
 	}
 }
 
-
-void ceph::ActionPlayerImpl::applyConstraints(ActorState& state)
+/*
+void ceph::ActionPlayer::applyConstraints(ActorState& state)
 {
 	for (const auto& constraint : constraints_)
 		constraint->apply(state);
 }
+*/
 
-ceph::ActionPlayerImpl::ActionPlayerImpl(Actor& parent) :
+ceph::ActionPlayer::ActionPlayer(Actor& parent) :
 	parent_(parent)
 {
 }
 
-void ceph::ActionPlayerImpl::run()
+void ceph::ActionPlayer::run()
 {
 	auto scene = parent_.getScene().lock();
-	scene->updateActionsEvent.connect(*this, &ceph::ActionPlayerImpl::update);
-	initial_actor_state_ = std::make_unique<ceph::ActorState>(parent_);
+	scene->updateActionsEvent.connect(*this, &ceph::ActionPlayer::update);
+	initial_actor_state_ = std::make_unique<ceph::ActorState>(parent_.getState());
 }
 
-bool ceph::ActionPlayerImpl::isRunning() const
+bool ceph::ActionPlayer::isRunning() const
 {
 	return hasActions() && parent_.isInScene();
 }
 
-bool ceph::ActionPlayerImpl::hasActions() const
+bool ceph::ActionPlayer::hasActions() const
 {
 	return !actions_.empty();
 }
 
-void ceph::ActionPlayerImpl::applyAction(int id, const ceph::Action& action, bool repeat)
+void ceph::ActionPlayer::applyAction(int id, const ceph::Action& action, bool repeat)
 {
 	bool wasRunning = isRunning();
 	actions_.push_back({id, action, repeat });
@@ -150,23 +149,25 @@ void ceph::ActionPlayerImpl::applyAction(int id, const ceph::Action& action, boo
 		run();
 }
 
-void ceph::ActionPlayerImpl::applyAction(const ceph::Action& action, bool repeat)
+void ceph::ActionPlayer::applyAction(const ceph::Action& action, bool repeat)
 {
 	applyAction(-1, action, repeat);
 }
 
-void ceph::ActionPlayerImpl::applyActions(std::initializer_list<Action> actions)
+void ceph::ActionPlayer::applyActions(std::initializer_list<ceph::Action> actions)
 {
 	for (auto& action : actions)
 		applyAction(action);
 }
 
-void ceph::ActionPlayerImpl::applyConstraint(const std::shared_ptr<ceph::ActionConstraint>& constraint)
+/*
+void ceph::ActionPlayer::applyConstraint(const std::shared_ptr<ceph::ActionConstraint>& constraint)
 {
 	constraints_.push_back(constraint);
 }
+*/
 
-void ceph::ActionPlayerImpl::removeAction(int id)
+void ceph::ActionPlayer::removeAction(int id)
 {
 	bool found_one = false;
 	for (auto& a : actions_) {
@@ -182,7 +183,7 @@ void ceph::ActionPlayerImpl::removeAction(int id)
 	}
 }
 
-ceph::Signal<int>& ceph::ActionPlayerImpl::getCompletionSignal(int id)
+ceph::Signal<int>& ceph::ActionPlayer::getCompletionSignal(int id)
 {
 	auto ia = std::find_if(
 		actions_.begin(), actions_.end(),
@@ -193,7 +194,7 @@ ceph::Signal<int>& ceph::ActionPlayerImpl::getCompletionSignal(int id)
 	return ia->signal;
 }
 
-bool ceph::ActionPlayerImpl::hasAction(int id)
+bool ceph::ActionPlayer::hasAction(int id)
 {
 	return (
 		std::find_if(
@@ -205,7 +206,7 @@ bool ceph::ActionPlayerImpl::hasAction(int id)
 	);
 }
 
-void  ceph::ActionPlayerImpl::clearActions()
+void  ceph::ActionPlayer::clearActions()
 {
 	for(auto& ai : actions_)
 		finalizeAction(ai, false);
@@ -214,22 +215,21 @@ void  ceph::ActionPlayerImpl::clearActions()
 	);
 }
 
-
-void ceph::ActionPlayerImpl::clearConstraints()
+/*
+void ceph::ActionPlayer::clearConstraints()
 {
 	constraints_.clear();
 }
 
-void ceph::ActionPlayerImpl::enforceConstraints()
+void ceph::ActionPlayer::enforceConstraints()
 {
 	ceph::ActorState state( parent_ );
 	applyConstraints(state);
 	setActorState(state);
 }
 
-void ceph::ActionPlayerImpl::translateCacheState(const ceph::Vec2D<float> offset)
-{
-	initial_actor_state_->translate(offset);
-}
+*/
+
+
 
 

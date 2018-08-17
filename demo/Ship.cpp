@@ -1,3 +1,4 @@
+/*
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include "cephalopod/types.hpp"
@@ -134,3 +135,4 @@ void Ship::handleKey(bool is_key_down, ceph::KeyCode key, unsigned char modifier
 			return;
 	}
 }
+*/

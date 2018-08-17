@@ -18,3 +18,8 @@ ceph::Rect<int> ceph::SpriteFrame::getRect() const
 	return rect_;
 }
 
+ceph::Vec2<int> ceph::SpriteFrame::getSize() const
+{
+	return rect_.getSize();
+}
+

@@ -1,6 +1,6 @@
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
 #include <Windows.h>
+#include "glad.h"
+#include  "GLFW/glfw3.h"
 #include <cmath>
 #include <ctime>
 #include <cstdlib>
@@ -12,141 +12,56 @@
 #include "../include/cephalopod/types.hpp"
 #include "../include/cephalopod/game.hpp"
 #include "../include/cephalopod/scene.hpp"
-#include "drawingcontext.hpp"
 #include "util.hpp"
 #include "gameimpl.hpp"
 #include "clock.hpp"
 
 namespace
 {
-	static std::vector<sf::RectangleShape*> debug_rects;
+	void OnError(int errorCode, const char* msg) {
+		throw std::runtime_error(msg);
+	}
 
-	sf::Color CephToSfColor(const ceph::ColorRGB& cc)
+	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
-		return sf::Color(cc.r, cc.g, cc.b, 255);
+		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+			glfwSetWindowShouldClose(window, GLFW_TRUE);
 	}
 
-	sf::Rect<float> ToSfRect(const ceph::Rect<float>& r)
+	GLFWwindow* CreateGlWindow(int wd, int hgt, const char* title)
 	{
-		return sf::Rect<float>(r.x, r.y, r.wd, r.hgt);
+		// open a window with GLFW
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+		auto window = glfwCreateWindow(wd, hgt, title, NULL, NULL);
+		if (!window)
+			return nullptr;
+
+		glfwSetKeyCallback(window, key_callback);
+
+		// GLFW settings
+		glfwMakeContextCurrent(window);
+
+		gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
+		glfwSwapInterval(1);
+
+		return window;
 	}
 
-	ceph::Rect<float> ToCephRect(const sf::Rect<float>& r)
-	{
-		return ceph::Rect<float>(r.left, r.top, r.width, r.height);
-	}
-
-	sf::Vector2<float> ToSfPoint(const ceph::Vec2D<float>& p)
-	{
-		return sf::Vector2<float>(p.x, p.y);
-	}
-
-	ceph::Vec2D<float> ToCephPoint(const sf::Vector2<float>& p)
-	{
-		return ceph::Vec2D<float>(p.x,p.y);
-	}
-}
-
-void ceph::GameImpl::handleInput(const sf::Event& evt)
-{
-	switch (evt.type) {
-		case sf::Event::KeyPressed:
-			keyEvent.fire(true, static_cast<ceph::KeyCode>(evt.key.code), getModifiers(evt.key));
-			break;
-		case sf::Event::KeyReleased:
-			keyEvent.fire(false, static_cast<ceph::KeyCode>(evt.key.code), getModifiers(evt.key));
-			break;
-	}
-}
-
-unsigned char ceph::GameImpl::getModifiers(const sf::Event::KeyEvent& ke) {
-	//TODO
-	return 0;
-}
-
-sf::Transform ceph::GameImpl::getCoordinateSystemMatrix(ceph::CoordinateSystem system, const ceph::Size<float>& log_sz)
-{
-	if (system == ceph::CoordinateSystem::UpperLeftOriginDescendingY)
-		return sf::Transform::Identity;
-
-	sf::Transform inverted_y = sf::Transform().scale(1.0f, -1.0f);
-	sf::Vector2f orig_pt = (system == ceph::CoordinateSystem::LowerLeftOriginAscendingY) ?
-		sf::Vector2f(0.0f, -log_sz.hgt) :
-		sf::Vector2f(static_cast<float>(log_sz.wd) / 2.0f, -static_cast<float>(log_sz.hgt) / 2.0f);
-
-	return inverted_y.translate(orig_pt);
-}
-
-ceph::Size<float> ceph::GameImpl::getLogSizeFromMapping(ceph::CoordinateMapping mapping_mode, const ceph::Size<float>& log_size, const ceph::Size<int>& scr_size)
-{
-	float aspect_ratio = static_cast<float>(scr_size.wd) / static_cast<float>(scr_size.hgt);
-	switch (mapping_mode) {
-		case ceph::CoordinateMapping::StretchToFit:
-		case ceph::CoordinateMapping::UseBlackBars:
-			return log_size;
-		case ceph::CoordinateMapping::PreserveHeight:
-			return ceph::Size<float>(
-				log_size.hgt * aspect_ratio,
-				log_size.hgt
-			);
-		case ceph::CoordinateMapping::PreserveWidth:
-			return ceph::Size<float>(
-				log_size.wd,
-				log_size.hgt * (1.0f / aspect_ratio)
-			);
-	}
-	return  ceph::Size<float>(0, 0);
-}
-
-std::tuple<sf::Transform, std::vector<sf::RectangleShape>> ceph::GameImpl::getCoordinateMappingInfo(
-	ceph::CoordinateMapping mapping_mode, 
-	const ceph::Size<float>& log_sz, 
-	const ceph::Size<int>& scr_sz)
-{
-	sf::Transform mapping;
-	std::vector<ceph::Rect<float>> black_bar_rects;
-	std::vector<sf::RectangleShape> bars;
-	switch (mapping_mode) {
-		case ceph::CoordinateMapping::StretchToFit:
-			mapping = getStretchToFitMatrix(log_sz, scr_sz);
-			break;
-		case ceph::CoordinateMapping::UseBlackBars:
-			mapping = getUseBlackBarsMatrix(log_sz, scr_sz, &black_bar_rects);
-			bars.resize(2);
-			std::transform(black_bar_rects.cbegin(), black_bar_rects.cend(), bars.begin(),
-				[](const ceph::Rect<float>& r) -> sf::RectangleShape {
-					sf::RectangleShape rs(sf::Vector2f(r.wd, r.hgt));
-					rs.setPosition(r.x, r.y);
-					rs.setFillColor(sf::Color(0, 0, 0));
-					return rs;
-				}
-			);
-			break;
-		case ceph::CoordinateMapping::PreserveHeight:
-		case ceph::CoordinateMapping::PreserveWidth: 
-			float scale = static_cast<float>(scr_sz.hgt) / log_sz.hgt;
-			mapping = sf::Transform().scale(scale, scale);
-			break;
-	}
-	return std::tuple<sf::Transform, std::vector<sf::RectangleShape>>( mapping, bars );
-}
-
-void ceph::GameImpl::render()
-{
-	window_->clear(CephToSfColor(active_scene_->getBackgroundColor()));
-
-	active_scene_->draw(ceph::DrawingContext(*window_, coord_transform_));
-	for (auto rs : debug_rects)
-		window_->draw(*rs);
-
-	if (coord_mapping_mode_ == ceph::CoordinateMapping::UseBlackBars)
-		drawBlackBars();
-
-	window_->display();
 }
 
 ceph::GameImpl::GameImpl() {
 	ceph::GameImpl::instance_ = this;
+
+	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
+	// initialise GLFW
+	glfwSetErrorCallback(OnError);
+	if (!glfwInit())
+		throw std::runtime_error("glfwInit failed");
 }
 
 ceph::GameImpl* ceph::GameImpl::getInstance()
@@ -154,109 +69,68 @@ ceph::GameImpl* ceph::GameImpl::getInstance()
 	return instance_;
 }
 
+
+
 void ceph::GameImpl::initialize(ceph::ScreenMode mode, int wd, int hgt, const std::string& title)
 {
-	sf::VideoMode video_mode;
-	unsigned int style;
 	switch (mode) {
 		case ceph::ScreenMode::FullScreenExclusive:
-			video_mode = sf::VideoMode::getFullscreenModes()[0];
-			wd = video_mode.width;
-			hgt = video_mode.height;
-			style = sf::Style::Fullscreen;
+			//TODO
 			break;
 		case ceph::ScreenMode::FullScreenWindowed:
-			video_mode = sf::VideoMode::getDesktopMode();
-			wd = video_mode.width;
-			hgt = video_mode.height;
-			style = sf::Style::None;
+			//TODO
 			break;
 		case ceph::ScreenMode::WindowedWithTitleBar:
-			video_mode = sf::VideoMode(wd, hgt);
-			style = sf::Style::Titlebar | sf::Style::Close;
+			window_ = CreateGlWindow(wd, hgt, title.c_str());
 			break;
 	}
-
-	window_ = std::make_unique<sf::RenderWindow>( video_mode, title, style );
-	setLogicalCoordinates(
-		ceph::CoordinateMapping::StretchToFit, 
-		ceph::Size<float>(static_cast<float>(wd), static_cast<float>(hgt)),
-		ceph::CoordinateSystem::UpperLeftOriginDescendingY
-	);
+	graphics_ = std::make_unique<ceph::Graphics>(window_);
 }
 
-void ceph::GameImpl::setLogicalCoordinates(ceph::CoordinateMapping mapping, const ceph::Size<float>& log_size, ceph::CoordinateSystem system)
+void ceph::GameImpl::setLogicalCoordinates(ceph::CoordinateMapping mapping, const ceph::Vec2<float>& log_size, ceph::CoordinateSystem system)
 {
-	auto scr_sz = getScreenSize();
-	log_size_ = getLogSizeFromMapping(mapping, log_size, scr_sz);
-	auto mapping_info = getCoordinateMappingInfo(mapping, log_size_, scr_sz);
-
-	coord_mapping_mode_ = mapping;
-	coord_mapping_ = std::get<0>(mapping_info);
-	auto bars = std::get<1>(mapping_info);
-
-	black_bars_ = (!bars.empty()) ? 
-		std::make_unique<std::vector<sf::RectangleShape>>(bars) : 
-		nullptr;
-	
-	coord_transform_ = coord_mapping_.combine(
-		coord_system_ = getCoordinateSystemMatrix(system, log_size_)
-	);
-}
-
-void ceph::GameImpl::drawBlackBars()
-{
-	if (black_bars_.get()) {
-		for( auto& bar: *black_bars_)
-			window_->draw(bar);
-	}
+	graphics_->setCoordinateSystem(system, mapping, log_size);
 }
 
 void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 	active_scene_ = startingScene;
 
-	sf::Event event;
 	ceph::Clock clock;
-	
-	while (window_->isOpen()) {
-		while (window_->pollEvent(event)) {
-			if (event.type == sf::Event::EventType::Closed)
-				window_->close();
-			handleInput(event);
-		}
+	DrawingContext dc(*graphics_);
+	while (!glfwWindowShouldClose(window_)) {
+		glfwPollEvents();
 
 		auto elapsed = clock.restart();
 		active_scene_->updateActionsEvent.fire(elapsed);
 		active_scene_->updateEvent.fire(elapsed);
 
-		render();
+		graphics_->BeginFrame();
+		active_scene_->draw(dc);
+		//graphics_->Blit(ceph::Mat3x3().scale(100,100), ceph::Rect<int>(0, 0, 100, 100), 1.0);
+		graphics_->EndFrame();
 		active_scene_->endGameLoopIteration();
+
 	}
 }
 
 ceph::Rect<float> ceph::GameImpl::getLogicalRect() const
 {
-	return ceph::SfmlRectToCoyRect( 
-		coord_system_.getInverse().transformRect(
-			sf::Rect<float>(0, 0, log_size_.wd, log_size_.hgt)
-		) 
-	);
+	return ceph::Rect<float>(0, 0, 0, 0);
 }
 
-ceph::Size<int> ceph::GameImpl::getScreenSize() const
+ceph::Vec2<int> ceph::GameImpl::getScreenSize() const
 {
-	auto sz = window_->getSize();
-	return { static_cast<int>(sz.x), static_cast<int>(sz.y) };
+	return ceph::Vec2<int>(0, 0);
 }
 
-ceph::Size<float> ceph::GameImpl::getLogicalSize() const
+ceph::Vec2<float> ceph::GameImpl::getLogicalSize() const
 {
 	return log_size_;
 }
 
 void ceph::GameImpl::quit()
 {
-	window_->close();
+	
 }
 
 ceph::CoordinateMapping ceph::GameImpl::getCoordinateMapping() const
@@ -264,45 +138,36 @@ ceph::CoordinateMapping ceph::GameImpl::getCoordinateMapping() const
 	return coord_mapping_mode_;
 }
 
-void ceph::GameImpl::addDebugRect(const Rect<float>& rect)
-{
-	auto rs = new sf::RectangleShape(sf::Vector2f(rect.wd, rect.hgt));
-	rs->setPosition(rect.x, rect.y);
-	rs->setFillColor(sf::Color::Transparent);
-	rs->setOutlineColor(sf::Color::Green);
-	rs->setOutlineThickness( 1 );
-	debug_rects.push_back( rs );
-}
-
-sf::Transform ceph::GameImpl::getCoordTransform() const
-{
-	return coord_transform_;
-}
 
 ceph::Rect<float> ceph::GameImpl::getScreenRect() const
 {
-	auto sz = window_->getSize();
-	return ceph::Rect<float>(0.0f, 0.0f, static_cast<float>(sz.x), static_cast<float>(sz.y));
+	int wd, hgt;
+	glfwGetWindowSize(window_, &wd, &hgt);
+	return ceph::Rect<float>(0.0f, 0.0f, static_cast<float>(wd), static_cast<float>(hgt));
 }
 
 ceph::Rect<float> ceph::GameImpl::convertToScreenCoords(const ceph::Rect<float>& rect) const
 {
-	return ToCephRect(coord_transform_.transformRect(ToSfRect(rect)));
+	//TODO
+	return ceph::Rect<float>(0, 0, 0, 0);
 }
 
 ceph::Rect<float> ceph::GameImpl::convertFromScreenCoords(const ceph::Rect<float>& rect) const
 {
-	return ToCephRect(coord_transform_.getInverse().transformRect(ToSfRect(rect)));
+	//TODO
+	return ceph::Rect<float>(0, 0, 0, 0);
 }
 
-ceph::Vec2D<float> ceph::GameImpl::convertToScreenCoords(const ceph::Vec2D<float>& pt) const
+ceph::Vec2<float> ceph::GameImpl::convertToScreenCoords(const ceph::Vec2<float>& pt) const
 {
-	return ToCephPoint(coord_transform_.transformPoint(ToSfPoint(pt)));
+	//TODO
+	return ceph::Vec2<float>(0, 0);
 }
 
-ceph::Vec2D<float> ceph::GameImpl::convertFromScreenCoords(const ceph::Vec2D<float>& pt) const
+ceph::Vec2<float> ceph::GameImpl::convertFromScreenCoords(const ceph::Vec2<float>& pt) const
 {
-	return ToCephPoint(coord_transform_.getInverse().transformPoint(ToSfPoint(pt)));
+	//TODO
+	return ceph::Vec2<float>(0, 0);
 }
 
 std::shared_ptr<ceph::Scene> ceph::GameImpl::getActiveScene() const

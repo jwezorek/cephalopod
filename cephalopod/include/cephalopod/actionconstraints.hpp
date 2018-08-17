@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 #include "types.hpp"
@@ -22,3 +23,4 @@ namespace ceph {
 		virtual void apply(ceph::ActorState& actor) const override;
 	};
 }
+*/

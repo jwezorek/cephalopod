@@ -24,18 +24,6 @@
     <ClInclude Include="source\json11.hpp">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="source\textureimpl.hpp">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="source\spriteimpl.hpp">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="source\actorimpl.hpp">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="source\sceneimpl.hpp">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
     <ClInclude Include="source\util.hpp">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
@@ -58,9 +46,6 @@
       <Filter>Header Files\include</Filter>
     </ClInclude>
     <ClInclude Include="include\cephalopod\spritesheet.hpp">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\cephalopod\texture.hpp">
       <Filter>Header Files\include</Filter>
     </ClInclude>
     <ClInclude Include="include\cephalopod\types.hpp">
@@ -87,16 +72,37 @@
     <ClInclude Include="include\cephalopod\actionconstraints.hpp">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="source\actorstate.hpp">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
     <ClInclude Include="include\cephalopod\actionplayer.hpp">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="source\actionplayerimpl.hpp">
+    <ClInclude Include="source\clock.hpp">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="source\clock.hpp">
+    <ClInclude Include="source\glad.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\image.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\mat3x3.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics.hpp">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\texture.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\actorstate.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="source\khrplatform.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cephalopod\drawingcontext.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="source\stb_image.h">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
   </ItemGroup>
@@ -119,22 +125,10 @@
     <ClCompile Include="source\json11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\spriteframe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\actor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\drawingcontext.hpp">
-      <Filter>Header Files\internal</Filter>
-    </ClCompile>
-    <ClCompile Include="source\actorimpl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\sceneimpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\actions.cpp">
@@ -155,10 +149,25 @@
     <ClCompile Include="source\actorstate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\actionplayerimpl.cpp">
+    <ClCompile Include="source\clock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\clock.cpp">
+    <ClCompile Include="source\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\mat3x3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\actionplayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

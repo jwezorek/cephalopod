@@ -7,10 +7,12 @@
 #include "signals.hpp"
 #include "actions.hpp"
 #include "actionplayer.hpp"
+#include "mat3x3.hpp"
+#include "actorstate.hpp"
+#include "drawingcontext.hpp"
 
 namespace ceph {
 
-	class DrawingContext;
 	class ActorImpl;
 	class Scene;
 	class Action;
@@ -28,10 +30,11 @@ namespace ceph {
 		Actor();
 
 	protected:
+		ActionPlayer actions_;
 		std::weak_ptr<Scene> scene_;
 		std::weak_ptr<Actor> parent_;
 		std::vector<std::shared_ptr<Actor>> children_;
-		std::unique_ptr<ActorImpl> impl_;
+		ActorState state_;
 
 		virtual void drawThis(DrawingContext& rt) const = 0;
 		void detachFromScene();
@@ -50,7 +53,9 @@ namespace ceph {
 		bool hasParent() const;
 		bool isInSceneTopLevel() const;
 
-		ActionPlayer& getActions() const;
+		ActorState getState() const;
+
+		ActionPlayer& getActions();
 		bool hasActions() const;
 
 		std::weak_ptr<Actor> getParent() const;
@@ -63,22 +68,21 @@ namespace ceph {
 		virtual float getRotation() const;
 		virtual void setRotation(float radians);
 
-		virtual float getRotationDegrees() const;
-		virtual void setRotationDegrees(float degrees);
-
-		virtual float getScale() const;
+		virtual Vec2<float> getScale() const;
 		virtual void setScale(float scale);
+		virtual void setScale(const Vec2<float>& scale);
 
-		virtual Vec2D<float> getPosition() const;
-		virtual Vec2D<float> getGlobalPosition() const = 0;
-		virtual void setGlobalPosition(const Vec2D<float>& pt_global) = 0;
-		virtual void setPosition(const Vec2D<float>& pt);
+		virtual Vec2<float> getPosition() const;
+		virtual void setPosition(const Vec2<float>& pt);
 		virtual void setPosition(float x, float y);
 
-		virtual Vec2D<float> getAnchorPt() const;
-		virtual void setAnchorPt(const Vec2D<float>& pt);
-		virtual void setAnchorPt(float x, float y);
+		virtual Vec2<float> getAnchorPt() const;
+		virtual Vec2<float> getAnchorPcnt() const;
+		virtual void setAnchorPcnt(const Vec2<float>& pt);
+		virtual void setAnchorPcnt(float x, float y);
 
+		virtual Vec2<float> getGlobalPosition() const = 0;
+		virtual void setGlobalPosition(const Vec2<float>& pt_global) = 0;
 		virtual Rect<float> getLocalBounds() const = 0;
 		virtual Rect<float> getGlobalBounds() const = 0;
 		virtual Rect<float> getTotalGlobalBounds() const;
