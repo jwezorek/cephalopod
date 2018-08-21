@@ -54,7 +54,7 @@ namespace ceph {
 	}
 
 	Action createAnimationAction(std::initializer_list<std::tuple<std::string, float>> frames);
-	/*
+	
 	Action createAnimationAction(const std::shared_ptr<std::vector<std::tuple<std::string, float>>>& frames);
 
 	template<class It>
@@ -77,5 +77,5 @@ namespace ceph {
 		);
 		return createAnimationAction(tuples);
 	}
-	*/
+	
 }

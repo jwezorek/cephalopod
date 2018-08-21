@@ -1,101 +1,5 @@
-/*
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include "actorstate.hpp"
-#include "actorimpl.hpp"
-#include "util.hpp"
-#include "../include/cephalopod/actor.hpp"
-
-ceph::ActorState::ActorState(const ceph::Actor& actor) : 
-	alpha_(actor.getAlpha()),
-	transform_(actor.impl_->properties)
-{
-	auto parent = actor.getParent();
-	sf::Transform trans;
-	while (!parent.expired())
-	{
-		auto& parent_actor_impl = *(parent.lock()->impl_);
-		auto parentTransform = parent_actor_impl.properties.getTransform();
-		trans = parentTransform.combine(trans);
-		parent = parent.lock()->getParent();
-	}
-	local_to_global_transform_ = trans;
-}
-
-void ceph::ActorState::translate(float x, float y)
-{
-	transform_.move(x, y);
-}
-
-void ceph::ActorState::translate(const ceph::Vec2D<float>& v)
-{
-	translate(v.x, v.y);
-}
-
-void ceph::ActorState::rotate(float theta)
-{
-	transform_.rotate(radiansToDegrees(theta));
-}
-
-sf::Vector2f ceph::ActorState::getGlobalPosition() const
-{
-	return local_to_global_transform_.transformPoint( getPosition() );
-}
-
-void ceph::ActorState::setGlobalPosition(const sf::Vector2f& pt)
-{
-	auto globalToLocal = local_to_global_transform_.getInverse();
-	transform_.setPosition(globalToLocal.transformPoint(pt));
-}
-
-sf::Vector2f ceph::ActorState::getPosition() const
-{
-	return transform_.getPosition();
-}
-
-float ceph::ActorState::getRotation() const
-{
-	return transform_.getRotation();
-}
-
-sf::Vector2f ceph::ActorState::getScale() const
-{
-	return  transform_.getScale();
-}
-
-std::string ceph::ActorState::getSpriteFrame() const
-{
-	return sprite_frame_;
-}
-
-void ceph::ActorState::setSpriteFrame(const std::string & sprite_frame)
-{
-	sprite_frame_ = sprite_frame;
-}
-
-void ceph::ActorState::setAlpha(float alpha) 
-{
-	alpha_ = alpha;
-}
-
-float ceph::ActorState::getAlpha() const
-{
-	return alpha_;
-}
-*/
-
-
-
-//	Mat3x3 local_to_global_transform_;
-//	std::optional<Mat3x3> transform_;
-//	Vec2<float> position_;
-//	Vec2<float> scale_;
-//	float rotation_;
-//	float alpha_;
-//	std::string sprite_frame_;
-
-
 #include "..\include\cephalopod\actorstate.hpp"
+#include "..\include\cephalopod\spritesheet.hpp"
 
 namespace
 {
@@ -121,6 +25,7 @@ namespace
 }
 
 ceph::ActorState::ActorState() :
+	sprite_sheet_(nullptr),
 	position_(0, 0),
 	scale_(1, 1),
 	rotation_(0),
@@ -128,6 +33,16 @@ ceph::ActorState::ActorState() :
 	origin_pcnt_(0.5f,0.5f),
 	transform_(std::nullopt)
 {}
+
+void ceph::ActorState::setSpriteSheet(const std::shared_ptr<const SpriteSheet>& sheet)
+{
+	sprite_sheet_ = sheet;
+}
+
+std::shared_ptr<const ceph::SpriteSheet> ceph::ActorState::getSpriteSheet() const
+{
+	return sprite_sheet_;
+}
 
 void ceph::ActorState::translate(const ceph::Vec2<float>& v)
 {
@@ -169,17 +84,6 @@ float ceph::ActorState::getAlpha() const
 	return alpha_;
 }
 
-ceph::Vec2<float> ceph::ActorState::getGlobalPosition() const
-{
-	//TODO
-	return ceph::Vec2<float>(0, 0);
-}
-
-void ceph::ActorState::setGlobalPosition(const Vec2<float>& pt)
-{
-	//TODO
-}
-
 void ceph::ActorState::setPosition(const ceph::Vec2<float>& v)
 {
 	position_ = v;
@@ -206,10 +110,20 @@ std::string ceph::ActorState::getSpriteFrame() const
 	return sprite_frame_;
 }
 
-void ceph::ActorState::setSpriteFrame(const std::string& sprite_frame, ceph::Vec2<int> sz)
+void ceph::ActorState::setSpriteFrame(const std::string& sprite_frame)
 {
 	sprite_frame_ = sprite_frame;
-	frame_sz_ = sz;
+	frame_sz_ = sprite_sheet_->getFrameSize(sprite_frame);
+}
+
+ceph::Vec2<int> ceph::ActorState::getSize() const
+{
+	return frame_sz_;
+}
+
+ceph::Rect<int> ceph::ActorState::getRect() const
+{
+	return sprite_sheet_->getFrame(sprite_frame_);
 }
 
 void ceph::ActorState::setAnchorPcnt(const ceph::Vec2<float>& v)
@@ -242,11 +156,6 @@ void ceph::ActorState::setRotation(float theta)
 {
 	rotation_ = theta;
 	transform_ = std::nullopt;
-}
-
-ceph::Vec2<int> ceph::ActorState::getFrameSize() const
-{
-	return frame_sz_;
 }
 
 ceph::Mat3x3 ceph::ActorState::getTransformationMatrix() const

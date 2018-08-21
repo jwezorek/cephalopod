@@ -27,29 +27,6 @@ ceph::Rect<int> extractRect(const json11::Json& json) {
 	return ceph::Rect<int>(nums[0], nums[1], nums[2], nums[3]);
 }
 
-struct ceph::SpriteSheet::FrameInfo{
-	std::string name;
-	ceph::Rect<int> rect;
-	int index;
-
-	ceph::SpriteSheet::FrameInfo(const std::string& n, const json11::Json& json) {
-		if (!json.is_object())
-			throw std::exception("expected frame info to be an object");
-		auto& items = json.object_items();
-
-		int i = (items.find("index") != items.end()) ?
-			items.find("index")->second.int_value() :
-			-1;
-		Rect<int> r = (items.find("rect") != items.end()) ?
-			extractRect(items.find("rect")->second) :
-			Rect<int>(0,0,0,0);
-
-		name = n;
-		rect = r;
-		index = i;
-	}
-};
-
 void ceph::SpriteSheet::parseAtlasJson(const std::string& atlas_path)
 {
 	std::ifstream t(atlas_path);
@@ -66,7 +43,17 @@ void ceph::SpriteSheet::parseAtlasJson(const std::string& atlas_path)
 		throw std::exception("bad sprite sheet atlas : expected toplevel object");
 
 	for (auto& item : json.object_items()) {
-		auto frame_info = std::make_shared<ceph::SpriteSheet::FrameInfo>(item.first, item.second);
+		auto items = item.second.object_items();
+
+		int index = (items.find("index") != items.end()) ?
+			items.find("index")->second.int_value() :
+			-1;
+E
+		ceph::Rect<int> rect = (items.find("rect") != items.end()) ?
+			extractRect(items.find("rect")->second) :
+			ceph::Rect<int>(0, 0, 0, 0);
+
+		SpriteSheet::FrameInfo frame_info(item.first, rect, index);
 		atlas_[item.first] = frame_info;
 	}
 }
@@ -79,7 +66,7 @@ ceph::SpriteSheet::SpriteSheet(const std::string& tex_path, const std::string& a
 	if (inverted_y_) {
 		int tex_hgt = texture_->getSize().y;
 		for (auto& item : atlas_)
-			item.second->rect = InvertRectVertically(tex_hgt, item.second->rect);
+			item.second.rect = InvertRectVertically(tex_hgt, item.second.rect);
 	}
 }
 
@@ -100,10 +87,36 @@ std::shared_ptr<ceph::Texture> ceph::SpriteSheet::getTexture() const
 
 ceph::Rect<int> ceph::SpriteSheet::getFrame(const std::string & name) const
 {
-	return atlas_.find(name)->second->rect;
+	return atlas_.find(name)->second.rect;
+}
+
+
+ceph::Vec2<int> ceph::SpriteSheet::getFrameSize(const std::string& name) const
+{
+	return getFrame(name).getSize();
 }
 
 ceph::SpriteFrame ceph::SpriteSheet::getSpriteFrame(const std::string & name) const
 {
 	return SpriteFrame(texture_, this->getFrame(name));
 }
+
+/*
+std::tuple<ceph::Rect<int>, int> getFrameInfo(const json11::Json& json)
+{
+	if (!json.is_object())
+		throw std::exception("expected frame info to be an object");
+	auto& items = json.object_items();
+
+	int i = (items.find("index") != items.end()) ?
+		items.find("index")->second.int_value() :
+		-1;
+	ceph::Rect<int> r = (items.find("rect") != items.end()) ?
+		extractRect(items.find("rect")->second) :
+		ceph::Rect<int>(0, 0, 0, 0);
+
+	name = n;
+	rect = r;
+	index = i;
+}
+*/

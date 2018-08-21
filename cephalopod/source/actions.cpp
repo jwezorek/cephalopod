@@ -124,7 +124,6 @@ ceph::Action ceph::createActionSequence(const std::shared_ptr<std::vector<ceph::
 		);
 }
 
-/*
 ceph::Action ceph::createAnimationAction(std::initializer_list<std::tuple<std::string, float>> frames)
 {
 	return ceph::createAnimationAction(frames.begin(), frames.end());
@@ -160,4 +159,3 @@ ceph::Action ceph::createAnimationAction(float frame_duration, std::initializer_
 {
 	return ceph::createAnimationAction(frame_duration, frames.begin(), frames.end());
 }
-*/

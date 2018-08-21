@@ -17,7 +17,6 @@ namespace ceph {
 		friend class Actor;
 
 	private:
-		SpriteFrame sprite_frame_;
 		std::shared_ptr<const SpriteSheet> sprite_sheet_;
 
 	protected:

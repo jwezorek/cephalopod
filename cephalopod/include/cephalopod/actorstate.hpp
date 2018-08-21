@@ -7,6 +7,8 @@
 
 namespace ceph {
 
+	class SpriteSheet;
+
 	class ActorState
 	{
 	private:
@@ -17,11 +19,15 @@ namespace ceph {
 		Vec2<float> origin_pcnt_;
 		float rotation_;
 		float alpha_;
+		std::shared_ptr<const SpriteSheet> sprite_sheet_;
 		std::string sprite_frame_;
 		Vec2<int> frame_sz_;
 
 	public:
 		ActorState();
+
+		void setSpriteSheet(const std::shared_ptr<const SpriteSheet>& sheet);
+		std::shared_ptr<const SpriteSheet> getSpriteSheet() const;
 
 		void translate(const ceph::Vec2<float>& v);
 		void translate(float x, float y);
@@ -29,9 +35,6 @@ namespace ceph {
 
 		void setAlpha(float alpha);
 		float getAlpha() const;
-
-		Vec2<float> getGlobalPosition() const;
-		void setGlobalPosition(const Vec2<float>& pt);
 
 		void setPosition(const ceph::Vec2<float>& v);
 		void setPosition(float x, float y);
@@ -49,9 +52,9 @@ namespace ceph {
 		float getRotation() const;
 
 		std::string getSpriteFrame() const;
-		void setSpriteFrame(const std::string& sprite_frame, const Vec2<int> frame_sz);
-
-		Vec2<int> getFrameSize() const;
+		void setSpriteFrame(const std::string& sprite_frame);
+		Vec2<int> getSize() const;
+		Rect<int> getRect() const;
 
 		Mat3x3 getTransformationMatrix() const;
 	};

@@ -5,21 +5,20 @@
 #include "gameimpl.hpp"
 #include "../include/cephalopod/drawingcontext.hpp"
 
-ceph::Sprite::Sprite(const std::shared_ptr<Texture>& texture):
-	sprite_frame_(texture)
+ceph::Sprite::Sprite(const std::shared_ptr<Texture>& texture)
 {
 }
 
 ceph::Sprite::Sprite(const std::shared_ptr<const SpriteSheet>& sheet, const std::string& frame_name) :
 	sprite_sheet_(sheet)
 {
-	setFrame(frame_name);
+	state_.setSpriteSheet(sheet);
+	state_.setSpriteFrame(frame_name);
 }
 
 void ceph::Sprite::setFrame(const std::string& frame_name)
 {
-	sprite_frame_ = sprite_sheet_->getSpriteFrame(frame_name);
-	state_.setSpriteFrame(frame_name, sprite_frame_.getSize());
+	state_.setSpriteFrame(frame_name);
 }
 
 ceph::Vec2<float> ceph::Sprite::getGlobalPosition() const
@@ -33,7 +32,7 @@ void ceph::Sprite::setGlobalPosition(const ceph::Vec2<float>& pt_global)
 
 ceph::Rect<float> ceph::Sprite::getLocalBounds() const
 {
-	auto sprite_sz = sprite_frame_.getSize();
+	auto sprite_sz = state_.getSize();
 	auto transformation = state_.getTransformationMatrix() * 
 		ceph::Mat3x3().scale(static_cast<float>(sprite_sz.x), static_cast<float>(sprite_sz.y));
 	return transformation.apply( ceph::Rect<float>(0, 0, 1, 1) );
@@ -60,9 +59,9 @@ void ceph::Sprite::drawThis(DrawingContext& dc) const
 	if (curr_tex.get() != sprite_sheet_tex.get())
 		dc.graphics.SetCurrentTexture(sprite_sheet_tex);
 
-	auto sprite_sz = sprite_frame_.getSize();
+	auto sprite_sz = state_.getSize();
 	auto matrix = dc.transformation * ceph::Mat3x3().scale(static_cast<float>(sprite_sz.x), static_cast<float>(sprite_sz.y));
-	dc.graphics.Blit(matrix, sprite_frame_.getRect(), dc.alpha);
+	dc.graphics.Blit(matrix, state_.getRect(), dc.alpha);
 }
 
 //TODO
