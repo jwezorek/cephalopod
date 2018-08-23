@@ -48,7 +48,7 @@ void ceph::SpriteSheet::parseAtlasJson(const std::string& atlas_path)
 		int index = (items.find("index") != items.end()) ?
 			items.find("index")->second.int_value() :
 			-1;
-E
+
 		ceph::Rect<int> rect = (items.find("rect") != items.end()) ?
 			extractRect(items.find("rect")->second) :
 			ceph::Rect<int>(0, 0, 0, 0);

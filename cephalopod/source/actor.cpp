@@ -98,6 +98,49 @@ void ceph::Actor::runActions()
 		child->runActions();
 }
 
+ceph::Mat3x3 ceph::Actor::getLocalToGlobalTransform() const
+{
+	ceph::Mat3x3 transform;
+	auto parent = getParent().lock();
+	while (parent) {
+		transform = parent->state_.getTransformationMatrix() * ceph::Mat3x3().translate(parent->getAnchorPt()) * transform;
+		parent = parent->getParent().lock();
+	}
+	return transform;
+}
+
+ceph::Vec2<float> ceph::Actor::getGlobalPosition() const
+{
+	return getLocalToGlobalTransform().apply(state_.getPosition());
+}
+
+void ceph::Actor::setGlobalPosition(const ceph::Vec2<float>& pt_global)
+{
+	setPosition(
+		getGlobalToLocalTransform().apply(pt_global)
+	);
+}
+
+ceph::Rect<float> ceph::Actor::getLocalBounds() const
+{
+	auto sprite_sz = state_.getSize();
+	auto transformation = state_.getTransformationMatrix() *
+		ceph::Mat3x3().scale(static_cast<float>(sprite_sz.x), static_cast<float>(sprite_sz.y));
+	return transformation.apply(ceph::Rect<float>(0, 0, 1, 1));
+}
+
+ceph::Rect<float> ceph::Actor::getGlobalBounds() const
+{
+	return getLocalToGlobalTransform().apply(
+		getLocalBounds()
+	);
+}
+
+ceph::Mat3x3 ceph::Actor::getGlobalToLocalTransform() const
+{
+	return getLocalToGlobalTransform().getInverse().value();
+}
+
 bool ceph::Actor::hasActions() const
 {
 	if (actions_.hasActions())

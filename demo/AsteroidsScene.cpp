@@ -197,7 +197,9 @@ void Asteroids::initialize()
 
 	auto action = ceph::createMoveByAction( 1.0f, ceph::Vec2<float>(300.0f, 0) );
 
-	test->getActions().applyAction( action );
+	auto testGP = child->getGlobalPosition();
+
+	//test->getActions().applyAction( action );
 
 	auto bounds = grandChild->getGlobalBounds();
 	int aaa;

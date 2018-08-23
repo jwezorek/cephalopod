@@ -41,6 +41,9 @@ namespace ceph {
 		void attachToScene(const std::shared_ptr<Scene>& scene);
 		void runActions();
 
+		Mat3x3 getLocalToGlobalTransform() const; 
+		Mat3x3 getGlobalToLocalTransform() const;
+
 	public:
 
 		virtual void initialize() {}
@@ -62,34 +65,35 @@ namespace ceph {
 		std::weak_ptr<Actor> getTopLevelParent() const;
 		std::weak_ptr<Scene> getScene() const;
 
-		virtual float getAlpha() const;
-		virtual void setAlpha(float alpha);
+		float getAlpha() const;
+		void setAlpha(float alpha);
 
-		virtual float getRotation() const;
-		virtual void setRotation(float radians);
+		float getRotation() const;
+		void setRotation(float radians);
 
-		virtual Vec2<float> getScale() const;
-		virtual void setScale(float scale);
-		virtual void setScale(const Vec2<float>& scale);
+		Vec2<float> getScale() const;
+		void setScale(float scale);
+		void setScale(const Vec2<float>& scale);
 
-		virtual Vec2<float> getPosition() const;
-		virtual void setPosition(const Vec2<float>& pt);
-		virtual void setPosition(float x, float y);
+		Vec2<float> getPosition() const;
+		void setPosition(const Vec2<float>& pt);
+		void setPosition(float x, float y);
 
-		virtual Vec2<float> getAnchorPt() const;
-		virtual Vec2<float> getAnchorPcnt() const;
-		virtual void setAnchorPcnt(const Vec2<float>& pt);
-		virtual void setAnchorPcnt(float x, float y);
+		Vec2<float> getAnchorPt() const;
+		Vec2<float> getAnchorPcnt() const;
+		void setAnchorPcnt(const Vec2<float>& pt);
+		void setAnchorPcnt(float x, float y);
 
-		virtual Vec2<float> getGlobalPosition() const = 0;
-		virtual void setGlobalPosition(const Vec2<float>& pt_global) = 0;
-		virtual Rect<float> getLocalBounds() const = 0;
-		virtual Rect<float> getGlobalBounds() const = 0;
-		virtual Rect<float> getTotalGlobalBounds() const;
+		Vec2<float> getGlobalPosition() const;
+		void setGlobalPosition(const Vec2<float>& pt_global);
 
-		virtual void draw(DrawingContext& rt) const;
+		Rect<float> getLocalBounds() const;
+		Rect<float> getGlobalBounds() const;
+		Rect<float> getTotalGlobalBounds() const;
+
+		void draw(DrawingContext& rt) const;
 		
-		virtual ~Actor();
+		~Actor();
 
 		template<typename A, typename... Args>
 		static std::shared_ptr<A> create(Args... construction_args)

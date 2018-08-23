@@ -28,12 +28,6 @@ namespace ceph {
 	public:
 
 		void setFrame(const std::string& frame_name);
-
-		Vec2<float> getGlobalPosition() const override;
-		void setGlobalPosition(const Vec2<float>& pt_global) override;
-		Rect<float> getLocalBounds() const override;
-		Rect<float> getGlobalBounds() const override;
-
 		virtual ~Sprite();
 	};
 }
