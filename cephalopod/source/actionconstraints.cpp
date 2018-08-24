@@ -41,6 +41,4 @@ void ceph::WrapTorroidally::apply(ceph::Actor& actor) const
 		pt.y -= log_sz.y;
 	
 	actor.setGlobalPosition( pt );
-
-	pt = actor.getGlobalPosition();
 }
