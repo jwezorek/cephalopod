@@ -145,6 +145,7 @@ std::shared_ptr<ceph::Sprite> ship;
 
 void Update(float dt)
 {
+	/*
 	float rotation = ship->getRotation();
 	auto pos = ship->getPosition();
 
@@ -160,6 +161,7 @@ void Update(float dt)
 
 	ship->setPosition(pos);
 	ship->setRotation(rotation);
+	*/
 }
 
 void Asteroids::initialize()
@@ -170,12 +172,12 @@ void Asteroids::initialize()
 	);
 	//setBackgroundColor(ceph::ColorRGB(10, 30, 60));
 
-	ship = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, "ship");
-	ship->connect(updateEvent, std::function<void(float)>(Update));
+	//ship = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, "ship");
+	//ship->connect(updateEvent, std::function<void(float)>(Update));
 
-	ship->setPosition(300, 300);
-	ship->setAnchorPcnt(0.5f, 0.5f);
-	addActor(ship);
+	//ship->setPosition(300, 300);
+	//ship->setAnchorPcnt(0.5f, 0.5f);
+	//addActor(ship);
 
 	auto test = ceph::Actor::create<ceph::Sprite>( sprite_sheet_, "test3" );
 	test->setPosition(300, 300);
@@ -199,7 +201,8 @@ void Asteroids::initialize()
 
 	auto testGP = child->getGlobalPosition();
 
-	//test->getActions().applyAction( action );
+	test->getActions().applyAction( action, true );
+	test->applyConstraint(std::make_shared<ceph::WrapTorroidally>(0, 0));
 
 	auto bounds = grandChild->getGlobalBounds();
 	int aaa;

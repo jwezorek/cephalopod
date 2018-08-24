@@ -1,5 +1,5 @@
 #define _USE_MATH_DEFINES
-#ifdef WIN32
+#ifdef _WIN32
 #include "Windows.h"
 #endif
 #include <cmath>
@@ -49,7 +49,7 @@ float ceph::magnitude(Vec2<float> vec)
 void ceph::outputDebugString(const std::string& str)
 {
 	std::string line = str + std::string("\n");
-#ifdef WIN32
+#ifdef _WIN32
 	OutputDebugStringA( line.c_str() );
 #endif
 }

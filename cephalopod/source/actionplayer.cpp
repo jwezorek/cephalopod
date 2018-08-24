@@ -25,7 +25,6 @@ void ceph::ActionPlayer::finalizeAction(ceph::ActionPlayer::ActionInProgress& co
 	auto& action = completed_action_info.action;
 	//burn the final state of the action into the cached state of the sprite...
 	action(*initial_actor_state_, completed_action_info.getPcntComplete());
-	//applyConstraints(*initial_actor_state_);
 
 	completed_action_info.complete = true;
 	completed_action_info.elapsed = 0.0f;
@@ -85,7 +84,6 @@ void ceph::ActionPlayer::update(float dt)
 		}
 	}
 
-	//applyConstraints(state);
 	setActorState(state);
 
 	if (has_completed_actions) {
@@ -110,14 +108,6 @@ void ceph::ActionPlayer::setActorState(const ActorState& state)
 		static_cast<ceph::Sprite*>(&parent_)->setFrame(sprite_frame);
 	}
 }
-
-/*
-void ceph::ActionPlayer::applyConstraints(ActorState& state)
-{
-	for (const auto& constraint : constraints_)
-		constraint->apply(state);
-}
-*/
 
 ceph::ActionPlayer::ActionPlayer(Actor& parent) :
 	parent_(parent)
@@ -159,13 +149,6 @@ void ceph::ActionPlayer::applyActions(std::initializer_list<ceph::Action> action
 	for (auto& action : actions)
 		applyAction(action);
 }
-
-/*
-void ceph::ActionPlayer::applyConstraint(const std::shared_ptr<ceph::ActionConstraint>& constraint)
-{
-	constraints_.push_back(constraint);
-}
-*/
 
 void ceph::ActionPlayer::removeAction(int id)
 {
@@ -214,22 +197,6 @@ void  ceph::ActionPlayer::clearActions()
 		[](const ActionInProgress& a)->bool {return true; }
 	);
 }
-
-/*
-void ceph::ActionPlayer::clearConstraints()
-{
-	constraints_.clear();
-}
-
-void ceph::ActionPlayer::enforceConstraints()
-{
-	ceph::ActorState state( parent_ );
-	applyConstraints(state);
-	setActorState(state);
-}
-
-*/
-
 
 
 

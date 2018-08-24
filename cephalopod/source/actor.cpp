@@ -213,13 +213,7 @@ ceph::Vec2<float> ceph::Actor::getPosition() const
 
 void ceph::Actor::setPosition(const ceph::Vec2<float>& pt)
 {
-	//if (! impl_->actions.isRunning()) {
 	state_.setPosition(pt);
-	//} else {
-	//	auto diff = pt - getPosition();
-	//	impl_->properties.setPosition(sf::Vector2f(pt.x, pt.y));
-	//	impl_->actions.translateCacheState(diff);
-	//}
 }
 
 void ceph::Actor::setPosition(float x, float y)
@@ -266,6 +260,24 @@ void ceph::Actor::draw(DrawingContext& dcParent) const
 	dc.transformation *= ceph::Mat3x3().translate(state_.getAnchorPt());
 	for (const auto& child : children_)
 		child->draw(dc);
+}
+
+void ceph::Actor::applyConstraint(const std::shared_ptr<ceph::ActionConstraint>& constraint)
+{
+	constraints_.push_back(constraint);
+}
+
+void ceph::Actor::clearConstraints()
+{
+	constraints_.clear();
+}
+
+void ceph::Actor::enforceConstraints()
+{
+	for (auto constraint : constraints_)
+		constraint->apply(*this);
+	//for (auto child : children_)
+	//	child->enforceConstraints();
 }
 
 ceph::Actor::~Actor()

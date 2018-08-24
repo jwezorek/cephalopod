@@ -101,12 +101,9 @@ void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 		glfwPollEvents();
 
 		auto elapsed = clock.restart();
-		active_scene_->updateActionsEvent.fire(elapsed);
-		active_scene_->updateEvent.fire(elapsed);
-
+		active_scene_->update(elapsed);
 		graphics_->BeginFrame();
 		active_scene_->draw(dc);
-		//graphics_->Blit(ceph::Mat3x3().scale(100,100), ceph::Rect<int>(0, 0, 100, 100), 1.0);
 		graphics_->EndFrame();
 		active_scene_->endGameLoopIteration();
 
@@ -115,11 +112,13 @@ void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
 
 ceph::Rect<float> ceph::GameImpl::getLogicalRect() const
 {
-	return ceph::Rect<float>(0, 0, 0, 0);
+	auto view_mat = graphics_->getViewMatrix();
+	return view_mat.getInverse().value().apply(ceph::Rect<float>(-1, -1, 2, 2));
 }
 
 ceph::Vec2<int> ceph::GameImpl::getScreenSize() const
 {
+	//TODO
 	return ceph::Vec2<int>(0, 0);
 }
 
@@ -144,30 +143,6 @@ ceph::Rect<float> ceph::GameImpl::getScreenRect() const
 	int wd, hgt;
 	glfwGetWindowSize(window_, &wd, &hgt);
 	return ceph::Rect<float>(0.0f, 0.0f, static_cast<float>(wd), static_cast<float>(hgt));
-}
-
-ceph::Rect<float> ceph::GameImpl::convertToScreenCoords(const ceph::Rect<float>& rect) const
-{
-	//TODO
-	return ceph::Rect<float>(0, 0, 0, 0);
-}
-
-ceph::Rect<float> ceph::GameImpl::convertFromScreenCoords(const ceph::Rect<float>& rect) const
-{
-	//TODO
-	return ceph::Rect<float>(0, 0, 0, 0);
-}
-
-ceph::Vec2<float> ceph::GameImpl::convertToScreenCoords(const ceph::Vec2<float>& pt) const
-{
-	//TODO
-	return ceph::Vec2<float>(0, 0);
-}
-
-ceph::Vec2<float> ceph::GameImpl::convertFromScreenCoords(const ceph::Vec2<float>& pt) const
-{
-	//TODO
-	return ceph::Vec2<float>(0, 0);
 }
 
 std::shared_ptr<ceph::Scene> ceph::GameImpl::getActiveScene() const

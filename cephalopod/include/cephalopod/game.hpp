@@ -28,11 +28,6 @@ namespace ceph
 		virtual Vec2<float> getLogicalSize() const = 0;
 		virtual Rect<float> getScreenRect() const = 0;
 
-		virtual Rect<float> convertToScreenCoords(const Rect<float>& rect) const = 0;
-		virtual Rect<float> convertFromScreenCoords(const Rect<float>& rect) const = 0;
-		virtual Vec2<float> convertToScreenCoords(const Vec2<float>& rect) const = 0;
-		virtual Vec2<float> convertFromScreenCoords(const Vec2<float>& rect) const = 0;
-
 		virtual CoordinateMapping getCoordinateMapping() const = 0;
 		virtual std::shared_ptr<Scene> getActiveScene() const = 0;
 

@@ -31,6 +31,7 @@ namespace ceph {
 
 	protected:
 		ActionPlayer actions_;
+		std::vector<std::shared_ptr<ActionConstraint>> constraints_;
 		std::weak_ptr<Scene> scene_;
 		std::weak_ptr<Actor> parent_;
 		std::vector<std::shared_ptr<Actor>> children_;
@@ -90,6 +91,10 @@ namespace ceph {
 		Rect<float> getLocalBounds() const;
 		Rect<float> getGlobalBounds() const;
 		Rect<float> getTotalGlobalBounds() const;
+
+		virtual void applyConstraint(const std::shared_ptr<ActionConstraint>& constraint);
+		void clearConstraints();
+		void enforceConstraints();
 
 		void draw(DrawingContext& rt) const;
 		

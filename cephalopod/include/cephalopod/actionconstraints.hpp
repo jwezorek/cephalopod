@@ -1,16 +1,15 @@
-/*
+
 #pragma once
 
 #include "types.hpp"
 
 namespace ceph {
 	class Actor;
-	class ActorState;
 
 	class ActionConstraint
 	{
 	public:
-		virtual void apply(ceph::ActorState& actor) const = 0;
+		virtual void apply(ceph::Actor& actor) const = 0;
 	};
 
 	class WrapTorroidally : public ActionConstraint
@@ -20,7 +19,6 @@ namespace ceph {
 		float vert_padding_;
 	public:
 		WrapTorroidally(float horz_padding = 0.0f, float vert_padding = 0.0f);
-		virtual void apply(ceph::ActorState& actor) const override;
+		virtual void apply(ceph::Actor& actor) const override;
 	};
 }
-*/

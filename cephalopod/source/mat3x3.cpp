@@ -219,7 +219,7 @@ ceph::Mat3x3 ceph::operator*(const ceph::Mat3x3& left, const Mat3x3& right)
 ceph::Mat3x3 ceph::operator*(float k, const Mat3x3& mat)
 {
 	auto m = mat.get();
-	return ceph::Mat3x3(k*m[0], k*m[1], k*m[2], k*m[3], k*m[4], k*m[5], k*m[6], k*m[7], k*m[8]);
+	return ceph::Mat3x3(k*m[_11], k*m[_12], k*m[_13], k*m[_21], k*m[_22], k*m[_23], k*m[_31], k*m[_32], k*m[_33]);
 }
 
 bool ceph::operator==(const ceph::Mat3x3& left, const ceph::Mat3x3& right)

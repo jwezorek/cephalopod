@@ -34,14 +34,12 @@ namespace ceph {
 		Actor& parent_;
 		std::unique_ptr<ActorState> initial_actor_state_;
 		std::vector<ActionInProgress> actions_;
-		//std::vector<std::shared_ptr<ActionConstraint>> constraints_;
 
 		void removeActions(const std::function<bool(const ActionInProgress&)> predicate);
 		void finalizeAction(ActionInProgress & aip, bool emit_signal = true);
 		void resetActions();
 		void update(float dt);
 		void setActorState(const ActorState& state);
-		//void applyConstraints(ActorState& state);
 		void run();
 
 	public:
@@ -52,13 +50,10 @@ namespace ceph {
 		void applyAction(int id, const ceph::Action& action, bool repeat = false);
 		void applyAction(const ceph::Action& action, bool repeat = false);
 		void applyActions(std::initializer_list<Action> actions);
-		//virtual void applyConstraint(const std::shared_ptr<ActionConstraint>& constraint);
 		void removeAction(int id);
 		Signal<int>& getCompletionSignal(int id);
 
 		bool hasAction(int id);
 		void clearActions();
-		//void clearConstraints();
-		//void enforceConstraints();
 	};
 }

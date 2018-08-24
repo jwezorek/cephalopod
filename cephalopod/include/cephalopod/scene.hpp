@@ -32,6 +32,7 @@ namespace ceph {
 		Signal<float> updateActionsEvent;
 
 		void endGameLoopIteration();
+		void update(float dt);
 		Scene();
 
 	public:

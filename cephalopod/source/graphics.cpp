@@ -81,8 +81,8 @@ namespace
 	{
 		static std::unordered_map<ceph::CoordinateSystem, std::function<ceph::Mat3x3()>> creation_funcs{
 			{ ceph::CoordinateSystem::CenterOriginAscendingY,  []() {return ceph::Mat3x3::Identity; } },
-		{ ceph::CoordinateSystem::LowerLeftOriginAscendingY, CreateLowerLeftOriginAscendingYMatrix },
-		{ ceph::CoordinateSystem::UpperLeftOriginDescendingY, CreateUpperLeftOriginDescendingYMatrix }
+			{ ceph::CoordinateSystem::LowerLeftOriginAscendingY, CreateLowerLeftOriginAscendingYMatrix },
+			{ ceph::CoordinateSystem::UpperLeftOriginDescendingY, CreateUpperLeftOriginDescendingYMatrix }
 		};
 
 		return creation_funcs[system]();

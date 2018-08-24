@@ -32,8 +32,6 @@ namespace ceph
 		//	ceph::CoordinateMapping mapping_mode,
 		//	const ceph::Size<float>& log_sz, const ceph::Size<int>& scr_sz);
 
-		void render();
-
 	public:
 
 		GameImpl();
@@ -48,10 +46,6 @@ namespace ceph
 		void quit() override;
 		ceph::CoordinateMapping getCoordinateMapping() const override;
 		Rect<float> getScreenRect() const override;
-		Rect<float> convertToScreenCoords(const Rect<float>& rect) const override;
-		Rect<float> convertFromScreenCoords(const Rect<float>& rect) const override;
-		Vec2<float> convertToScreenCoords(const Vec2<float>& rect) const override;
-		Vec2<float> convertFromScreenCoords(const Vec2<float>& rect)  const override;
 		std::shared_ptr<Scene> getActiveScene() const override;
 	};
 };

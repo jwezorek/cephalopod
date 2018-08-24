@@ -14,6 +14,14 @@ void ceph::Scene::endGameLoopIteration()
 	dropped_actors_.clear();
 }
 
+void ceph::Scene::update(float dt)
+{
+	updateActionsEvent.fire( dt );
+	updateEvent.fire( dt );
+	for (auto actor : stage_)
+		actor->enforceConstraints();
+}
+
 void ceph::Scene::setBackground(const std::shared_ptr<Texture>& tex)
 {
 	//setBackground(tex, ceph::Game::getInstance().getCoordinateMapping());

@@ -1,8 +1,7 @@
-/*
 #include "../include/cephalopod/actionconstraints.hpp"
+#include "../include/cephalopod/actor.hpp"
 #include "../include/cephalopod/game.hpp"
 #include "util.hpp"
-#include "actorstate.hpp"
 
 ceph::WrapTorroidally::WrapTorroidally(float horz_padding, float vert_padding) :
 	horz_padding_(horz_padding),
@@ -10,26 +9,38 @@ ceph::WrapTorroidally::WrapTorroidally(float horz_padding, float vert_padding) :
 {
 }
 
-void ceph::WrapTorroidally::apply(ceph::ActorState& state) const
+void ceph::WrapTorroidally::apply(ceph::Actor& actor) const
 {
 	auto& game = ceph::Game::getInstance();
-	auto screen_rect = game.getScreenRect();
-	screen_rect.inflate(horz_padding_, vert_padding_);
-	auto scr_coord_position = game.convertToScreenCoords( ceph::SfPtToCephPt( state.getGlobalPosition()) );
+	auto log_rect = game.getLogicalRect();
+	auto log_sz = log_rect.getSize();
+	auto pt = actor.getGlobalPosition();
 
-	if (!screen_rect.contains(scr_coord_position)) {
-		if (scr_coord_position.x < screen_rect.x)
-			scr_coord_position.x += screen_rect.wd;
-		else if (scr_coord_position.x > screen_rect.x2())
-			scr_coord_position.x -= screen_rect.wd;
+	if (log_rect.contains(pt))
+		return;
 
-		if (scr_coord_position.y < 0.0f)
-			scr_coord_position.y += screen_rect.hgt;
-		else if (scr_coord_position.y > screen_rect.y2())
-			scr_coord_position.y -= screen_rect.hgt;
+	float left, right, top, bottom;
+	left = log_rect.x;
+	right = log_rect.x2();
 
-		auto new_position = game.convertFromScreenCoords(scr_coord_position);
-		state.setGlobalPosition(ceph::CephPtToSfPt(new_position) );
+	if (log_rect.y < log_rect.y2()) {
+		top = log_rect.y2();
+		bottom = log_rect.y;
+	} else {
+		top = log_rect.y;
+		bottom = log_rect.y2();
 	}
+
+	if (pt.x < left)
+		pt.x += log_sz.x;
+	if (pt.x > right)
+		pt.x -= log_sz.x;
+	if (pt.y < bottom)
+		pt.y += log_sz.y;
+	if (pt.y > top)
+		pt.y -= log_sz.y;
+	
+	actor.setGlobalPosition( pt );
+
+	pt = actor.getGlobalPosition();
 }
-*/
