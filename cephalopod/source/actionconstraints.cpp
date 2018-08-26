@@ -13,6 +13,9 @@ void ceph::WrapTorroidally::apply(ceph::Actor& actor) const
 {
 	auto& game = ceph::Game::getInstance();
 	auto log_rect = game.getLogicalRect();
+
+	log_rect.inflate(horz_padding_, vert_padding_);
+
 	auto log_sz = log_rect.getSize();
 	auto pt = actor.getGlobalPosition();
 

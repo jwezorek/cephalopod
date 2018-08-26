@@ -98,6 +98,11 @@ void ceph::Actor::runActions()
 		child->runActions();
 }
 
+void ceph::Actor::setActorState(const ActorState & state)
+{
+	state_ = state;
+}
+
 ceph::Mat3x3 ceph::Actor::getLocalToGlobalTransform() const
 {
 	ceph::Mat3x3 transform;
@@ -116,7 +121,7 @@ ceph::Vec2<float> ceph::Actor::getGlobalPosition() const
 
 void ceph::Actor::setGlobalPosition(const ceph::Vec2<float>& pt_global)
 {
-	setPosition(
+	moveTo(
 		getGlobalToLocalTransform().apply(pt_global)
 	);
 }
@@ -174,11 +179,17 @@ float ceph::Actor::getAlpha() const
 	return state_.getAlpha();
 }
 
-void ceph::Actor::setAlpha(float alpha)
+void ceph::Actor::setAlphaTo(float alpha)
 {
-	alpha = (alpha > 1.0f) ? 1.0f : alpha;
-	alpha = (alpha < 0.0f) ? 0.0f : alpha;
-	state_.setAlpha(alpha);
+	auto diff = alpha - state_.getAlpha();
+	changeAlphaBy(diff);
+}
+
+void ceph::Actor::changeAlphaBy(float alpha_diff)
+{
+	state_.changeAlphaBy(alpha_diff);
+	if (actions_.isRunning())
+		actions_.changeAlphaBy(alpha_diff);
 }
 
 float ceph::Actor::getRotation() const
@@ -186,9 +197,17 @@ float ceph::Actor::getRotation() const
 	return state_.getRotation();
 }
 
-void ceph::Actor::setRotation(float radians)
+void ceph::Actor::rotateTo(float radians)
 {
-	state_.setRotation(radians);
+	auto angle_delta = ceph::normalizeAngle(radians) - state_.getRotation();
+	rotateBy(angle_delta);
+}
+
+void ceph::Actor::rotateBy(float angle_delta)
+{
+	state_.rotateBy(angle_delta);
+	if (actions_.isRunning())
+		actions_.rotateBy(angle_delta);
 }
 
 ceph::Vec2<float> ceph::Actor::getScale() const
@@ -196,14 +215,22 @@ ceph::Vec2<float> ceph::Actor::getScale() const
 	return state_.getScale();
 }
 
-void ceph::Actor::setScale(float scale)
+void ceph::Actor::setScaleTo(float scale)
 {
-	state_.setScale(ceph::Vec2<float>(scale, scale));
+	setScaleTo(ceph::Vec2<float>(scale, scale));
 }
 
-void ceph::Actor::setScale(const ceph::Vec2<float>& s)
+void ceph::Actor::setScaleTo(const ceph::Vec2<float>& s)
 {
-	state_.setScale(s);
+	auto scale_delta = s - state_.getScale();
+	changeScaleBy(scale_delta);
+}
+
+void ceph::Actor::changeScaleBy(const ceph::Vec2<float>& s)
+{
+	state_.changeScaleBy(s);
+	if (actions_.isRunning())
+		actions_.changeScaleBy(s);
 }
 
 ceph::Vec2<float> ceph::Actor::getPosition() const
@@ -211,14 +238,22 @@ ceph::Vec2<float> ceph::Actor::getPosition() const
 	return state_.getPosition();
 }
 
-void ceph::Actor::setPosition(const ceph::Vec2<float>& pt)
+void ceph::Actor::moveTo(const ceph::Vec2<float>& position)
 {
-	state_.setPosition(pt);
+	auto delta = position - state_.getPosition();
+	moveBy(delta);
 }
 
-void ceph::Actor::setPosition(float x, float y)
+void ceph::Actor::moveTo(float x, float y)
 {
-	setPosition(ceph::Vec2<float>(x, y));
+	moveTo(ceph::Vec2<float>(x, y));
+}
+
+void ceph::Actor::moveBy(const ceph::Vec2<float>& delta)
+{
+	state_.moveBy(delta);
+	if (actions_.isRunning())
+		actions_.moveBy(delta);
 }
 
 ceph::Vec2<float> ceph::Actor::getAnchorPt() const

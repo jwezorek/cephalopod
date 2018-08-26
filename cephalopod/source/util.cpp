@@ -6,6 +6,25 @@
 #include "../include/cephalopod/types.hpp"
 #include "util.hpp"
 
+float ceph::normalizeAngle(float radians)
+{
+	auto two_pi = 2.0f * static_cast<float>(M_PI);
+	if (radians < 0.0)
+		radians += two_pi;
+	if (radians > two_pi)
+		radians = std::fmod(radians, two_pi);
+	return radians;
+}
+
+float ceph::clampValue(float value, float minimum, float maximum)
+{
+	if (value < minimum)
+		return minimum;
+	if (value > maximum)
+		return maximum;
+	return value;
+}
+
 float ceph::radiansToDegrees(float radians)
 {
 	return radians * 180.0f / static_cast<float>(M_PI);

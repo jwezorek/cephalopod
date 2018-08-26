@@ -1,5 +1,6 @@
 #include "..\include\cephalopod\actorstate.hpp"
 #include "..\include\cephalopod\spritesheet.hpp"
+#include "util.hpp"
 
 namespace
 {
@@ -44,22 +45,15 @@ std::shared_ptr<const ceph::SpriteSheet> ceph::ActorState::getSpriteSheet() cons
 	return sprite_sheet_;
 }
 
-void ceph::ActorState::translate(const ceph::Vec2<float>& v)
+void ceph::ActorState::moveBy(const ceph::Vec2<float>& v)
 {
 	position_ += v;
 	transform_ = std::nullopt;
 }
 
-void ceph::ActorState::translate(float x, float y)
-{	
-	position_.x += x;
-	position_.y += y;
-	transform_ = std::nullopt;
-}
-
-void ceph::ActorState::rotate(float theta)
+void ceph::ActorState::rotateBy(float theta)
 {
-	rotation_ += theta;
+	rotation_ = normalizeAngle(rotation_ + theta);
 	transform_ = std::nullopt;
 }
 
@@ -68,31 +62,20 @@ ceph::Vec2<float> ceph::ActorState::getScale() const
 	return scale_;
 }
 
-void ceph::ActorState::setScale(const Vec2<float>& s)
+void ceph::ActorState::changeScaleBy(const Vec2<float>& s)
 {
-	scale_ = s;
+	scale_ += s;
 	transform_ = std::nullopt;
 }
 
-void ceph::ActorState::setAlpha(float alpha)
+void ceph::ActorState::changeAlphaBy(float alpha)
 {
-	alpha_ = alpha;
+	alpha_ = ceph::clampValue(alpha, 0, 1);
 }
 
 float ceph::ActorState::getAlpha() const
 {
 	return alpha_;
-}
-
-void ceph::ActorState::setPosition(const ceph::Vec2<float>& v)
-{
-	position_ = v;
-	transform_ = std::nullopt;
-}
-
-void ceph::ActorState::setPosition(float x, float y)
-{
-	setPosition(ceph::Vec2<float>(x, y));
 }
 
 ceph::Vec2<float> ceph::ActorState::getPosition() const
@@ -150,12 +133,6 @@ void ceph::ActorState::setAnchorPcnt(float x, float y)
 	setAnchorPcnt(
 		ceph::Vec2<float>(x,y)
 	);
-}
-
-void ceph::ActorState::setRotation(float theta)
-{
-	rotation_ = theta;
-	transform_ = std::nullopt;
 }
 
 ceph::Mat3x3 ceph::ActorState::getTransformationMatrix() const

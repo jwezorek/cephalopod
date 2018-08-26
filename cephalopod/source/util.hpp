@@ -7,7 +7,8 @@
 
 namespace ceph {
 	void outputDebugString(const std::string& str);
-
+	float clampValue(float value, float minium, float maximum);
+	float normalizeAngle(float radians);
 	float radiansToDegrees(float radians);
 	float degreesToRadians(float degrees);
 	float lerp(float start, float end, float pcnt);

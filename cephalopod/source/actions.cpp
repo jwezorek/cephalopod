@@ -37,7 +37,7 @@ ceph::Action ceph::createMoveByAction(float duration, float x, float y)
 	return ceph::Action(
 		duration,
 		[x, y](ceph::ActorState& state, float t) -> void {
-			state.translate( t*x, t*y);
+			state.moveBy( ceph::Vec2(t*x, t*y) );
 		}
 	);
 }
@@ -47,7 +47,7 @@ ceph::Action ceph::createRotateByAction(float duration, float theta)
 	return ceph::Action(
 		duration,
 		[theta](ceph::ActorState& state, float t) -> void {
-			state.rotate( t*theta );
+			state.rotateBy( t*theta );
 		}
 	);
 }
@@ -57,8 +57,7 @@ ceph::Action ceph::createFadeByAction(float duration, float alpha)
 	return ceph::Action(
 		duration,
 		[alpha](ceph::ActorState& state, float t) -> void {
-			float old_alpha = state.getAlpha();
-			state.setAlpha( old_alpha + t*alpha);
+			state.changeAlphaBy( t*alpha);
 		}
 	);
 }

@@ -84,7 +84,7 @@ void ceph::ActionPlayer::update(float dt)
 		}
 	}
 
-	setActorState(state);
+	parent_.setActorState(state);
 
 	if (has_completed_actions) {
 		// remove the completed non-repeating actions and then clean up...
@@ -93,19 +93,6 @@ void ceph::ActionPlayer::update(float dt)
 				return aip.complete && !aip.repeat;
 			}
 		);
-	}
-}
-
-void ceph::ActionPlayer::setActorState(const ActorState& state)
-{
-	parent_.setPosition( state.getPosition() );
-	parent_.setRotation( state.getRotation() );
-	parent_.setScale( state.getScale() );
-	parent_.setAlpha(state.getAlpha());
-
-	auto sprite_frame = state.getSpriteFrame();
-	if (!sprite_frame.empty()) {
-		static_cast<ceph::Sprite*>(&parent_)->setFrame(sprite_frame);
 	}
 }
 
@@ -189,13 +176,33 @@ bool ceph::ActionPlayer::hasAction(int id)
 	);
 }
 
-void  ceph::ActionPlayer::clearActions()
+void ceph::ActionPlayer::clearActions()
 {
 	for(auto& ai : actions_)
 		finalizeAction(ai, false);
 	removeActions(
 		[](const ActionInProgress& a)->bool {return true; }
 	);
+}
+
+void ceph::ActionPlayer::moveBy(const Vec2<float>& vec)
+{
+	initial_actor_state_->moveBy( vec );
+}
+
+void ceph::ActionPlayer::rotateBy(float theta)
+{
+	initial_actor_state_->rotateBy( theta );
+}
+
+void ceph::ActionPlayer::changeAlphaBy(float alpha)
+{
+	initial_actor_state_->changeAlphaBy(alpha);
+}
+
+void ceph::ActionPlayer::changeScaleBy(const Vec2<float>& scale)
+{
+	initial_actor_state_->changeScaleBy(scale);
 }
 
 

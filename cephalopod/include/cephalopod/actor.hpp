@@ -24,7 +24,7 @@ namespace ceph {
 		friend class Sprite;
 		friend class Group;
 		friend class ActorState;
-		friend class ActionPlayerImpl;
+		friend class ActionPlayer;
 
 	private:
 		Actor();
@@ -41,6 +41,7 @@ namespace ceph {
 		void detachFromScene();
 		void attachToScene(const std::shared_ptr<Scene>& scene);
 		void runActions();
+		void setActorState(const ActorState& state);
 
 		Mat3x3 getLocalToGlobalTransform() const; 
 		Mat3x3 getGlobalToLocalTransform() const;
@@ -67,18 +68,24 @@ namespace ceph {
 		std::weak_ptr<Scene> getScene() const;
 
 		float getAlpha() const;
-		void setAlpha(float alpha);
+		void setAlphaTo(float alpha);
+		void changeAlphaBy(float alpha);
 
 		float getRotation() const;
-		void setRotation(float radians);
+		void rotateTo(float radians);
+		void rotateBy(float radians);
 
 		Vec2<float> getScale() const;
-		void setScale(float scale);
-		void setScale(const Vec2<float>& scale);
+		void setScaleTo(float scale);
+		void setScaleTo(const Vec2<float>& scale);
+		void changeScaleBy(float scale);
+		void changeScaleBy(const Vec2<float>& scale);
 
 		Vec2<float> getPosition() const;
-		void setPosition(const Vec2<float>& pt);
-		void setPosition(float x, float y);
+		void moveTo(const Vec2<float>& pt);
+		void moveTo(float x, float y);
+		void moveBy(const Vec2<float>& pt);
+		void moveBy(float x, float y);
 
 		Vec2<float> getAnchorPt() const;
 		Vec2<float> getAnchorPcnt() const;

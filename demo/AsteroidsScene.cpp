@@ -138,15 +138,14 @@ std::shared_ptr<ceph::Sprite> Asteroids::createAsteroid()
 #include "cephalopod/game.hpp"
 #include "cephalopod/sprite.hpp"
 
-std::random_device rd; // obtain a random number from hardware
+std::random_device rd; 
 std::mt19937 eng(rd());
 
 std::shared_ptr<ceph::Sprite> ship;
 
 void Update(float dt)
 {
-	/*
-	float rotation = ship->getRotation();
+	
 	auto pos = ship->getPosition();
 
 	pos += dt * ceph::Vec2<float>(100, 100);
@@ -157,11 +156,9 @@ void Update(float dt)
 	if (pos.y > 768)
 		pos.y -= 768;
 
-	rotation += 2*dt;
-
-	ship->setPosition(pos);
-	ship->setRotation(rotation);
-	*/
+	ship->moveTo(pos);
+	ship->rotateBy(2 * dt);
+	
 }
 
 void Asteroids::initialize()
@@ -170,31 +167,31 @@ void Asteroids::initialize()
 		".\\data\\zarquon.png",
 		".\\data\\zarquon.json"
 	);
-	//setBackgroundColor(ceph::ColorRGB(10, 30, 60));
+	setBackgroundColor(ceph::ColorRGB(10, 30, 60));
 
-	//ship = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, "ship");
-	//ship->connect(updateEvent, std::function<void(float)>(Update));
+	ship = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, "ship");
+	ship->connect(updateEvent, std::function<void(float)>(Update));
 
-	//ship->setPosition(300, 300);
-	//ship->setAnchorPcnt(0.5f, 0.5f);
-	//addActor(ship);
+	ship->moveTo(300, 300);
+	ship->setAnchorPcnt(0.5f, 0.5f);
+	addActor(ship);
 
 	auto test = ceph::Actor::create<ceph::Sprite>( sprite_sheet_, "test3" );
-	test->setPosition(300, 300);
+	test->moveTo(300, 300);
 	test->setAnchorPcnt(0.5f, 0.5f);
 	addActor(test);
 
 	auto child = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, "test2");
 	child->setAnchorPcnt(0.5f, 0.5f);
-	child->setPosition(20, 20);
+	child->moveTo(20, 20);
 	//child->setRotation(0.78539816339f);
 	//addActor(child);
 	test->addChild(child);
 
 	auto grandChild = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, "test2");
 	grandChild->setAnchorPcnt(0.5f, 0.5f);
-	grandChild->setPosition(0, 0);
-	grandChild->setScale( 0.5f );
+	grandChild->moveTo(0, 0);
+	grandChild->setScaleTo( 0.5f );
 	child->addChild(grandChild);
 
 	auto action = ceph::createMoveByAction( 1.0f, ceph::Vec2<float>(300.0f, 0) );
@@ -202,7 +199,7 @@ void Asteroids::initialize()
 	auto testGP = child->getGlobalPosition();
 
 	test->getActions().applyAction( action, true );
-	test->applyConstraint(std::make_shared<ceph::WrapTorroidally>(0, 0));
+	test->applyConstraint(std::make_shared<ceph::WrapTorroidally>(80.0f, 80.0f));
 
 	auto bounds = grandChild->getGlobalBounds();
 	int aaa;

@@ -39,8 +39,12 @@ namespace ceph {
 		void finalizeAction(ActionInProgress & aip, bool emit_signal = true);
 		void resetActions();
 		void update(float dt);
-		void setActorState(const ActorState& state);
 		void run();
+
+		void moveBy(const Vec2<float>& vec);
+		void rotateBy(float theta);
+		void changeAlphaBy(float alpha);
+		void changeScaleBy(const Vec2<float>& scale);
 
 	public:
 		ActionPlayer(Actor& parent);
