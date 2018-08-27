@@ -309,10 +309,12 @@ void ceph::Actor::clearConstraints()
 
 void ceph::Actor::enforceConstraints()
 {
-	for (auto constraint : constraints_)
-		constraint->apply(*this);
-	//for (auto child : children_)
-	//	child->enforceConstraints();
+	if (!constraints_.empty())
+		for (auto constraint : constraints_)
+			constraint->apply(*this);
+	else
+		for (auto child : children_)
+			child->enforceConstraints();
 }
 
 ceph::Actor::~Actor()

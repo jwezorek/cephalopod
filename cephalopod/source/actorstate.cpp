@@ -68,9 +68,9 @@ void ceph::ActorState::changeScaleBy(const Vec2<float>& s)
 	transform_ = std::nullopt;
 }
 
-void ceph::ActorState::changeAlphaBy(float alpha)
+void ceph::ActorState::changeAlphaBy(float alpha_delta)
 {
-	alpha_ = ceph::clampValue(alpha, 0, 1);
+	alpha_ = ceph::clampValue(alpha_ + alpha_delta, 0, 1);
 }
 
 float ceph::ActorState::getAlpha() const

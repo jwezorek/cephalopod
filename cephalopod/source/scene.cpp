@@ -50,10 +50,9 @@ void ceph::Scene::addActor(const std::shared_ptr<ceph::Actor>& child, bool add_o
 		stage_.push_front(child);
 
 	child->attachToScene( shared_from_this() );
-	/*
+	
 	if (child->isInSceneTopLevel() && child->hasActions())
 		child->runActions();
-	*/
 }
 
 void ceph::Scene::addActors(std::initializer_list<std::shared_ptr<Actor>> children, bool add_on_top)

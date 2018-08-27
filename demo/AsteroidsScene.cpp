@@ -1,4 +1,3 @@
-/*
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <random>
@@ -30,18 +29,20 @@ void Asteroids::initialize()
 		CreateStarLayer( -32.0f, 0.0625f )
 	});
 
+	/*
 	addActor(
 		bkgd_layer_ = ceph::Actor::create<ceph::Group>()
 	);
-
+	
 	auto ship = ceph::Actor::create<Ship>(sprite_sheet_);
 
-	ship->setPosition(700, 300);
-	ship->getActions().applyConstraint(
+	ship->moveTo(700, 300);
+	ship->applyConstraint(
 		std::make_shared<ceph::WrapTorroidally>( 40.0f, 40.0f )
 	);
 	addActor(ship);
 	ship->connect(updateEvent, &Ship::update);
+	*/
 
 	for (int i = 0; i < 5; i++) {
 		auto asteroid = createAsteroid();
@@ -68,16 +69,16 @@ std::shared_ptr<ceph::Actor> Asteroids::CreateStarLayer(float horz_speed, float 
 		auto star_id = "star_" + std::to_string(star_distr(eng));
 		auto star = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, star_id);
 		auto& star_actions = star->getActions();
-		star->setAnchorPt(0.5f, 0.5f);
-		star->setPosition( static_cast<float>(x_distr( eng )), static_cast<float>(y_distr( eng )) );
-		star->setAlpha(alpha);
+		star->setAnchorPcnt(0.5f, 0.5f);
+		star->moveTo( static_cast<float>(x_distr( eng )), static_cast<float>(y_distr( eng )) );
+		star->setAlphaTo(alpha);
 		star_actions.applyAction(
 			ceph::createMoveByAction(2.0f, horz_speed, 0), true
 		);
 		star_actions.applyAction(
 			ceph::createRotateByAction(1.0f, 1.0f), true
 		);
-		star_actions.applyConstraint(
+		star->applyConstraint(
 			std::make_shared<ceph::WrapTorroidally>(10.0f, 0.0f)
 		);
 		layer->addChild(star);
@@ -102,14 +103,14 @@ std::shared_ptr<ceph::Sprite> Asteroids::createAsteroid()
 	std::uniform_real_distribution<> rot_distr(0.0f, 2.0f*M_PI);
 
 	auto asteroid = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, frame_prefix + "_0");
-	asteroid->setPosition(x_distr(eng), y_distr(eng));
+	asteroid->moveTo(x_distr(eng), y_distr(eng));
 
 	auto theta = rot_distr(eng);
 	asteroid->getActions().applyAction(
-		ceph::createMoveByAction(1.0f, 100.0f * ceph::Vec2D<float>(cosf(theta), sinf(theta))),
+		ceph::createMoveByAction(1.0f, 100.0f * ceph::Vec2<float>(cosf(theta), sinf(theta))),
 		true
 	);
-	asteroid->setRotation(rot_distr(eng));
+	asteroid->rotateTo(rot_distr(eng));
 
 	std::vector<std::string> frames;
 	for (int i = 0; i < num_frames; i++)
@@ -120,7 +121,7 @@ std::shared_ptr<ceph::Sprite> Asteroids::createAsteroid()
 		true
 	);
 	
-	asteroid->getActions().applyConstraint(
+	asteroid->applyConstraint(
 		std::make_shared<ceph::WrapTorroidally>(100.0f, 100.0f)
 	);
 
@@ -129,7 +130,8 @@ std::shared_ptr<ceph::Sprite> Asteroids::createAsteroid()
 	addActor(asteroid);
 	return asteroid;
 }
-*/
+
+/*
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <random>
@@ -205,6 +207,7 @@ void Asteroids::initialize()
 	int aaa;
 	aaa = 5;
 }
+*/
 
 
 

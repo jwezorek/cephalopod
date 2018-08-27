@@ -1,5 +1,5 @@
 #pragma once
-/*
+
 #include <memory>
 #include "cephalopod/scene.hpp"
 
@@ -23,8 +23,8 @@ public:
 	void initialize() override;
 	std::shared_ptr<ceph::Group> getBkgdLayer() const;
 };
-*/
 
+/*
 #include <memory>
 #include "cephalopod/scene.hpp"
 
@@ -44,3 +44,4 @@ private:
 public:
 	void initialize() override;
 };
+*/

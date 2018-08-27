@@ -8,8 +8,6 @@
 
 namespace ceph {
 
-	class SpriteImpl;
-
 	class Group : public Actor
 	{
 		friend class Actor;
@@ -19,10 +17,6 @@ namespace ceph {
 		Group();
 
 	public:
-		//Vec2<float> getGlobalPosition() const override;
-		//void setGlobalPosition(const Vec2<float>& pt_global) override;
-		//Rect<float> getLocalBounds() const override;
-		//Rect<float> getGlobalBounds() const override;
 		virtual ~Group();
 	};
 }
