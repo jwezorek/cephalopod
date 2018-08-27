@@ -22,16 +22,6 @@ namespace ceph
 		ceph::Vec2<float> log_size_;
 		static GameImpl* instance_;
 
-		//void handleInput(const sf::Event& evt);
-		//static unsigned char getModifiers(const sf::Event::KeyEvent& ke);
-		//static sf::Transform getCoordinateSystemMatrix(ceph::CoordinateSystem system, const ceph::Size<float>& log_sz);
-
-		//static ceph::Size<float> getLogSizeFromMapping(ceph::CoordinateMapping mapping_mode, const ceph::Size<float>& log_size, const ceph::Size<int>& scr_size);
-
-		//static std::tuple<sf::Transform, std::vector<sf::RectangleShape>> getCoordinateMappingInfo(
-		//	ceph::CoordinateMapping mapping_mode,
-		//	const ceph::Size<float>& log_sz, const ceph::Size<int>& scr_sz);
-
 	public:
 
 		GameImpl();

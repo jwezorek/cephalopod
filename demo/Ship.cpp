@@ -1,4 +1,4 @@
-/*
+
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include "cephalopod/types.hpp"
@@ -10,10 +10,9 @@
 
 Ship::RotationType Ship::getRotationState() const
 {
-	auto& actions = getActions();
-	if (actions.hasAction(static_cast<int>(RotationType::Left)))
+	if (actions_.hasAction(static_cast<int>(RotationType::Left)))
 		return RotationType::Left;
-	else if (actions.hasAction(static_cast<int>(RotationType::Right)))
+	else if (actions_.hasAction(static_cast<int>(RotationType::Right)))
 		return RotationType::Right;
 	return RotationType::None;
 }
@@ -28,7 +27,7 @@ Ship::Ship(const std::shared_ptr<ceph::SpriteSheet>& ss) :
 void Ship::initialize()
 {
 	auto main_ship_sprite = ceph::Actor::create<ceph::Sprite>(sprites_, "ship");
-	main_ship_sprite->setAnchorPt(0.5f, 0.5f);
+	main_ship_sprite->setAnchorPcnt(0.5f, 0.5f);
 	addChild(main_ship_sprite);
 	auto& key_evt = ceph::Game::getInstance().keyEvent;
 	connect(key_evt, &Ship::handleKey);
@@ -42,9 +41,7 @@ void Ship::update(float dt)
 	}
 
 	auto old_position = getPosition();
-	setPosition(old_position + dt * velocity_ );
-
-	getActions().enforceConstraints();
+	moveTo(old_position + dt * velocity_ );
 }
 
 void Ship::handleRotationKey(bool key_down, Ship::RotationType direction)
@@ -75,9 +72,9 @@ void Ship::handleThrustKey(bool key_down)
 	is_thruster_on_ = key_down;
 }
 
-ceph::Vec2D<float> Ship::getDirection() const
+ceph::Vec2<float> Ship::getDirection() const
 {
-	float theta = getRotation();
+	float theta = -getRotation();
 	return {
 		cosf(theta),
 		sinf(theta)
@@ -89,9 +86,9 @@ void Ship::shoot()
 	auto direction = getDirection();
 	auto start_position = getPosition() + 40.0f * direction;
 	auto bullet = ceph::Actor::create<ceph::Sprite>(sprites_, "zap");
-	bullet->setAnchorPt(0.5f, 0.5f);
-	bullet->setPosition(start_position);
-	bullet->setRotation(getRotation());
+	bullet->setAnchorPcnt(0.5f, 0.5f);
+	bullet->moveTo(start_position);
+	bullet->rotateTo(getRotation());
 
 	bullet->getActions().applyAction(
 		FLYING_BULLET_ACTION,
@@ -135,4 +132,3 @@ void Ship::handleKey(bool is_key_down, ceph::KeyCode key, unsigned char modifier
 			return;
 	}
 }
-*/

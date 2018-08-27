@@ -57,7 +57,7 @@ namespace ceph {
 		void removeAction(int id);
 		Signal<int>& getCompletionSignal(int id);
 
-		bool hasAction(int id);
+		bool hasAction(int id) const;
 		void clearActions();
 	};
 }

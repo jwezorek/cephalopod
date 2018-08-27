@@ -164,7 +164,7 @@ ceph::Signal<int>& ceph::ActionPlayer::getCompletionSignal(int id)
 	return ia->signal;
 }
 
-bool ceph::ActionPlayer::hasAction(int id)
+bool ceph::ActionPlayer::hasAction(int id) const
 {
 	return (
 		std::find_if(

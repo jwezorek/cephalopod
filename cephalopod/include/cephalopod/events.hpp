@@ -104,7 +104,13 @@ namespace ceph {
 		F13,          ///< The F13 key
 		F14,          ///< The F14 key
 		F15,          ///< The F15 key
-		Pause
+		Pause,
+		Apostrophe,
+		Enter,
+		CapsLock,
+		ScrollLock,
+		NumLock,
+		PrintScreen
 	};
 
 }
