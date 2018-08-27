@@ -134,7 +134,7 @@ namespace
 		ceph::Game::getInstance().keyEvent.fire( (action == GLFW_PRESS), key, mods );
 	}
 
-	GLFWwindow* CreateGlWindow(int wd, int hgt, const char* title)
+	GLFWwindow* CreateGlWindow(bool fullscreen, int wd, int hgt, const char* title)
 	{
 		// open a window with GLFW
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -143,7 +143,12 @@ namespace
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-		auto window = glfwCreateWindow(wd, hgt, title, NULL, NULL);
+		auto window = glfwCreateWindow(
+			wd, hgt, 
+			title, 
+			(fullscreen) ? glfwGetPrimaryMonitor(): NULL,
+			NULL
+		);
 		if (!window)
 			return nullptr;
 
@@ -180,14 +185,14 @@ ceph::GameImpl* ceph::GameImpl::getInstance()
 void ceph::GameImpl::initialize(ceph::ScreenMode mode, int wd, int hgt, const std::string& title)
 {
 	switch (mode) {
-		case ceph::ScreenMode::FullScreenExclusive:
-			//TODO
+		case ceph::ScreenMode::FullScreen:
+			window_ = CreateGlWindow(true, wd, hgt, title.c_str());
 			break;
 		case ceph::ScreenMode::FullScreenWindowed:
 			//TODO
 			break;
 		case ceph::ScreenMode::WindowedWithTitleBar:
-			window_ = CreateGlWindow(wd, hgt, title.c_str());
+			window_ = CreateGlWindow(false, wd, hgt, title.c_str());
 			break;
 	}
 	graphics_ = std::make_unique<ceph::Graphics>(window_);

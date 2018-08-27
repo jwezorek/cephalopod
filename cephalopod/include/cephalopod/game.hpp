@@ -9,7 +9,7 @@ namespace ceph
 {
 	enum class ScreenMode
 	{
-		FullScreenExclusive,
+		FullScreen,
 		FullScreenWindowed,
 		WindowedWithTitleBar
 	};
