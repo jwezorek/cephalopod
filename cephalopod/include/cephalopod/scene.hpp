@@ -1,5 +1,6 @@
 #pragma once
 #include <deque>
+#include <list>
 #include <memory>
 #include <functional>
 #include <initializer_list>
@@ -8,6 +9,7 @@
 #include "events.hpp"
 #include "texture.hpp"
 #include "signals.hpp"
+#include "drawingcontext.hpp"
 
 namespace ceph {
 
@@ -24,13 +26,15 @@ namespace ceph {
 
 	private:
 
+		ceph::Mat3x3 bkgd_tranform_;
+		std::shared_ptr<Texture> bkgd_;
 		std::deque<std::shared_ptr<Actor>> stage_;
 		std::list<std::shared_ptr<Actor>> dropped_actors_;
 		ColorRGB bkgd_color_;
 
 	protected:
 		Signal<float> updateActionsEvent;
-
+		void drawBackground(DrawingContext& dc);
 		void endGameLoopIteration();
 		void update(float dt);
 		Scene();

@@ -49,4 +49,6 @@ namespace ceph
 
 		~Graphics();
 	};
+
+	CoordinateMappingInfo CreateStretchToFit(float scr_wd, float scr_hgt, float logical_wd, float logical_hgt);
 };

@@ -95,7 +95,7 @@ namespace
 			2.0f / logical_hgt
 		);
 	}
-
+	
 	ceph::CoordinateMappingInfo CreateStretchToFit(float scr_wd, float scr_hgt, float logical_wd, float logical_hgt)
 	{
 		return CreateStretchToFitMatrix(logical_wd, logical_hgt);

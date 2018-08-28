@@ -3,6 +3,7 @@
 #include "../include/cephalopod/game.hpp"
 #include "../include/cephalopod/texture.hpp"
 #include "../include/cephalopod/drawingcontext.hpp"
+#include "graphics.hpp"
 #include "util.hpp"
 
 ceph::Scene::Scene()
@@ -24,12 +25,22 @@ void ceph::Scene::update(float dt)
 
 void ceph::Scene::setBackground(const std::shared_ptr<Texture>& tex)
 {
-	//setBackground(tex, ceph::Game::getInstance().getCoordinateMapping());
+	
+
+}
+
+ceph::Mat3x3 CreateStretchToFitMatrix(float logical_wd, float logical_hgt)
+{
+	return ceph::Mat3x3().scale(
+		2.0f / logical_wd,
+		2.0f / logical_hgt
+	);
 }
 
 void ceph::Scene::setBackground(const std::shared_ptr<Texture>& tex, ceph::CoordinateMapping mapping)
 {
-	//impl_->setBackground(tex, mapping);
+	bkgd_ = tex;
+	bkgd_tranform_ = CreateStretchToFitMatrix(tex->getWidth(), tex->getHeight());
 }
 
 void ceph::Scene::setBackgroundColor(const ceph::ColorRGB& color)
@@ -71,11 +82,22 @@ void ceph::Scene::removeActor(const std::shared_ptr<ceph::Actor>& child)
 	stage_.erase(i);
 }
 
-void ceph::Scene::draw(ceph::DrawingContext& rt)
+void ceph::Scene::draw(ceph::DrawingContext& dc)
 {
-	//drawBackground(rt);
+	//TODO: paint bkgd color...
+	drawBackground(dc);
 	for (const auto& actor : stage_)
-		actor->draw(rt);
+		actor->draw(dc);
+}
+
+void ceph::Scene::drawBackground(ceph::DrawingContext& dc)
+{
+	if (bkgd_.get()) {
+		auto curr_tex = dc.graphics.GetCurrentTexture();
+		if (curr_tex.get() != bkgd_.get())
+			dc.graphics.SetCurrentTexture(bkgd_);
+		dc.graphics.Blit(bkgd_tranform_, curr_tex->getBounds(), 1.0f);
+	}
 }
 
 ceph::Scene::~Scene()
