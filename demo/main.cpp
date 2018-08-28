@@ -21,8 +21,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	//game->initialize(ceph::ScreenMode::WindowedWithTitleBar, 1024, 768);
 	//game->setLogicalCoordinates(ceph::CoordinateMapping::UseBlackBars, ceph::Vec2<float>(1024, 768), ceph::CoordinateSystem::LowerLeftOriginAscendingY);
 
-	game->initialize(ceph::ScreenMode::FullScreen, 1920, 1080);
-	game->setLogicalCoordinates(ceph::CoordinateMapping::UseBlackBars, ceph::Vec2<float>(1920, 1080), ceph::CoordinateSystem::LowerLeftOriginAscendingY);
+	game->initializeFullscreen( ceph::VideoMode(1024,768) );
+	game->setLogicalCoordinates(ceph::CoordinateMapping::UseBlackBars, ceph::Vec2<float>(1024, 768), ceph::CoordinateSystem::LowerLeftOriginAscendingY);
 
 	auto scene = ceph::Scene::create<Asteroids>();
 	game->run(scene);

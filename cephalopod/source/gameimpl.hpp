@@ -27,15 +27,16 @@ namespace ceph
 		GameImpl();
 
 		static GameImpl* getInstance();
-		void initialize(ceph::ScreenMode mode, int wd, int hgt, const std::string& title) override;
+		void initialize(ceph::WindowMode mode, int wd, int hgt, const std::string& title) override;
 		void setLogicalCoordinates(CoordinateMapping mapping, const Vec2<float>& log_size, CoordinateSystem system);
 		void run(const std::shared_ptr<ceph::Scene>& startingScene) override;
 		ceph::Rect<float> getLogicalRect() const override;
-		ceph::Vec2<int> getScreenSize() const override;
 		ceph::Vec2<float> getLogicalSize() const override;
 		void quit() override;
 		ceph::CoordinateMapping getCoordinateMapping() const override;
-		Rect<float> getScreenRect() const override;
+		Rect<int> getScreenRect() const override;
 		std::shared_ptr<Scene> getActiveScene() const override;
+		void initializeFullscreen(VideoMode vm, const std::string& title = "") override;
+		std::list<VideoMode> getVideoModes() const override;
 	};
 };

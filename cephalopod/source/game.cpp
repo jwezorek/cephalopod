@@ -134,8 +134,18 @@ namespace
 		ceph::Game::getInstance().keyEvent.fire( (action == GLFW_PRESS), key, mods );
 	}
 
-	GLFWwindow* CreateGlWindow(bool fullscreen, int wd, int hgt, const char* title)
+	GLFWwindow* CreateGlWindow(ceph::WindowMode mode, ceph::VideoMode vm, const char* title = "cephalopod")
 	{
+		if (mode == ceph::WindowMode::FullScreen) {
+			auto m = glfwGetVideoMode(glfwGetPrimaryMonitor());
+			vm.width = (vm.width < 0) ? m->width : vm.width;
+			vm.height = (vm.height < 0) ? m->height : vm.height;
+			vm.refresh_rate = (vm.refresh_rate < 0) ? m->refreshRate : vm.refresh_rate;
+			vm.red_bits = (vm.red_bits < 0) ? m->redBits : vm.red_bits;
+			vm.green_bits = (vm.green_bits < 0) ? m->greenBits : vm.green_bits;
+			vm.blue_bits = (vm.blue_bits < 0) ? m->blueBits : vm.blue_bits;
+		}
+
 		// open a window with GLFW
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -143,12 +153,25 @@ namespace
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 		glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-		auto window = glfwCreateWindow(
-			wd, hgt, 
-			title, 
-			(fullscreen) ? glfwGetPrimaryMonitor(): NULL,
-			NULL
-		);
+		auto monitor = (mode == ceph::WindowMode::FullScreen || mode == ceph::WindowMode::FullScreenWindowed) ?
+			glfwGetPrimaryMonitor() : NULL;
+
+		if (mode == ceph::WindowMode::FullScreenWindowed) {
+			const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+			glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+			glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+			glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+			glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+			vm.width = mode->width;
+			vm.height = mode->height;
+		} else if (mode == ceph::WindowMode::FullScreen) {
+			glfwWindowHint(GLFW_RED_BITS, vm.red_bits);
+			glfwWindowHint(GLFW_GREEN_BITS, vm.green_bits);
+			glfwWindowHint(GLFW_BLUE_BITS, vm.blue_bits);
+			glfwWindowHint(GLFW_REFRESH_RATE, vm.refresh_rate);
+		}
+
+		auto window = glfwCreateWindow( vm.width, vm.height, title, monitor, NULL );
 		if (!window)
 			return nullptr;
 
@@ -180,21 +203,15 @@ ceph::GameImpl* ceph::GameImpl::getInstance()
 	return instance_;
 }
 
-
-
-void ceph::GameImpl::initialize(ceph::ScreenMode mode, int wd, int hgt, const std::string& title)
+void ceph::GameImpl::initializeFullscreen(VideoMode vm, const std::string& title)
 {
-	switch (mode) {
-		case ceph::ScreenMode::FullScreen:
-			window_ = CreateGlWindow(true, wd, hgt, title.c_str());
-			break;
-		case ceph::ScreenMode::FullScreenWindowed:
-			//TODO
-			break;
-		case ceph::ScreenMode::WindowedWithTitleBar:
-			window_ = CreateGlWindow(false, wd, hgt, title.c_str());
-			break;
-	}
+	window_ = CreateGlWindow(ceph::WindowMode::FullScreen, vm, title.c_str());
+	graphics_ = std::make_unique<ceph::Graphics>(window_);
+}
+
+void ceph::GameImpl::initialize(ceph::WindowMode mode, int wd, int hgt, const std::string& title)
+{
+	window_ = CreateGlWindow(mode, VideoMode(wd,hgt), title.c_str());
 	graphics_ = std::make_unique<ceph::Graphics>(window_);
 }
 
@@ -227,12 +244,6 @@ ceph::Rect<float> ceph::GameImpl::getLogicalRect() const
 	return view_mat.getInverse().value().apply(ceph::Rect<float>(-1, -1, 2, 2));
 }
 
-ceph::Vec2<int> ceph::GameImpl::getScreenSize() const
-{
-	//TODO
-	return ceph::Vec2<int>(0, 0);
-}
-
 ceph::Vec2<float> ceph::GameImpl::getLogicalSize() const
 {
 	return log_size_;
@@ -249,11 +260,11 @@ ceph::CoordinateMapping ceph::GameImpl::getCoordinateMapping() const
 }
 
 
-ceph::Rect<float> ceph::GameImpl::getScreenRect() const
+ceph::Rect<int> ceph::GameImpl::getScreenRect() const
 {
 	int wd, hgt;
 	glfwGetWindowSize(window_, &wd, &hgt);
-	return ceph::Rect<float>(0.0f, 0.0f, static_cast<float>(wd), static_cast<float>(hgt));
+	return ceph::Rect<int>(0, 0, wd, hgt);
 }
 
 std::shared_ptr<ceph::Scene> ceph::GameImpl::getActiveScene() const
@@ -266,6 +277,27 @@ ceph::GameImpl* ceph::GameImpl::instance_ = nullptr;
 std::unique_ptr<ceph::Game> ceph::Game::createInstance()
 {
 	return std::make_unique<GameImpl>();
+}
+
+std::list<ceph::VideoMode> ceph::GameImpl::getVideoModes() const
+{
+	int n;
+	auto ary = glfwGetVideoModes(glfwGetPrimaryMonitor(), &n);
+	if (!ary)
+		return std::list<ceph::VideoMode>();
+	std::list<ceph::VideoMode> modes;
+	for (int i = 0; i < n; i++)
+		modes.push_back(
+			ceph::VideoMode(
+				ary[i].width,
+				ary[i].height,
+				ary[i].refreshRate,
+				ary[i].redBits,
+				ary[i].greenBits,
+				ary[i].blueBits
+			)
+		);
+	return modes;
 }
 
 ceph::Game& ceph::Game::getInstance()
