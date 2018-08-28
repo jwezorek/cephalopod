@@ -240,7 +240,7 @@ ceph::Vec2<float> ceph::GameImpl::getLogicalSize() const
 
 void ceph::GameImpl::quit()
 {
-	
+	glfwSetWindowShouldClose(window_, 1);
 }
 
 ceph::CoordinateMapping ceph::GameImpl::getCoordinateMapping() const
