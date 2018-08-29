@@ -60,7 +60,6 @@ void ceph::SpriteSheet::parseAtlasJson(const std::string& atlas_path)
 
 ceph::SpriteSheet::SpriteSheet(const std::string& tex_path, const std::string& atlas_path, bool invert_y) : inverted_y_(invert_y)
 {
-	ceph::Image img(tex_path);
 	texture_ = std::make_shared<ceph::Texture>(tex_path);
 	parseAtlasJson(atlas_path);
 	if (inverted_y_) {

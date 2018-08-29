@@ -19,7 +19,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	);
 
 	game->initialize(ceph::WindowMode::WindowedWithTitleBar, 1024, 768);
-	game->setLogicalCoordinates(ceph::CoordinateMapping::UseBlackBars, ceph::Vec2<float>(1024, 768), ceph::CoordinateSystem::LowerLeftOriginAscendingY);
+	game->setLogicalCoordinates(ceph::CoordinateMapping::StretchToFit, ceph::Vec2<float>(800, 800), ceph::CoordinateSystem::CenterOriginAscendingY);
 
 	//game->initializeFullscreen( ceph::VideoMode(1024,768) );
 	//game->setLogicalCoordinates(ceph::CoordinateMapping::UseBlackBars, ceph::Vec2<float>(1024, 768), ceph::CoordinateSystem::LowerLeftOriginAscendingY);

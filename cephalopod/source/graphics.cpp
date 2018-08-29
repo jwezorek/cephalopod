@@ -270,6 +270,16 @@ std::shared_ptr<ceph::Texture> ceph::Graphics::GetCurrentTexture() const
 	return current_texture_;
 }
 
+void ceph::Graphics::Blit(const ceph::Rect<float>& dest_rect, const ceph::Rect<int>& src_rect, float alpha)
+{
+	auto mat = ceph::Mat3x3().scale(dest_rect.wd, dest_rect.hgt).translate(dest_rect.x, dest_rect.y);
+	Blit(
+		ceph::Mat3x3().translate(dest_rect.x, dest_rect.y).scale(dest_rect.wd, dest_rect.hgt),
+		src_rect,
+		alpha
+	);
+}
+
 void ceph::Graphics::Blit(const ceph::Mat3x3& matWorld, const ceph::Rect<int>& src_rect, float alpha)
 {
 	float current_texture_wd = current_texture_->getWidth();

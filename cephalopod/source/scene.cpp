@@ -6,6 +6,29 @@
 #include "graphics.hpp"
 #include "util.hpp"
 
+namespace
+{
+	ceph::Rect<float> GetBkgdRect(ceph::BackgroundMode mode, float tex_wd, float tex_hgt)
+	{
+		auto log_rect = ceph::Game::getInstance().getLogicalRect();
+		ceph::Rect<float> r;
+		switch (mode) {
+			case ceph::BackgroundMode::StretchToFit:
+				r = log_rect;
+				break;
+			case ceph::BackgroundMode::PreserveWidth:
+				break;
+
+			case ceph::BackgroundMode::PreserveHeight:
+				break;
+			case ceph::BackgroundMode::Tile:
+				r = ceph::Rect<float>(log_rect.x, log_rect.y, tex_wd, tex_hgt);
+				break;
+		}
+		return r;
+	}
+}
+
 ceph::Scene::Scene()
 {
 }
@@ -23,24 +46,11 @@ void ceph::Scene::update(float dt)
 		actor->enforceConstraints();
 }
 
-void ceph::Scene::setBackground(const std::shared_ptr<Texture>& tex)
-{
-	
-
-}
-
-ceph::Mat3x3 CreateStretchToFitMatrix(float logical_wd, float logical_hgt)
-{
-	return ceph::Mat3x3().scale(
-		2.0f / logical_wd,
-		2.0f / logical_hgt
-	);
-}
-
-void ceph::Scene::setBackground(const std::shared_ptr<Texture>& tex, ceph::CoordinateMapping mapping)
+void ceph::Scene::setBackground(const std::shared_ptr<Texture>& tex, ceph::BackgroundMode bk_mode)
 {
 	bkgd_ = tex;
-	bkgd_tranform_ = CreateStretchToFitMatrix(tex->getWidth(), tex->getHeight());
+	bkgd_mode_ = bk_mode;
+	bkgd_rect_ = GetBkgdRect(bk_mode, tex->getWidth(), tex->getHeight());
 }
 
 void ceph::Scene::setBackgroundColor(const ceph::ColorRGB& color)
@@ -96,7 +106,7 @@ void ceph::Scene::drawBackground(ceph::DrawingContext& dc)
 		auto curr_tex = dc.graphics.GetCurrentTexture();
 		if (curr_tex.get() != bkgd_.get())
 			dc.graphics.SetCurrentTexture(bkgd_);
-		dc.graphics.Blit(bkgd_tranform_, curr_tex->getBounds(), 1.0f);
+		dc.graphics.Blit(bkgd_rect_, bkgd_->getBounds(), 1.0f);
 	}
 }
 

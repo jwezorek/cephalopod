@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include "types.hpp"
 
 namespace ceph
@@ -15,6 +16,8 @@ namespace ceph
 		unsigned int id_;
 
 	public:
+
+		Texture(const std::string& path, bool useSmoothing = true, bool useRepeat = false);
 		Texture(const ceph::Image& bitmap, bool useSmoothing = true, bool useRepeat = false);
 		int getWidth() const;
 		int getHeight() const;

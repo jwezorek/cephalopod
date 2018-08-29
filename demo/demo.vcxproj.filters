@@ -51,7 +51,7 @@
     <Image Include="data\zarquon.png">
       <Filter>data</Filter>
     </Image>
-    <Image Include="data\escher_square.png">
+    <Image Include="data\lenna.png">
       <Filter>data</Filter>
     </Image>
   </ItemGroup>

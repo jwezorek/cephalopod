@@ -2,6 +2,10 @@
 #include "..\include\cephalopod\image.hpp"
 #include "glad.h"
 
+ceph::Texture::Texture(const std::string& img_path, bool useSmoothing, bool useRepeat) :
+	ceph::Texture(ceph::Image(img_path), useSmoothing, useRepeat)
+{}
+
 ceph::Texture::Texture(const ceph::Image& img, bool useSmoothing, bool useRepeat)
 {
 	wd_ = img.getWidth();

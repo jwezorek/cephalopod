@@ -17,8 +17,10 @@ namespace ceph {
 			std::string name;
 			ceph::Rect<int> rect;
 			int index;
+
 			FrameInfo()
 			{}
+
 			FrameInfo(const std::string& n, const ceph::Rect<int>& r, int i) :
 				name(n), rect(r), index(i)
 			{}

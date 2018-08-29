@@ -31,7 +31,6 @@ namespace ceph
 		CoordinateMappingInfo coord_mapping_;
 		ceph::Vec2<float> log_sz_;
 		std::vector<std::unique_ptr<Shader>> shaders_;
-
 		
 		void CreateShaders();
 		void CreateQuadVerts();
@@ -45,6 +44,7 @@ namespace ceph
 		void SetCurrentTexture(const std::shared_ptr<Texture>& tex);
 		std::shared_ptr<Texture> GetCurrentTexture() const;
 		void Blit(const Mat3x3& mat, const ceph::Rect<int>& src_rect, float alpha);
+		void Blit(const ceph::Rect<float>& dest_rect, const ceph::Rect<int>& src_rect, float alpha);
 		ceph::Mat3x3 getViewMatrix() const;
 
 		~Graphics();

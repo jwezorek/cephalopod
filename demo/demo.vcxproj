@@ -170,7 +170,7 @@
     <None Include="data\zarquon.json" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="data\escher_square.png" />
+    <Image Include="data\lenna.png" />
     <Image Include="data\zarquon.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -16,6 +16,9 @@ std::mt19937 eng( rd()  );
 
 void Asteroids::initialize()
 {
+	auto bkgd = std::make_shared<ceph::Texture>( ".\\data\\lenna.png" );
+	setBackground(bkgd);
+
 	sprite_sheet_ = ceph::SpriteSheet::create(
 		".\\data\\zarquon.png",
 		".\\data\\zarquon.json" 

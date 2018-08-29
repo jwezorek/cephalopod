@@ -18,6 +18,14 @@ namespace ceph {
 	typedef std::function<void(Actor&, float)> UpdateHandlerFunc;
 	typedef std::function<void(Actor&, bool, KeyCode, unsigned char)> KeyEventHandlerFunc;
 
+	enum class BackgroundMode
+	{
+		StretchToFit,
+		PreserveWidth,
+		PreserveHeight,
+		Tile
+	};
+
 	class Scene : public Slot<Scene>, public std::enable_shared_from_this<Scene>
 	{
 		friend class GameImpl;
@@ -26,8 +34,9 @@ namespace ceph {
 
 	private:
 
-		ceph::Mat3x3 bkgd_tranform_;
+		ceph::Rect<float> bkgd_rect_;
 		std::shared_ptr<Texture> bkgd_;
+		BackgroundMode bkgd_mode_;
 		std::deque<std::shared_ptr<Actor>> stage_;
 		std::list<std::shared_ptr<Actor>> dropped_actors_;
 		ColorRGB bkgd_color_;
@@ -42,8 +51,7 @@ namespace ceph {
 	public:
 		virtual void initialize() = 0;
 
-		void setBackground(const std::shared_ptr<Texture>& tex );
-		void setBackground(const std::shared_ptr<Texture>& tex, CoordinateMapping mapping);
+		void setBackground(const std::shared_ptr<Texture>& tex, BackgroundMode mapping = BackgroundMode::StretchToFit);
 
 		void setBackgroundColor(const ColorRGB& tex);
 		ColorRGB getBackgroundColor() const;
