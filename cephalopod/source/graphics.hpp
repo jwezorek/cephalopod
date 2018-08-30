@@ -43,7 +43,7 @@ namespace ceph
 		void EndFrame();
 		void SetCurrentTexture(const std::shared_ptr<Texture>& tex);
 		std::shared_ptr<Texture> GetCurrentTexture() const;
-		void Clear(ColorRGB color);
+		void Clear(ColorRGB color, bool just_viewport = false);
 		void Blit(const Mat3x3& mat, const ceph::Rect<int>& src_rect, float alpha);
 		void Blit(const ceph::Rect<float>& dest_rect, const ceph::Rect<int>& src_rect, float alpha);
 		ceph::Mat3x3 getViewMatrix() const;

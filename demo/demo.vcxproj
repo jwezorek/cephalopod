@@ -171,6 +171,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\lenna.png" />
+    <Image Include="data\snoopy.png" />
+    <Image Include="data\snoopy_2.png" />
     <Image Include="data\zarquon.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

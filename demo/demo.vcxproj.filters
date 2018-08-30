@@ -54,5 +54,11 @@
     <Image Include="data\lenna.png">
       <Filter>data</Filter>
     </Image>
+    <Image Include="data\snoopy.png">
+      <Filter>data</Filter>
+    </Image>
+    <Image Include="data\snoopy_2.png">
+      <Filter>data</Filter>
+    </Image>
   </ItemGroup>
 </Project>

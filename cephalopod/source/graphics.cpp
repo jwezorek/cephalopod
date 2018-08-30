@@ -270,7 +270,6 @@ std::shared_ptr<ceph::Texture> ceph::Graphics::GetCurrentTexture() const
 
 void ceph::Graphics::Blit(const ceph::Rect<float>& dest_rect, const ceph::Rect<int>& src_rect, float alpha)
 {
-	auto mat = ceph::Mat3x3().scale(dest_rect.wd, dest_rect.hgt).translate(dest_rect.x, dest_rect.y);
 	Blit(
 		ceph::Mat3x3().translate(dest_rect.x, dest_rect.y).scale(dest_rect.wd, dest_rect.hgt),
 		src_rect,
@@ -278,8 +277,20 @@ void ceph::Graphics::Blit(const ceph::Rect<float>& dest_rect, const ceph::Rect<i
 	);
 }
 
-void ceph::Graphics::Clear(ceph::ColorRGB color)
+void ceph::Graphics::Clear(ceph::ColorRGB color, bool just_viewport)
 {
+	if (just_viewport && !coord_mapping_.viewport.isEmpty()) {
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(
+			coord_mapping_.viewport.x,
+			coord_mapping_.viewport.y,
+			coord_mapping_.viewport.wd,
+			coord_mapping_.viewport.hgt
+		);
+		Clear(color, false);
+		glDisable(GL_SCISSOR_TEST);
+		return;
+	}
 	auto to_float = [](unsigned char c) { return static_cast<float>(c) / 255.0f; };
 	glClearColor(to_float(color.r), to_float(color.g), to_float(color.b), 1); 
 	glClear(GL_COLOR_BUFFER_BIT);

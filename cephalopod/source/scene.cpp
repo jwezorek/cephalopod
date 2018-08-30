@@ -129,7 +129,7 @@ void ceph::Scene::removeActor(const std::shared_ptr<ceph::Actor>& child)
 
 void ceph::Scene::draw(ceph::DrawingContext& dc)
 {
-	dc.graphics.Clear(bkgd_color_);
+	dc.graphics.Clear(bkgd_color_, true);
 	drawBackground(dc);
 	for (const auto& actor : stage_)
 		actor->draw(dc);
