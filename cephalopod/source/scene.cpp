@@ -8,19 +8,54 @@
 
 namespace
 {
+	ceph::Vec2<float> GetCenterOfRect(const ceph::Rect<float>& r)
+	{
+		return ceph::Vec2<float>(
+			(r.x + r.x2()) / 2.0f,
+			(r.y + r.y2()) / 2.0f
+		);
+	}
+
+	ceph::Rect<float> CenterRectAroundPoint(const ceph::Rect<float>& r, const ceph::Vec2<float>& pt)
+	{
+		return ceph::Rect<float>(
+			pt.x - r.wd / 2.0f,
+			pt.y - r.hgt / 2.0f,
+			r.wd,
+			r.hgt
+		);
+	}
+
 	ceph::Rect<float> GetBkgdRect(ceph::BackgroundMode mode, float tex_wd, float tex_hgt)
 	{
 		auto log_rect = ceph::Game::getInstance().getLogicalRect();
+
 		ceph::Rect<float> r;
 		switch (mode) {
 			case ceph::BackgroundMode::StretchToFit:
 				r = log_rect;
 				break;
-			case ceph::BackgroundMode::PreserveWidth:
+
+			case ceph::BackgroundMode::PreserveWidth: {
+					float aspect_ratio = tex_hgt / tex_wd;
+					float new_hgt = log_rect.wd * aspect_ratio;
+					r = CenterRectAroundPoint(
+						ceph::Rect<float>(0,0,log_rect.wd,new_hgt),
+						GetCenterOfRect(log_rect)
+					);
+				}	
 				break;
 
-			case ceph::BackgroundMode::PreserveHeight:
+			case ceph::BackgroundMode::PreserveHeight: {
+					float inv_aspect_ratio = tex_wd / tex_hgt;
+					float new_wd = log_rect.hgt * inv_aspect_ratio;
+					r = CenterRectAroundPoint(
+						ceph::Rect<float>(0, 0, new_wd, log_rect.hgt),
+						GetCenterOfRect(log_rect)
+					);
+				}
 				break;
+
 			case ceph::BackgroundMode::Tile:
 				r = ceph::Rect<float>(log_rect.x, log_rect.y, tex_wd, tex_hgt);
 				break;
@@ -94,7 +129,7 @@ void ceph::Scene::removeActor(const std::shared_ptr<ceph::Actor>& child)
 
 void ceph::Scene::draw(ceph::DrawingContext& dc)
 {
-	//TODO: paint bkgd color...
+	dc.graphics.Clear(bkgd_color_);
 	drawBackground(dc);
 	for (const auto& actor : stage_)
 		actor->draw(dc);

@@ -43,12 +43,11 @@ namespace ceph
 		void EndFrame();
 		void SetCurrentTexture(const std::shared_ptr<Texture>& tex);
 		std::shared_ptr<Texture> GetCurrentTexture() const;
+		void Clear(ColorRGB color);
 		void Blit(const Mat3x3& mat, const ceph::Rect<int>& src_rect, float alpha);
 		void Blit(const ceph::Rect<float>& dest_rect, const ceph::Rect<int>& src_rect, float alpha);
 		ceph::Mat3x3 getViewMatrix() const;
 
 		~Graphics();
 	};
-
-	CoordinateMappingInfo CreateStretchToFit(float scr_wd, float scr_hgt, float logical_wd, float logical_hgt);
 };

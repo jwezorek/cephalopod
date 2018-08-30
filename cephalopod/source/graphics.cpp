@@ -246,9 +246,7 @@ void ceph::Graphics::setCoordinateSystem(ceph::CoordinateSystem system, ceph::Co
 
 void ceph::Graphics::BeginFrame()
 {
-	// clear everything
-	glClearColor(0, 0, 0, 1); // black
-	glClear(GL_COLOR_BUFFER_BIT);
+	Clear(ceph::ColorRGB(0, 0, 0));
 }
 
 void ceph::Graphics::EndFrame()
@@ -278,6 +276,13 @@ void ceph::Graphics::Blit(const ceph::Rect<float>& dest_rect, const ceph::Rect<i
 		src_rect,
 		alpha
 	);
+}
+
+void ceph::Graphics::Clear(ceph::ColorRGB color)
+{
+	auto to_float = [](unsigned char c) { return static_cast<float>(c) / 255.0f; };
+	glClearColor(to_float(color.r), to_float(color.g), to_float(color.b), 1); 
+	glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void ceph::Graphics::Blit(const ceph::Mat3x3& matWorld, const ceph::Rect<int>& src_rect, float alpha)
