@@ -34,7 +34,7 @@ namespace ceph
 	public:
 		virtual ~Game() = default;
 		virtual void initialize(WindowMode mode, int wd = 0, int hgt = 0, const std::string& title = "") = 0;
-		virtual void initializeFullscreen(VideoMode vm, const std::string& title = "") = 0;
+		virtual void initializeFullscreen(VideoMode vm = VideoMode(), const std::string& title = "") = 0;
 		virtual std::list<VideoMode> getVideoModes() const = 0;
 		virtual void setLogicalCoordinates(CoordinateMapping mapping, const Vec2<float>& logSize, 
 			CoordinateSystem system = CoordinateSystem::UpperLeftOriginDescendingY) = 0;

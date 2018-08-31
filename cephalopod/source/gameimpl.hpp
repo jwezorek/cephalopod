@@ -36,7 +36,7 @@ namespace ceph
 		ceph::CoordinateMapping getCoordinateMapping() const override;
 		Rect<int> getScreenRect() const override;
 		std::shared_ptr<Scene> getActiveScene() const override;
-		void initializeFullscreen(VideoMode vm, const std::string& title = "") override;
+		void initializeFullscreen(VideoMode vm, const std::string& title) override;
 		std::list<VideoMode> getVideoModes() const override;
 	};
 };

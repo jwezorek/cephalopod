@@ -268,15 +268,6 @@ std::shared_ptr<ceph::Texture> ceph::Graphics::GetCurrentTexture() const
 	return current_texture_;
 }
 
-void ceph::Graphics::Blit(const ceph::Rect<float>& dest_rect, const ceph::Rect<int>& src_rect, float alpha)
-{
-	Blit(
-		ceph::Mat3x3().translate(dest_rect.x, dest_rect.y).scale(dest_rect.wd, dest_rect.hgt),
-		src_rect,
-		alpha
-	);
-}
-
 void ceph::Graphics::Clear(ceph::ColorRGB color, bool just_viewport)
 {
 	if (just_viewport && !coord_mapping_.viewport.isEmpty()) {
@@ -294,6 +285,15 @@ void ceph::Graphics::Clear(ceph::ColorRGB color, bool just_viewport)
 	auto to_float = [](unsigned char c) { return static_cast<float>(c) / 255.0f; };
 	glClearColor(to_float(color.r), to_float(color.g), to_float(color.b), 1); 
 	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void ceph::Graphics::Blit(const ceph::Rect<float>& dest_rect, const ceph::Rect<int>& src_rect, float alpha)
+{
+	Blit(
+		ceph::Mat3x3().translate(dest_rect.x, dest_rect.y).scale(dest_rect.wd, dest_rect.hgt),
+		src_rect,
+		alpha
+	);
 }
 
 void ceph::Graphics::Blit(const ceph::Mat3x3& matWorld, const ceph::Rect<int>& src_rect, float alpha)

@@ -69,7 +69,7 @@ namespace ceph {
 		T wd;
 		T hgt;
 
-		Rect(const Vec2<T> loc, const Vec2<T> sz) :
+		Rect(const Vec2<T>& loc, const Vec2<T>& sz) :
 			x(loc.x), y(loc.y), wd(sz.x), hgt(sz.y) {
 		}
 

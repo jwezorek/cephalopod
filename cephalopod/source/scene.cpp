@@ -5,6 +5,7 @@
 #include "../include/cephalopod/drawingcontext.hpp"
 #include "graphics.hpp"
 #include "util.hpp"
+#include <cmath>
 
 namespace
 {
@@ -61,6 +62,23 @@ namespace
 				break;
 		}
 		return r;
+	}
+
+	void DrawTiledBackground(ceph::Graphics& g, ceph::Vec2<int> tile_sz)
+	{
+		ceph::Rect<int> tile_rect(0, 0, tile_sz.x, tile_sz.y);
+		auto log_rect = ceph::Game::getInstance().getLogicalRect();
+		int columns = static_cast<int>(std::ceil(log_rect.wd / tile_sz.x));
+		int rows = static_cast<int>(std::ceil(log_rect.hgt / tile_sz.y));
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < columns; col++) {
+				ceph::Rect<float> r(
+					log_rect.x + col * tile_sz.x, log_rect.y + row * tile_sz.y,
+					tile_sz.x, tile_sz.y
+				);
+				g.Blit(r, tile_rect, 1.0f);
+			}
+		}
 	}
 }
 
@@ -141,7 +159,11 @@ void ceph::Scene::drawBackground(ceph::DrawingContext& dc)
 		auto curr_tex = dc.graphics.GetCurrentTexture();
 		if (curr_tex.get() != bkgd_.get())
 			dc.graphics.SetCurrentTexture(bkgd_);
-		dc.graphics.Blit(bkgd_rect_, bkgd_->getBounds(), 1.0f);
+
+		if (bkgd_mode_ != ceph::BackgroundMode::Tile)
+			dc.graphics.Blit(bkgd_rect_, bkgd_->getBounds(), 1.0f);
+		else
+			DrawTiledBackground(dc.graphics, bkgd_->getSize()); //TODO: possibly do this via texture wrapMode
 	}
 }
 

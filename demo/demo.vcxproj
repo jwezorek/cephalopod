@@ -170,6 +170,7 @@
     <None Include="data\zarquon.json" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="data\bkgd.png" />
     <Image Include="data\lenna.png" />
     <Image Include="data\snoopy.png" />
     <Image Include="data\snoopy_2.png" />
