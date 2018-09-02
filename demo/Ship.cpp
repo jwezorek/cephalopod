@@ -93,11 +93,11 @@ void Ship::shoot()
 	bullet->getActions().applyAction(
 		FLYING_BULLET_ACTION,
 		ceph::createActionSequence({
-			ceph::createMoveByAction(0.5, 400.0f * direction),
+			ceph::createMoveByAction(0.25, 400.0f * direction),
 			ceph::createSimultaneousActions({
-				ceph::createMoveByAction(0.5, 400.0f * direction),
+				ceph::createMoveByAction(0.25, 400.0f * direction),
 				ceph::createEasingAction<ceph::EasingFunctionType::Bouncy, ceph::EasingType::Out>(
-					ceph::createFadeOutAction(0.5, *bullet)
+					ceph::createFadeOutAction(0.25, *bullet)
 				)
 			})
 		})
