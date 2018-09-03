@@ -32,14 +32,14 @@ namespace ceph {
 	protected:
 		ActionPlayer actions_;
 		std::vector<std::shared_ptr<ActionConstraint>> constraints_;
-		std::weak_ptr<Scene> scene_;
+		Scene* scene_;
 		std::weak_ptr<Actor> parent_;
 		std::vector<std::shared_ptr<Actor>> children_;
 		ActorState state_;
 
 		virtual void drawThis(DrawingContext& rt) const = 0;
 		void detachFromScene();
-		void attachToScene(const std::shared_ptr<Scene>& scene);
+		void attachToScene(Scene& scene);
 		void runActions();
 		void setActorState(const ActorState& state);
 
@@ -65,7 +65,7 @@ namespace ceph {
 
 		std::weak_ptr<Actor> getParent() const;
 		std::weak_ptr<Actor> getTopLevelParent() const;
-		std::weak_ptr<Scene> getScene() const;
+		Scene& getScene() const;
 
 		float getAlpha() const;
 		void setAlphaTo(float alpha);

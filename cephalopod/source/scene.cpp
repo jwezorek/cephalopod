@@ -124,7 +124,7 @@ void ceph::Scene::addActor(const std::shared_ptr<ceph::Actor>& child, bool add_o
 	else
 		stage_.push_front(child);
 
-	child->attachToScene( shared_from_this() );
+	child->attachToScene( *this );
 	
 	if (child->isInSceneTopLevel() && child->hasActions())
 		child->runActions();

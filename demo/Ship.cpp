@@ -103,7 +103,7 @@ void Ship::shoot()
 		})
 	);
 
-	auto bkgd = std::static_pointer_cast<Asteroids>(scene_.lock())->getBkgdLayer();
+	auto bkgd = static_cast<Asteroids*>(scene_)->getBkgdLayer();
 	bullet->getActions().getCompletionSignal(FLYING_BULLET_ACTION).connect(
 		*bullet,
 		[bullet,bkgd](int i) {

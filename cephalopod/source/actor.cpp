@@ -6,7 +6,7 @@
 #include "../include/cephalopod/actorstate.hpp"
 #include "util.hpp"
 
-ceph::Actor::Actor() : actions_(*this)
+ceph::Actor::Actor() : actions_(*this), scene_(nullptr)
 {
 }
 
@@ -15,7 +15,7 @@ void ceph::Actor::addChild(const std::shared_ptr<ceph::Actor>& child)
 	child->parent_ = shared_from_this();
 	children_.push_back(child);
 	if (isInScene()) {
-		child->attachToScene(scene_.lock());
+		child->attachToScene(*scene_);
 		if (child->hasActions())
 			child->runActions();
 	}
@@ -33,41 +33,43 @@ void ceph::Actor::removeChild(const std::shared_ptr<ceph::Actor>& actor)
 	if (i == children_.end())
 		return;
 
-	auto scene = actor->getScene().lock();
-
 	(*i)->parent_ = std::weak_ptr<Actor>();
 	(*i)->detachFromScene();
 	children_.erase(i);
 
-	if (scene != nullptr || scene == Game::getInstance().getActiveScene())
-		scene->dropped_actors_.push_back(actor);
+	if (isInScene())
+	{
+		auto& scene = getScene();
+		if (&scene == Game::getInstance().getActiveScene().get())
+			scene.dropped_actors_.push_back(actor);
+	}
 }
 
 void ceph::Actor::detach()
 {
 	if (hasParent())
 		parent_.lock()->removeChild(shared_from_this());
-	else if (isInScene())
-		scene_.lock()->removeActor(shared_from_this());
+	if (isInScene())
+		scene_->removeActor(shared_from_this());
 }
 
 void ceph::Actor::detachFromScene()
 {
-	scene_ = std::weak_ptr<ceph::Scene>();
+	scene_ = nullptr;
 	for (auto child : children_)
 		child->detachFromScene();
 }
 
-void ceph::Actor::attachToScene(const std::shared_ptr<ceph::Scene>& scene)
+void ceph::Actor::attachToScene( ceph::Scene& scene)
 {
-	scene_ = scene;
+	scene_ = &scene;
 	for (auto child : children_)
 		child->attachToScene(scene);
 }
 
 bool ceph::Actor::isInScene() const
 {
-	return !scene_.expired();
+	return scene_;
 }
 
 bool ceph::Actor::hasParent() const
@@ -169,9 +171,9 @@ std::weak_ptr<ceph::Actor> ceph::Actor::getTopLevelParent() const
 	return parent;
 }
 
-std::weak_ptr<ceph::Scene> ceph::Actor::getScene() const
+ceph::Scene& ceph::Actor::getScene() const
 {
-	return scene_;
+	return *scene_;
 }
 
 float ceph::Actor::getAlpha() const

@@ -103,9 +103,12 @@ ceph::ActionPlayer::ActionPlayer(Actor& parent) :
 
 void ceph::ActionPlayer::run()
 {
-	auto scene = parent_.getScene().lock();
-	scene->updateActionsEvent.connect(*this, &ceph::ActionPlayer::update);
-	initial_actor_state_ = std::make_unique<ceph::ActorState>(parent_.getState());
+	if (parent_.isInScene())
+	{
+		auto& scene = parent_.getScene();
+		scene.updateActionsEvent.connect(*this, &ceph::ActionPlayer::update);
+		initial_actor_state_ = std::make_unique<ceph::ActorState>(parent_.getState());
+	}
 }
 
 bool ceph::ActionPlayer::isRunning() const
