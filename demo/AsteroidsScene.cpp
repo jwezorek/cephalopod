@@ -11,7 +11,7 @@
 #include "cephalopod/sprite.hpp"
 #include "Ship.hpp"
 
-std::random_device rd; // obtain a random number from hardware
+std::random_device rd; 
 std::mt19937 eng( rd()  );
 
 void Asteroids::initialize()
@@ -24,7 +24,7 @@ void Asteroids::initialize()
 		".\\data\\zarquon.json" 
 	);
 	setBackgroundColor(ceph::ColorRGB(10, 30, 60));
-	
+
 	addActors({
 		CreateStarLayer( -256.0f, 0.5f ),
 		CreateStarLayer( -128.0f, 0.25f ),
@@ -127,7 +127,7 @@ std::shared_ptr<ceph::Sprite> Asteroids::createAsteroid()
 		std::make_shared<ceph::WrapTorroidally>(100.0f, 100.0f)
 	);
 
-	//asteroid->setScale(0.25f);
+	//asteroid->setScaleTo(0.25f);
 
 	addActor(asteroid);
 	return asteroid;

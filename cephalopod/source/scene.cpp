@@ -64,7 +64,7 @@ namespace
 		return r;
 	}
 
-	void DrawTiledBackground(ceph::Graphics& g, ceph::Vec2<int> tile_sz)
+	void DrawTiledBackground(ceph::Graphics& g, ceph::Vec2<int> tile_sz, const ceph::Mat3x3& mat, float alpha)
 	{
 		ceph::Rect<int> tile_rect(0, 0, tile_sz.x, tile_sz.y);
 		auto log_rect = ceph::Game::getInstance().getLogicalRect();
@@ -76,7 +76,8 @@ namespace
 					log_rect.x + col * tile_sz.x, log_rect.y + row * tile_sz.y,
 					tile_sz.x, tile_sz.y
 				);
-				g.Blit(r, tile_rect, 1.0f);
+				r.intersectWith(log_rect);
+				g.Blit(mat, r, ceph::Rect<int>(0, tile_sz.y - r.hgt, r.wd, r.hgt), alpha);
 			}
 		}
 	}
@@ -147,7 +148,7 @@ void ceph::Scene::removeActor(const std::shared_ptr<ceph::Actor>& child)
 
 void ceph::Scene::draw(ceph::DrawingContext& dc)
 {
-	dc.graphics.Clear(bkgd_color_, true);
+	dc.graphics.PaintRectangle(dc.transformation, ceph::Game::getInstance().getLogicalRect(), bkgd_color_, dc.alpha);
 	drawBackground(dc);
 	for (const auto& actor : stage_)
 		actor->draw(dc);
@@ -161,9 +162,9 @@ void ceph::Scene::drawBackground(ceph::DrawingContext& dc)
 			dc.graphics.SetCurrentTexture(bkgd_);
 
 		if (bkgd_mode_ != ceph::BackgroundMode::Tile)
-			dc.graphics.Blit(bkgd_rect_, bkgd_->getBounds(), 1.0f);
+			dc.graphics.Blit(dc.transformation, bkgd_rect_, bkgd_->getBounds(), dc.alpha);
 		else
-			DrawTiledBackground(dc.graphics, bkgd_->getSize()); //TODO: possibly do this via texture wrapMode
+			DrawTiledBackground(dc.graphics, bkgd_->getSize(), dc.transformation, dc.alpha); //TODO: possibly do this via texture wrapMode
 	}
 }
 

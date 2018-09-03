@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include "cephalopod/game.hpp"
 #include "AsteroidsScene.hpp"
+#include "IntroScene.hpp"
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
@@ -15,14 +16,18 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		}
 	);
 
-	//game->initialize(ceph::WindowMode::WindowedWithTitleBar, 1024, 768);
-	//game->setLogicalCoordinates(ceph::CoordinateMapping::UseBlackBars, ceph::Vec2<float>(1024, 768), ceph::CoordinateSystem::LowerLeftOriginAscendingY);
+	//game->initialize(ceph::WindowMode::WindowedWithTitleBar, 1800, 1000);
+	//game->setLogicalCoordinates(ceph::CoordinateMapping::UseBlackBars, ceph::Vec2<float>(1800, 1000), ceph::CoordinateSystem::LowerLeftOriginAscendingY);
 
 	game->initializeFullscreen( );
 	game->setLogicalCoordinates(ceph::CoordinateMapping::UseBlackBars, ceph::Vec2<float>(1920, 1080), ceph::CoordinateSystem::LowerLeftOriginAscendingY);
 
-	auto scene = ceph::Scene::create<Asteroids>();
-	game->run(scene);
+	auto asteroids = ceph::Scene::create<Asteroids>();
+	auto scene = ceph::Scene::create<IntroScene>();
+	scene->setMainScene(asteroids);
+
+	game->setScene(scene);
+	game->run();
 
 	return 0;
 }

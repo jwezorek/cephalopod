@@ -182,6 +182,7 @@
     <ClInclude Include="include\cephalopod\image.hpp" />
     <ClInclude Include="include\cephalopod\mat3x3.hpp" />
     <ClInclude Include="include\cephalopod\scene.hpp" />
+    <ClInclude Include="include\cephalopod\scenetransition.hpp" />
     <ClInclude Include="include\cephalopod\signals.hpp" />
     <ClInclude Include="include\cephalopod\sprite.hpp" />
     <ClInclude Include="include\cephalopod\spriteframe.hpp" />
@@ -215,6 +216,7 @@
     <ClCompile Include="source\json11.cpp" />
     <ClCompile Include="source\mat3x3.cpp" />
     <ClCompile Include="source\scene.cpp" />
+    <ClCompile Include="source\scenetransition.cpp" />
     <ClCompile Include="source\sprite.cpp" />
     <ClCompile Include="source\spriteframe.cpp" />
     <ClCompile Include="source\spritesheet.cpp" />

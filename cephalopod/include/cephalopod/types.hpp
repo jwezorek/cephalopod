@@ -29,6 +29,40 @@ namespace ceph {
 		ColorRGB(unsigned char r = 0, unsigned char g = 0, unsigned char b = 0) : r(r), g(g), b(b) {}
 	};
 
+	struct ColorRGBA
+	{
+		unsigned char r;
+		unsigned char g;
+		unsigned char b;
+		unsigned char a;
+
+		ColorRGBA(unsigned char r = 0, unsigned char g = 0, unsigned char b = 0, unsigned char a = 1) : r(r), g(g), b(b), a(a) {}
+		ColorRGBA(const ColorRGB& rgb, unsigned char a = 1) : r(rgb.r), g(rgb.g), b(rgb.b), a(a) {}
+	};
+
+	struct NormalizedColorRGBA
+	{
+		float r;
+		float g;
+		float b;
+		float a;
+
+		NormalizedColorRGBA(float r = 0, float g = 0, float b = 0, float a = 1) : r(r), g(g), b(b), a(a) {}
+		NormalizedColorRGBA(const ColorRGBA& c) : 
+			r(c.r/255.0f), 
+			g(c.g/255.0f), 
+			b(c.b/255.0f), 
+			a(c.a/255.0f) 
+		{}
+
+		NormalizedColorRGBA(const ColorRGB& c, float a) :
+			r(c.r / 255.0f),
+			g(c.g / 255.0f),
+			b(c.b / 255.0f),
+			a(a)
+		{}
+	};
+
 	template<typename T>
 	struct Vec2 {
 		T x, y;
@@ -102,7 +136,19 @@ namespace ceph {
 			return wd*hgt;
 		}
 
-		Rect<T> unionOf(const Rect<T>& r)
+		Rect<T> intersectionOf(const Rect<T>& r) const
+		{
+			T new_x = std::max( x,  r.x);
+			T num1 = std::min( x2(), r.x2() );
+			T new_y = std::max( y, r.y );
+			T num2 = std::min( y2(), r.y2());
+			if (num1 >= new_x && num2 >= new_y)
+				return ceph::Rect<T>(new_x, new_y, num1 - new_x, num2 - new_y);
+			else
+				return ceph::Rect<T>();
+		}
+
+		Rect<T> unionOf(const Rect<T>& r) const
 		{
 			T new_x = std::min(x, r.x);
 			T new_y = std::min(y, r.y);
@@ -114,6 +160,11 @@ namespace ceph {
 		void unionWith(const Rect<T>& r)
 		{
 			*this = unionOf(r);
+		}
+
+		void intersectWith(const Rect<T>& r)
+		{
+			*this = intersectionOf(r);
 		}
 
 		bool intersects(const Rect<T>& r)

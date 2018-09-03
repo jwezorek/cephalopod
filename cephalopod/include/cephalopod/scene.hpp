@@ -31,6 +31,7 @@ namespace ceph {
 		friend class GameImpl;
 		friend class Actor;
 		friend class ActionPlayer;
+		friend class SceneTransition;
 
 	private:
 

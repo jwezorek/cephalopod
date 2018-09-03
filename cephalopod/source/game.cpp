@@ -123,10 +123,15 @@ namespace
 		throw std::runtime_error(msg);
 	}
 
+	//bool do_scene_transition = false;
+
 	static void key_callback(GLFWwindow* window, int key_index, int scancode, int action, int mods)
 	{
 		if (action == GLFW_REPEAT) // TODO: Handle this?
 			return;
+
+		//if (key_index == GLFW_KEY_G)
+		//	do_scene_transition = true;
 
 		ceph::KeyCode key = (map_glfw_to_ceph_key.find(key_index) != map_glfw_to_ceph_key.end()) ?
 			map_glfw_to_ceph_key.at(key_index) : ceph::KeyCode::Unknown;
@@ -220,21 +225,76 @@ void ceph::GameImpl::setLogicalCoordinates(ceph::CoordinateMapping mapping, cons
 	graphics_->setCoordinateSystem(system, mapping, log_size);
 }
 
-void ceph::GameImpl::run(const std::shared_ptr<ceph::Scene>& startingScene) {
-	active_scene_ = startingScene;
+/*
+void TestPanTransition(ceph::DrawingContext& dc, float elapsed)
+{
+	if (do_scene_transition)
+	{
+		ceph::Mat3x3 translate = ceph::Mat3x3().translate(-400.0f * elapsed, 0);
+		dc.transformation *= translate;
+	}
+}
 
+void TestFadeTransition(ceph::DrawingContext& dc, float elapsed)
+{
+	if (do_scene_transition)
+	{
+		float alpha = elapsed * -0.25;
+		dc.alpha += alpha;
+	}
+}
+*/
+
+
+bool ceph::GameImpl::isInSceneTransition() const
+{
+	return transition_.get();
+}
+
+void ceph::GameImpl::clearTransition()
+{
+	transition_ = nullptr;
+}
+
+ceph::SceneTransition& ceph::GameImpl::getSceneTransition()
+{
+	return *transition_;
+}
+
+void ceph::GameImpl::setScene(const std::shared_ptr<Scene>& scene, const std::shared_ptr<SceneTransition> transition)
+{
+	auto old_scene = active_scene_;
+	active_scene_ = scene;
+	transition_ = transition;
+	if (transition)
+		transition_->setScenes(old_scene, active_scene_);
+}
+
+void ceph::GameImpl::run() {
 	ceph::Clock clock;
-	DrawingContext dc(*graphics_);
 	while (!glfwWindowShouldClose(window_)) {
 		glfwPollEvents();
-
 		auto elapsed = clock.restart();
-		active_scene_->update(elapsed);
-		graphics_->BeginFrame();
-		active_scene_->draw(dc);
-		graphics_->EndFrame();
-		active_scene_->endGameLoopIteration();
 
+		if (! isInSceneTransition()) {
+			DrawingContext dc(*graphics_);
+			auto scene = getActiveScene();
+			scene->update(elapsed);
+			graphics_->BeginFrame();
+			scene->draw(dc);
+			graphics_->EndFrame();
+			scene->endGameLoopIteration();
+		} else {
+			DrawingContext dc(*graphics_);
+			auto& transition = getSceneTransition();
+			transition.update(elapsed);
+			graphics_->BeginFrame();
+			transition.draw(dc);
+			graphics_->EndFrame();
+			transition.endGameLoopIteration();
+			if (transition.isComplete())
+				clearTransition();
+		}
 	}
 }
 

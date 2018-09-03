@@ -56,7 +56,10 @@ namespace
 		out vec4 finalColor;
 
 		void main() {
-			finalColor = texture(tex, fragTexCoord) * tintColor ;
+			if (fragTexCoord.x >= 0.0)
+				finalColor = texture(tex, fragTexCoord) * tintColor ;
+			else
+				finalColor = tintColor; 
 		}
 	)";
 
@@ -287,16 +290,39 @@ void ceph::Graphics::Clear(ceph::ColorRGB color, bool just_viewport)
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void ceph::Graphics::Blit(const ceph::Rect<float>& dest_rect, const ceph::Rect<int>& src_rect, float alpha)
+
+void ceph::Graphics::PaintRectangle(const Mat3x3& matWorld, const Rect<float>& dest_rect, const ColorRGB& color, float alpha)
 {
-	Blit(
-		ceph::Mat3x3().translate(dest_rect.x, dest_rect.y).scale(dest_rect.wd, dest_rect.hgt),
-		src_rect,
-		alpha
-	);
+	auto rectangle_matrix = ceph::Mat3x3(matWorld).combine(ceph::Mat3x3().translate(dest_rect.x, dest_rect.y).scale(dest_rect.wd, dest_rect.hgt));
+	NormalizedColorRGBA rgba(color, alpha);
+
+	float uv[8] = { -1,-1 , -1,-1 , -1,-1 , -1,-1 };
+	glUniform2fv(glGetUniformLocation(program_id_, "uv"), 4, uv);
+
+	ceph::Mat3x3 matWorldView = getViewMatrix() * rectangle_matrix;
+
+	auto mat3x3 = matWorldView.get();
+	glUniformMatrix3fv(glGetUniformLocation(program_id_, "mat"), 1, GL_FALSE, &(mat3x3[0]));
+
+	glUniform4f(glGetUniformLocation(program_id_, "tintColor"), rgba.r, rgba.g, rgba.b, rgba.a);
+
+	// draw the VAO
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+}
+
+void ceph::Graphics::Blit(const Mat3x3& mat, const ceph::Rect<float>& dest_rect, const ceph::Rect<int>& src_rect, float alpha )
+{
+	auto rectangle_matrix = ceph::Mat3x3(mat).combine(ceph::Mat3x3().translate(dest_rect.x, dest_rect.y).scale(dest_rect.wd, dest_rect.hgt));
+	Blit( rectangle_matrix, src_rect, alpha );
 }
 
 void ceph::Graphics::Blit(const ceph::Mat3x3& matWorld, const ceph::Rect<int>& src_rect, float alpha)
+{
+	NormalizedColorRGBA color(1, 1, 1, alpha);
+	Blit(matWorld, src_rect, color);
+}
+
+void ceph::Graphics::Blit(const ceph::Mat3x3& matWorld, const ceph::Rect<int>& src_rect, const NormalizedColorRGBA& color)
 {
 	float current_texture_wd = current_texture_->getWidth();
 	float current_texture_hgt = current_texture_->getHeight();
@@ -314,7 +340,7 @@ void ceph::Graphics::Blit(const ceph::Mat3x3& matWorld, const ceph::Rect<int>& s
 	auto mat3x3 = matWorldView.get();
 	glUniformMatrix3fv(glGetUniformLocation(program_id_, "mat"), 1, GL_FALSE, &(mat3x3[0]));
 
-	glUniform4f(glGetUniformLocation(program_id_, "tintColor"), 1.0, 1.0, 1.0, alpha);
+	glUniform4f(glGetUniformLocation(program_id_, "tintColor"), color.r, color.g, color.b, color.a);
 
 	// draw the VAO
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

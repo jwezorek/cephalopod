@@ -35,6 +35,8 @@ namespace ceph
 		void CreateShaders();
 		void CreateQuadVerts();
 
+		void Blit(const ceph::Mat3x3& matWorld, const ceph::Rect<int>& src_rect, const NormalizedColorRGBA& color);
+
 	public:
 		Graphics(GLFWwindow* window = nullptr, ceph::CoordinateSystem system = ceph::CoordinateSystem::CenterOriginAscendingY, ceph::CoordinateMapping mapping = ceph::CoordinateMapping::StretchToFit, const ceph::Vec2<float>& log_size = ceph::Vec2<float>(0.0f, 0.0f));
 		void setWindow(GLFWwindow* window);
@@ -45,7 +47,8 @@ namespace ceph
 		std::shared_ptr<Texture> GetCurrentTexture() const;
 		void Clear(ColorRGB color, bool just_viewport = false);
 		void Blit(const Mat3x3& mat, const ceph::Rect<int>& src_rect, float alpha);
-		void Blit(const ceph::Rect<float>& dest_rect, const ceph::Rect<int>& src_rect, float alpha);
+		void Blit(const Mat3x3& mat, const ceph::Rect<float>& dest_rect, const ceph::Rect<int>& src_rect, float alpha );
+		void PaintRectangle(const Mat3x3& mat, const ceph::Rect<float>& dest_rect, const ColorRGB& color, float alpha );
 		ceph::Mat3x3 getViewMatrix() const;
 
 		~Graphics();

@@ -29,6 +29,8 @@ namespace ceph
 		{}
 	};
 
+	class SceneTransition;
+
 	class Game : public Slot<Game> 
 	{
 	public:
@@ -38,13 +40,18 @@ namespace ceph
 		virtual std::list<VideoMode> getVideoModes() const = 0;
 		virtual void setLogicalCoordinates(CoordinateMapping mapping, const Vec2<float>& logSize, 
 			CoordinateSystem system = CoordinateSystem::UpperLeftOriginDescendingY) = 0;
-		virtual void run(const std::shared_ptr<Scene>& startingScene ) = 0;
+		virtual void run() = 0;
 		virtual void quit() = 0;
 		virtual Rect<float> getLogicalRect() const = 0;
 		virtual Vec2<float> getLogicalSize() const = 0;
 		virtual Rect<int> getScreenRect() const = 0;
 		virtual CoordinateMapping getCoordinateMapping() const = 0;
 		virtual std::shared_ptr<Scene> getActiveScene() const = 0;
+		virtual bool isInSceneTransition() const = 0;
+		virtual void clearTransition() = 0;
+		virtual SceneTransition& getSceneTransition() = 0;
+		virtual void setScene(const std::shared_ptr<Scene>& scene, const std::shared_ptr<SceneTransition> transition = nullptr) = 0;
+
 		Signal<bool, KeyCode, unsigned char> keyEvent;
 		static Game& getInstance();
 		static std::unique_ptr<ceph::Game> ceph::Game::createInstance();
