@@ -14,7 +14,7 @@
 std::random_device rd; 
 std::mt19937 eng( rd()  );
 
-void Asteroids::initialize()
+Asteroids::Asteroids(const ceph::ColorRGB& color)
 {
 	auto bkgd = std::make_shared<ceph::Texture>( ".\\data\\bkgd.png" );
 	setBackground(bkgd, ceph::BackgroundMode::Tile);
@@ -23,7 +23,7 @@ void Asteroids::initialize()
 		".\\data\\zarquon.png",
 		".\\data\\zarquon.json" 
 	);
-	setBackgroundColor(ceph::ColorRGB(10, 30, 60));
+	setBackgroundColor(color);
 
 	addActors({
 		CreateStarLayer( -256.0f, 0.5f ),

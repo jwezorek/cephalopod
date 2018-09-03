@@ -9,7 +9,7 @@ void IntroScene::setMainScene(const std::shared_ptr<Asteroids>& a)
 	asteroids_ = a;
 }
 
-void IntroScene::initialize()
+IntroScene::IntroScene()
 {
 	setBackgroundColor( ceph::ColorRGB(255, 0, 0) );
 	auto bkgd = std::make_shared<ceph::Texture>(".\\data\\snoopy.png");

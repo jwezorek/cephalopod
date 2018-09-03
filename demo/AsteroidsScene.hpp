@@ -20,7 +20,7 @@ private:
 	std::shared_ptr<ceph::Sprite> createAsteroid();
 
 public:
-	void initialize() override;
+	Asteroids(const ceph::ColorRGB& bkgd_color);
 	std::shared_ptr<ceph::Group> getBkgdLayer() const;
 };
 

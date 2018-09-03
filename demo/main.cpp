@@ -22,8 +22,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	//game->initializeFullscreen( );
 	//game->setLogicalCoordinates(ceph::CoordinateMapping::UseBlackBars, ceph::Vec2<float>(1920, 1080), ceph::CoordinateSystem::LowerLeftOriginAscendingY);
 
-	auto asteroids = ceph::Scene::create<Asteroids>();
-	auto scene = ceph::Scene::create<IntroScene>();
+	auto asteroids = std::make_shared<Asteroids>(ceph::ColorRGB(10, 30, 60));
+	auto scene = std::make_shared<IntroScene>();
 	scene->setMainScene(asteroids);
 
 	game->setScene(scene);

@@ -11,7 +11,7 @@ private:
 	std::shared_ptr<Asteroids> asteroids_;
 
 public:
+	IntroScene();
 	void setMainScene(const std::shared_ptr<Asteroids>& a); 
 	void handleKey(bool isPressed, ceph::KeyCode key, unsigned char modifiers);
-	void initialize() override;
 };

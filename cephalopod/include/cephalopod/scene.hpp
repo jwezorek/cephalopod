@@ -26,7 +26,7 @@ namespace ceph {
 		Tile
 	};
 
-	class Scene : public Slot<Scene>, public std::enable_shared_from_this<Scene>
+	class Scene : public Slot<Scene>
 	{
 		friend class GameImpl;
 		friend class Actor;
@@ -50,7 +50,6 @@ namespace ceph {
 		Scene();
 
 	public:
-		virtual void initialize() = 0;
 
 		void setBackground(const std::shared_ptr<Texture>& tex, BackgroundMode mapping = BackgroundMode::StretchToFit);
 
@@ -69,12 +68,6 @@ namespace ceph {
 		Signal<float> updateEvent;
 
 		virtual ~Scene();
-
-		template<typename T> static std::shared_ptr<T> create() {
-			auto scene = std::make_shared<T>();
-			scene->initialize();
-			return scene;
-		}
 	};
 
 }
