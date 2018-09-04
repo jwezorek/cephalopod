@@ -1,14 +1,15 @@
 #include "..\include\cephalopod\scenetransition.hpp"
 #include "..\include\cephalopod\scene.hpp"
 
-ceph::SceneTransition::SceneTransition(float duration) : duration_(duration), elapsed_(0)
+ceph::SceneTransition::SceneTransition(float duration) : 
+	duration_(duration), elapsed_(0), old_scene_(nullptr), active_scene_(nullptr)
 {
 }
 
-void ceph::SceneTransition::setScenes(const std::shared_ptr<Scene>& old_scene, const std::shared_ptr<Scene>& new_scene)
+void ceph::SceneTransition::setScenes(Scene& old_scene, Scene& new_scene)
 {
-	old_scene_ = old_scene;
-	active_scene_ = new_scene;
+	old_scene_ = &old_scene;
+	active_scene_ = &new_scene;
 }
 
 void ceph::SceneTransition::update(float elapsed)

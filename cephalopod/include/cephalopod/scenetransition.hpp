@@ -13,14 +13,14 @@ namespace ceph {
 
 		float elapsed_;
 		float duration_;
-		std::shared_ptr<Scene> active_scene_;
-		std::shared_ptr<Scene> old_scene_;
+		Scene* active_scene_;
+		Scene* old_scene_;
 
 		virtual void updateTransition(float elapsed);
 
 	public:
 		SceneTransition(float duration);
-		void setScenes(const std::shared_ptr<Scene>& old_scene, const std::shared_ptr<Scene>& new_scene);
+		void setScenes(Scene& old_scene, Scene& new_scene);
 		virtual void update(float elapsed);
 		virtual void draw(const DrawingContext& dc) = 0;
 		virtual void endGameLoopIteration();

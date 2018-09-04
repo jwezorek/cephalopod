@@ -267,7 +267,7 @@ void ceph::GameImpl::setScene(const std::shared_ptr<Scene>& scene, const std::sh
 	active_scene_ = scene;
 	transition_ = transition;
 	if (transition)
-		transition_->setScenes(old_scene, active_scene_);
+		transition_->setScenes( *old_scene, *active_scene_ );
 }
 
 void ceph::GameImpl::run() {
