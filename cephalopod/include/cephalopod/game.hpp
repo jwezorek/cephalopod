@@ -2,6 +2,7 @@
 #include <memory>
 #include <list>
 #include <string>
+#include <unordered_map>
 #include "scene.hpp"
 #include "types.hpp"
 #include "signals.hpp"
@@ -35,6 +36,7 @@ namespace ceph
 	class Game : public Slot<Game> 
 	{
 	private:
+		std::unordered_map<std::string, std::unique_ptr<Scene>> scenes_;
 		std::unique_ptr<ceph::GameImpl> impl_;
 		Game();
 	public:
@@ -45,20 +47,28 @@ namespace ceph
 		std::list<VideoMode> getVideoModes() const;
 		void setLogicalCoordinates(CoordinateMapping mapping, const Vec2<float>& logSize, 
 			CoordinateSystem system = CoordinateSystem::UpperLeftOriginDescendingY);
-		void run();
 		void quit();
 		Rect<float> getLogicalRect() const;
 		Vec2<float> getLogicalSize() const;
 		Rect<int> getScreenRect() const;
 		CoordinateMapping getCoordinateMapping() const;
-		std::shared_ptr<Scene> getActiveScene() const;
+		Scene& getActiveScene() const;
 		bool isInSceneTransition() const;
 		void clearTransition();
 		SceneTransition& getSceneTransition();
-		void setScene(const std::shared_ptr<Scene>& scene, const std::shared_ptr<SceneTransition> transition = nullptr);
+
+		void run(const std::string& initial_scene);
+		void setScene(const std::string& scene_name, const std::shared_ptr<SceneTransition> transition = nullptr);
 
 		Signal<bool, KeyCode, unsigned char> keyEvent;
 		static Game& getInstance();
 		static std::unique_ptr<ceph::Game> ceph::Game::createInstance();
+
+		template<typename T, class... Args>
+		void registerScene(const std::string& s, Args&&... args)
+		{
+			scenes_.emplace(std::make_pair(s, std::make_unique<T>(args...)));
+		}
+
 	};
 }
