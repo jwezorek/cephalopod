@@ -203,7 +203,6 @@ namespace ceph
 	public:
 		GLFWwindow* window_;
 		std::unique_ptr<ceph::Graphics> graphics_;
-		std::shared_ptr<ceph::SceneTransition> transition_;
 		ceph::Scene* active_scene_;
 		ceph::CoordinateMapping coord_mapping_mode_;
 		ceph::Vec2<float> log_size_;
@@ -252,26 +251,31 @@ void TestPanTransition(ceph::DrawingContext& dc, float elapsed)
 
 bool ceph::Game::isInSceneTransition() const
 {
-	return impl_->transition_.get();
+	return transition_.get();
 }
 
 void ceph::Game::clearTransition()
 {
-	impl_->transition_ = nullptr;
+	transition_ = nullptr;
 }
 
 ceph::SceneTransition& ceph::Game::getSceneTransition()
 {
-	return *(impl_->transition_);
+	return *transition_;
 }
 
-void ceph::Game::setScene(const std::string& scene_name, const std::shared_ptr<SceneTransition> transition)
+void ceph::Game::setScene(const std::string& scene_name)
+{
+	clearTransition();
+	switchScenes(scene_name);
+}
+
+void ceph::Game::switchScenes(const std::string& scene_name)
 {
 	auto old_scene = impl_->active_scene_;
 	impl_->active_scene_ = scenes_[scene_name].get();
-	impl_->transition_ = transition;
-	if (transition)
-		impl_->transition_->setScenes( *old_scene, *(impl_->active_scene_) );
+	if (transition_)
+		transition_->setScenes( *old_scene, *(impl_->active_scene_) );
 }
 
 void ceph::Game::run(const std::string& scene_name) {

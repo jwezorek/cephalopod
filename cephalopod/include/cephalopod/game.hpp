@@ -37,8 +37,12 @@ namespace ceph
 	{
 	private:
 		std::unordered_map<std::string, std::unique_ptr<Scene>> scenes_;
+		std::unique_ptr<SceneTransition> transition_;
 		std::unique_ptr<ceph::GameImpl> impl_;
+
 		Game();
+		void switchScenes(const std::string& new_scene);
+
 	public:
 		
 		virtual ~Game() = default;
@@ -58,17 +62,24 @@ namespace ceph
 		SceneTransition& getSceneTransition();
 
 		void run(const std::string& initial_scene);
-		void setScene(const std::string& scene_name, const std::shared_ptr<SceneTransition> transition = nullptr);
 
 		Signal<bool, KeyCode, unsigned char> keyEvent;
 		static Game& getInstance();
 		static std::unique_ptr<ceph::Game> ceph::Game::createInstance();
 
-		template<typename T, class... Args>
+		template<typename T, typename... Args>
 		void registerScene(const std::string& s, Args&&... args)
 		{
 			scenes_.emplace(std::make_pair(s, std::make_unique<T>(args...)));
 		}
 
+		template<typename T, typename... Args>
+		void setScene(const std::string& scene_name, Args&&... args)
+		{
+			transition_ = std::make_unique<T>(args...);
+			switchScenes(scene_name);
+		}
+
+		void setScene(const std::string& scene_name);
 	};
 }
