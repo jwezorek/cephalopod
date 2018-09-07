@@ -30,27 +30,32 @@ namespace ceph
 	};
 
 	class SceneTransition;
+	class GameImpl;
 
 	class Game : public Slot<Game> 
 	{
+	private:
+		std::unique_ptr<ceph::GameImpl> impl_;
+		Game();
 	public:
+		
 		virtual ~Game() = default;
-		virtual void initialize(WindowMode mode, int wd = 0, int hgt = 0, const std::string& title = "") = 0;
-		virtual void initializeFullscreen(VideoMode vm = VideoMode(), const std::string& title = "") = 0;
-		virtual std::list<VideoMode> getVideoModes() const = 0;
-		virtual void setLogicalCoordinates(CoordinateMapping mapping, const Vec2<float>& logSize, 
-			CoordinateSystem system = CoordinateSystem::UpperLeftOriginDescendingY) = 0;
-		virtual void run() = 0;
-		virtual void quit() = 0;
-		virtual Rect<float> getLogicalRect() const = 0;
-		virtual Vec2<float> getLogicalSize() const = 0;
-		virtual Rect<int> getScreenRect() const = 0;
-		virtual CoordinateMapping getCoordinateMapping() const = 0;
-		virtual std::shared_ptr<Scene> getActiveScene() const = 0;
-		virtual bool isInSceneTransition() const = 0;
-		virtual void clearTransition() = 0;
-		virtual SceneTransition& getSceneTransition() = 0;
-		virtual void setScene(const std::shared_ptr<Scene>& scene, const std::shared_ptr<SceneTransition> transition = nullptr) = 0;
+		void initialize(WindowMode mode, int wd = 0, int hgt = 0, const std::string& title = "");
+		void initializeFullscreen(VideoMode vm = VideoMode(), const std::string& title = "");
+		std::list<VideoMode> getVideoModes() const;
+		void setLogicalCoordinates(CoordinateMapping mapping, const Vec2<float>& logSize, 
+			CoordinateSystem system = CoordinateSystem::UpperLeftOriginDescendingY);
+		void run();
+		void quit();
+		Rect<float> getLogicalRect() const;
+		Vec2<float> getLogicalSize() const;
+		Rect<int> getScreenRect() const;
+		CoordinateMapping getCoordinateMapping() const;
+		std::shared_ptr<Scene> getActiveScene() const;
+		bool isInSceneTransition() const;
+		void clearTransition();
+		SceneTransition& getSceneTransition();
+		void setScene(const std::shared_ptr<Scene>& scene, const std::shared_ptr<SceneTransition> transition = nullptr);
 
 		Signal<bool, KeyCode, unsigned char> keyEvent;
 		static Game& getInstance();

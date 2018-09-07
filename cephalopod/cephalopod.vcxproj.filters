@@ -54,9 +54,6 @@
     <ClInclude Include="include\cephalopod\signals.hpp">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="source\gameimpl.hpp">
-      <Filter>Header Files\internal</Filter>
-    </ClInclude>
     <ClInclude Include="include\cephalopod\actions.hpp">
       <Filter>Header Files\include</Filter>
     </ClInclude>

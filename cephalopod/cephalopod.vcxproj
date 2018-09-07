@@ -191,7 +191,6 @@
     <ClInclude Include="include\cephalopod\types.hpp" />
     <ClInclude Include="source\clock.hpp" />
     <ClInclude Include="source\easingfunctions.hpp" />
-    <ClInclude Include="source\gameimpl.hpp" />
     <ClInclude Include="source\glad.h" />
     <ClInclude Include="source\graphics.hpp" />
     <ClInclude Include="source\json11.hpp" />

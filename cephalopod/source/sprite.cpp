@@ -2,8 +2,8 @@
 #include "../include/cephalopod/sprite.hpp"
 #include "../include/cephalopod/types.hpp"
 #include "../include/cephalopod/game.hpp"
-#include "gameimpl.hpp"
 #include "../include/cephalopod/drawingcontext.hpp"
+#include "graphics.hpp"
 
 ceph::Sprite::Sprite(const std::shared_ptr<Texture>& texture)
 {

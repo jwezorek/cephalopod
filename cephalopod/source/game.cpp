@@ -12,12 +12,15 @@
 #include "../include/cephalopod/types.hpp"
 #include "../include/cephalopod/game.hpp"
 #include "../include/cephalopod/scene.hpp"
+#include "../include/cephalopod/scenetransition.hpp"
+#include "graphics.hpp"
 #include "util.hpp"
-#include "gameimpl.hpp"
 #include "clock.hpp"
 
 namespace
 {
+	ceph::Game* g_instance_ = nullptr;
+
 	static std::unordered_map<int, ceph::KeyCode> map_glfw_to_ceph_key = {
 			{ GLFW_KEY_SPACE, ceph::KeyCode::Space },
 			{ GLFW_KEY_APOSTROPHE, ceph::KeyCode::Apostrophe },
@@ -193,9 +196,25 @@ namespace
 
 }
 
-ceph::GameImpl::GameImpl() {
-	ceph::GameImpl::instance_ = this;
+namespace ceph
+{
+	class GameImpl
+	{
+	public:
+		GLFWwindow* window_;
+		std::unique_ptr<ceph::Graphics> graphics_;
+		std::shared_ptr<ceph::SceneTransition> transition_;
+		std::shared_ptr<ceph::Scene> active_scene_;
+		ceph::CoordinateMapping coord_mapping_mode_;
+		ceph::Vec2<float> log_size_;
+	};
+}
 
+ceph::Game::Game() 
+{
+	g_instance_ = this;
+
+	impl_ = std::make_unique<GameImpl>();
 	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 	// initialise GLFW
 	glfwSetErrorCallback(OnError);
@@ -203,26 +222,21 @@ ceph::GameImpl::GameImpl() {
 		throw std::runtime_error("glfwInit failed");
 }
 
-ceph::GameImpl* ceph::GameImpl::getInstance()
+void ceph::Game::initializeFullscreen(VideoMode vm, const std::string& title)
 {
-	return instance_;
+	impl_->window_ = CreateGlWindow(ceph::WindowMode::FullScreen, vm, title.c_str());
+	impl_->graphics_ = std::make_unique<ceph::Graphics>(impl_->window_);
 }
 
-void ceph::GameImpl::initializeFullscreen(VideoMode vm, const std::string& title)
+void ceph::Game::initialize(ceph::WindowMode mode, int wd, int hgt, const std::string& title)
 {
-	window_ = CreateGlWindow(ceph::WindowMode::FullScreen, vm, title.c_str());
-	graphics_ = std::make_unique<ceph::Graphics>(window_);
+	impl_->window_ = CreateGlWindow(mode, VideoMode(wd,hgt), title.c_str());
+	impl_->graphics_ = std::make_unique<ceph::Graphics>(impl_->window_);
 }
 
-void ceph::GameImpl::initialize(ceph::WindowMode mode, int wd, int hgt, const std::string& title)
+void ceph::Game::setLogicalCoordinates(ceph::CoordinateMapping mapping, const ceph::Vec2<float>& log_size, ceph::CoordinateSystem system)
 {
-	window_ = CreateGlWindow(mode, VideoMode(wd,hgt), title.c_str());
-	graphics_ = std::make_unique<ceph::Graphics>(window_);
-}
-
-void ceph::GameImpl::setLogicalCoordinates(ceph::CoordinateMapping mapping, const ceph::Vec2<float>& log_size, ceph::CoordinateSystem system)
-{
-	graphics_->setCoordinateSystem(system, mapping, log_size);
+	impl_->graphics_->setCoordinateSystem(system, mapping, log_size);
 }
 
 /*
@@ -234,63 +248,53 @@ void TestPanTransition(ceph::DrawingContext& dc, float elapsed)
 		dc.transformation *= translate;
 	}
 }
-
-void TestFadeTransition(ceph::DrawingContext& dc, float elapsed)
-{
-	if (do_scene_transition)
-	{
-		float alpha = elapsed * -0.25;
-		dc.alpha += alpha;
-	}
-}
 */
 
-
-bool ceph::GameImpl::isInSceneTransition() const
+bool ceph::Game::isInSceneTransition() const
 {
-	return transition_.get();
+	return impl_->transition_.get();
 }
 
-void ceph::GameImpl::clearTransition()
+void ceph::Game::clearTransition()
 {
-	transition_ = nullptr;
+	impl_->transition_ = nullptr;
 }
 
-ceph::SceneTransition& ceph::GameImpl::getSceneTransition()
+ceph::SceneTransition& ceph::Game::getSceneTransition()
 {
-	return *transition_;
+	return *(impl_->transition_);
 }
 
-void ceph::GameImpl::setScene(const std::shared_ptr<Scene>& scene, const std::shared_ptr<SceneTransition> transition)
+void ceph::Game::setScene(const std::shared_ptr<Scene>& scene, const std::shared_ptr<SceneTransition> transition)
 {
-	auto old_scene = active_scene_;
-	active_scene_ = scene;
-	transition_ = transition;
+	auto old_scene = impl_->active_scene_;
+	impl_->active_scene_ = scene;
+	impl_->transition_ = transition;
 	if (transition)
-		transition_->setScenes( *old_scene, *active_scene_ );
+		impl_->transition_->setScenes( *old_scene, *(impl_->active_scene_) );
 }
 
-void ceph::GameImpl::run() {
+void ceph::Game::run() {
 	ceph::Clock clock;
-	while (!glfwWindowShouldClose(window_)) {
+	while (!glfwWindowShouldClose(impl_->window_)) {
 		glfwPollEvents();
 		auto elapsed = clock.restart();
 
 		if (! isInSceneTransition()) {
-			DrawingContext dc(*graphics_);
+			DrawingContext dc(*impl_->graphics_);
 			auto scene = getActiveScene();
 			scene->update(elapsed);
-			graphics_->BeginFrame();
+			impl_->graphics_->BeginFrame();
 			scene->draw(dc);
-			graphics_->EndFrame();
+			impl_->graphics_->EndFrame();
 			scene->endGameLoopIteration();
 		} else {
-			DrawingContext dc(*graphics_);
+			DrawingContext dc(*impl_->graphics_);
 			auto& transition = getSceneTransition();
 			transition.update(elapsed);
-			graphics_->BeginFrame();
+			impl_->graphics_->BeginFrame();
 			transition.draw(dc);
-			graphics_->EndFrame();
+			impl_->graphics_->EndFrame();
 			transition.endGameLoopIteration();
 			if (transition.isComplete())
 				clearTransition();
@@ -298,48 +302,48 @@ void ceph::GameImpl::run() {
 	}
 }
 
-ceph::Rect<float> ceph::GameImpl::getLogicalRect() const
+ceph::Rect<float> ceph::Game::getLogicalRect() const
 {
-	auto view_mat = graphics_->getViewMatrix();
+	auto view_mat = impl_->graphics_->getViewMatrix();
 	return view_mat.getInverse().value().apply(ceph::Rect<float>(-1, -1, 2, 2));
 }
 
-ceph::Vec2<float> ceph::GameImpl::getLogicalSize() const
+ceph::Vec2<float> ceph::Game::getLogicalSize() const
 {
-	return log_size_;
+	return impl_->log_size_;
 }
 
-void ceph::GameImpl::quit()
+void ceph::Game::quit()
 {
-	glfwSetWindowShouldClose(window_, 1);
+	glfwSetWindowShouldClose(impl_->window_, 1);
 }
 
-ceph::CoordinateMapping ceph::GameImpl::getCoordinateMapping() const
+ceph::CoordinateMapping ceph::Game::getCoordinateMapping() const
 {
-	return coord_mapping_mode_;
+	return impl_->coord_mapping_mode_;
 }
 
 
-ceph::Rect<int> ceph::GameImpl::getScreenRect() const
+ceph::Rect<int> ceph::Game::getScreenRect() const
 {
 	int wd, hgt;
-	glfwGetWindowSize(window_, &wd, &hgt);
+	glfwGetWindowSize(impl_->window_, &wd, &hgt);
 	return ceph::Rect<int>(0, 0, wd, hgt);
 }
 
-std::shared_ptr<ceph::Scene> ceph::GameImpl::getActiveScene() const
+std::shared_ptr<ceph::Scene> ceph::Game::getActiveScene() const
 {
-	return active_scene_;
+	return impl_->active_scene_;
 }
-
-ceph::GameImpl* ceph::GameImpl::instance_ = nullptr;
 
 std::unique_ptr<ceph::Game> ceph::Game::createInstance()
 {
-	return std::make_unique<GameImpl>();
+	if (g_instance_ != nullptr)
+		throw std::runtime_error("only one intsance of ceph::Game is permitted.");
+	return std::unique_ptr<Game>(new ceph::Game()); // can't use make_unique with a private constructor
 }
 
-std::list<ceph::VideoMode> ceph::GameImpl::getVideoModes() const
+std::list<ceph::VideoMode> ceph::Game::getVideoModes() const
 {
 	int n;
 	auto ary = glfwGetVideoModes(glfwGetPrimaryMonitor(), &n);
@@ -362,10 +366,9 @@ std::list<ceph::VideoMode> ceph::GameImpl::getVideoModes() const
 
 ceph::Game& ceph::Game::getInstance()
 {
-	auto instance = GameImpl::getInstance();
-	if (!instance)
+	if (!g_instance_)
 		throw std::runtime_error("No instance of the cephalopod game singleton");
-	return *instance;
+	return *g_instance_;
 }
 
 

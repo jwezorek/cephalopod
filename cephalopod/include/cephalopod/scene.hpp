@@ -13,7 +13,7 @@
 
 namespace ceph {
 
-	class GameImpl;
+	class Game;
 
 	typedef std::function<void(Actor&, float)> UpdateHandlerFunc;
 	typedef std::function<void(Actor&, bool, KeyCode, unsigned char)> KeyEventHandlerFunc;
@@ -28,7 +28,7 @@ namespace ceph {
 
 	class Scene : public Slot<Scene>
 	{
-		friend class GameImpl;
+		friend class Game;
 		friend class Actor;
 		friend class ActionPlayer;
 		friend class SceneTransition;

@@ -5,7 +5,7 @@
 namespace ceph {
 
 	class Scene;
-	class DrawingContext;
+	struct DrawingContext;
 
 	class SceneTransition
 	{
