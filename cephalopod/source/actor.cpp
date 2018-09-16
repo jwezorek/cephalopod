@@ -40,7 +40,7 @@ void ceph::Actor::removeChild(const std::shared_ptr<ceph::Actor>& actor)
 	if (isInScene())
 	{
 		auto& scene = getScene();
-		if (&scene == Game::getInstance().getActiveScene().get())
+		if (&scene == &(Game::getInstance().getActiveScene()))
 			scene.dropped_actors_.push_back(actor);
 	}
 }

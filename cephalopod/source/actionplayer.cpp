@@ -61,7 +61,7 @@ void ceph::ActionPlayer::removeActions(const std::function<bool(const ActionInPr
 	if (actions_.empty()) {
 		// if there are no more actions then unhook the action player object from the scene's update event
 		initial_actor_state_ = nullptr;
-		Game::getInstance().getActiveScene()->updateActionsEvent.disconnect(*this);
+		Game::getInstance().getActiveScene().updateActionsEvent.disconnect(*this);
 	} else {
 		// toggle the complete flag of repeating items and if there are only repeating items
 		// left, re-set the cached state...

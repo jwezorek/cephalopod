@@ -22,5 +22,5 @@ IntroScene::IntroScene()
 void IntroScene::handleKey(bool is_key_down, ceph::KeyCode key, unsigned char modifiers)
 {
 	if (is_key_down && key == ceph::KeyCode::G)
-		ceph::Game::getInstance().setScene( asteroids_, std::make_shared<ceph::CrossFadeTransition>(3.0f) );
+		ceph::Game::getInstance().setScene<ceph::CrossFadeTransition>( "game", 3.0f );
 }
