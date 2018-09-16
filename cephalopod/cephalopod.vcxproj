@@ -195,6 +195,7 @@
     <ClInclude Include="source\graphics.hpp" />
     <ClInclude Include="source\json11.hpp" />
     <ClInclude Include="source\khrplatform.h" />
+    <ClInclude Include="source\spritepacker.hpp" />
     <ClInclude Include="source\stb_image.h" />
     <ClInclude Include="source\util.hpp" />
   </ItemGroup>

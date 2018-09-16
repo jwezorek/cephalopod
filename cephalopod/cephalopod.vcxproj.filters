@@ -105,6 +105,9 @@
     <ClInclude Include="include\cephalopod\scenetransition.hpp">
       <Filter>Header Files\include</Filter>
     </ClInclude>
+    <ClInclude Include="source\spritepacker.hpp">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\game.cpp">

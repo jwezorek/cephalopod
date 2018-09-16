@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include <Windows.h>
 #include "glad.h"
 #include  "GLFW/glfw3.h"
@@ -17,8 +18,7 @@
 #include "util.hpp"
 #include "clock.hpp"
 
-namespace
-{
+namespace {
 	ceph::Game* g_instance_ = nullptr;
 
 	static std::unordered_map<int, ceph::KeyCode> map_glfw_to_ceph_key = {

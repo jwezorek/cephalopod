@@ -121,6 +121,18 @@ namespace ceph {
 			return Vec2<T>(wd, hgt);
 		}
 
+		void setLocation(const Vec2<T>& pt)
+		{
+			x = pt.x;
+			y = pt.y;
+		}
+
+		void setSize(const Vec2<T>& sz)
+		{
+			wd = sz.x;
+			hgt = sz.y;
+		}
+
 		T x2() const
 		{
 			return x + wd;
