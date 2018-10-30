@@ -113,10 +113,14 @@ namespace ceph {
 				children[0]->splitNode(new_sprite);
 			}
 
+			// TODO: should change the logic here so that we pick vert or horz based on a heuristic
+			// regardless of whether we can grow without resizing in both directions, and then handle the 
+			// case in which we need to resize in both directions correctly.
+
 			bool shouldGrowVertically(const ceph::Vec2<int>& sprite_sz)
 			{
-				bool can_grow_vert = rect.wd >= sprite_sz.x;
-				bool can_grow_horz = rect.hgt >= sprite_sz.y;
+				bool can_grow_vert = rect.wd >= sprite_sz.x;  // can grow vertically without having to resize horz
+				bool can_grow_horz = rect.hgt >= sprite_sz.y; // can grow horz without having to resize vertically
 				if (!can_grow_vert && !can_grow_horz)
 					throw std::runtime_error("Unable to grow!"); //TODO: should grow horz & vert here...
 				if (can_grow_vert && !can_grow_horz)
