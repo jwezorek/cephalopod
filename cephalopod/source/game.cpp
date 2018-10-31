@@ -18,6 +18,8 @@
 #include "util.hpp"
 #include "clock.hpp"
 
+#include "spritepacker.hpp"
+
 namespace {
 	ceph::Game* g_instance_ = nullptr;
 
@@ -277,6 +279,20 @@ void ceph::Game::switchScenes(const std::string& scene_name)
 	if (transition_)
 		transition_->setScenes( *old_scene, *(impl_->active_scene_) );
 }
+
+/*
+void testSpritePack()
+{
+	std::vector<ceph::Rect<int>> rects = {
+		{0, 0, 20, 20},
+		{0,0,100,150},
+		{0,0,150,10},
+		{0,0,40,40}
+	};
+
+	ceph::PackSprites(rects);
+}
+*/
 
 void ceph::Game::run(const std::string& scene_name) {
 	ceph::Clock clock;

@@ -69,6 +69,12 @@ ceph::SpriteSheet::SpriteSheet(const std::string& tex_path, const std::string& a
 	}
 }
 
+ceph::SpriteSheet::SpriteSheet()
+{
+	texture_ = nullptr;
+	inverted_y_ = false;
+}
+
 std::shared_ptr<ceph::SpriteSheet> ceph::SpriteSheet::create(const std::string& text_path, const std::string& atlas_path, bool invert_y)
 {
 	return std::shared_ptr<ceph::SpriteSheet>(new ceph::SpriteSheet(text_path, atlas_path, invert_y));

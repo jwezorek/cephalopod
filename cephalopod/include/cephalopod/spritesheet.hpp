@@ -6,12 +6,10 @@
 #include "texture.hpp"
 #include "spriteframe.hpp"
 
-
-
 namespace ceph {
 	class Sprite;
 	class SpriteSheet : public std::enable_shared_from_this<SpriteSheet> {
-	private:
+	protected:
 
 		struct FrameInfo {
 			std::string name;
@@ -32,6 +30,7 @@ namespace ceph {
 
 		void parseAtlasJson(const std::string& atlas_path);
 		SpriteSheet(const std::string& text_path, const std::string& atlas_path, bool invert_y);
+		SpriteSheet();
 
 	public:
 		static std::shared_ptr<SpriteSheet> create(const std::string& text_path, const std::string& atlas_path, bool invert_y = false);

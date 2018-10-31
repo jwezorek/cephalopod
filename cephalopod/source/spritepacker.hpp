@@ -8,8 +8,6 @@
 
 namespace ceph {
 
-	using T = Rect<int>;
-
 	namespace details
 	{
 		std::pair<Rect<int>, Rect<int>> splitVertically(const Rect<int>& self, int y)
@@ -26,6 +24,7 @@ namespace ceph {
 			return { left, right };
 		}
 
+		template <typename T>
 		struct PackingNode
 		{
 			T* sprite;
@@ -56,7 +55,7 @@ namespace ceph {
 				return isLeaf() && !sprite;
 			}
 
-			details::PackingNode* findEmptyLeaf(const Vec2<int>& sz)
+			details::PackingNode<T>* findEmptyLeaf(const Vec2<int>& sz)
 			{
 				if (isEmptyLeaf())
 					return canContain(sz) ? this : nullptr;
@@ -160,6 +159,7 @@ namespace ceph {
 		};
 	}
 
+	template <typename T>
 	void PackSprites(std::vector<T>& rects, std::optional<Vec2<int>> packing_sz = std::nullopt)
 	{
 		bool is_grow_mode = !packing_sz.has_value();
@@ -171,13 +171,13 @@ namespace ceph {
 			}
 		);
 
-		std::unique_ptr<details::PackingNode> root;
+		std::unique_ptr<details::PackingNode<T>> root;
 		for (auto p : ptr_rects) {
 			auto& sprite = *p;
 			if (!root) {
 				root = (is_grow_mode) ?
-					std::make_unique<details::PackingNode>(sprite.getSize()) :
-					std::make_unique<details::PackingNode>(packing_sz.value());
+					std::make_unique<details::PackingNode<T>>(sprite.getSize()) :
+					std::make_unique<details::PackingNode<T>>(packing_sz.value());
 				root->splitNode(sprite);
 				continue;
 			}
@@ -195,7 +195,7 @@ namespace ceph {
 		}
 
 		root->traverse(
-			[](details::PackingNode& node) { 
+			[](details::PackingNode<T>& node) {
 				if (node.sprite)
 					node.sprite->setLocation(node.rect.getLocation());
 			}
