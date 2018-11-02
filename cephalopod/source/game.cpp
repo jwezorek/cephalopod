@@ -18,7 +18,7 @@
 #include "util.hpp"
 #include "clock.hpp"
 
-#include "spritepacker.hpp"
+//#include "spritepacker.hpp"
 
 namespace {
 	ceph::Game* g_instance_ = nullptr;

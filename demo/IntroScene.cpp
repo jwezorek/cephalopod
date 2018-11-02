@@ -3,6 +3,8 @@
 #include "cephalopod/game.hpp"
 #include "cephalopod/signals.hpp"
 #include "cephalopod/scenetransition.hpp"
+#include "cephalopod/font.hpp"
+#include "cephalopod/fontsheet.hpp"
 
 void IntroScene::setMainScene(const std::shared_ptr<Asteroids>& a)
 {
@@ -11,6 +13,14 @@ void IntroScene::setMainScene(const std::shared_ptr<Asteroids>& a)
 
 IntroScene::IntroScene()
 {
+	std::shared_ptr<ceph::Font> font = std::make_shared<ceph::Font>(".\\data\\cmunrm.ttf");
+	ceph::FontSheet fsheet(
+		std::vector< ceph::FontSheet::FontItem> {
+			ceph::FontSheet::FontItem(font, 14),
+			ceph::FontSheet::FontItem(font, 24),
+		}
+	);
+
 	setBackgroundColor( ceph::ColorRGB(255, 0, 0) );
 	auto bkgd = std::make_shared<ceph::Texture>(".\\data\\snoopy.png");
 	setBackground(bkgd);

@@ -177,6 +177,7 @@
     <ClInclude Include="include\cephalopod\drawingcontext.hpp" />
     <ClInclude Include="include\cephalopod\easingactions.hpp" />
     <ClInclude Include="include\cephalopod\events.hpp" />
+    <ClInclude Include="include\cephalopod\font.hpp" />
     <ClInclude Include="include\cephalopod\fontsheet.hpp" />
     <ClInclude Include="include\cephalopod\game.hpp" />
     <ClInclude Include="include\cephalopod\group.hpp" />
@@ -211,6 +212,7 @@
     <ClCompile Include="source\clock.cpp" />
     <ClCompile Include="source\easingactions.cpp" />
     <ClCompile Include="source\easingfunctions.cpp" />
+    <ClCompile Include="source\font.cpp" />
     <ClCompile Include="source\fontsheet.cpp" />
     <ClCompile Include="source\game.cpp" />
     <ClCompile Include="source\glad.c" />
