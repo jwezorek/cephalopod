@@ -8,8 +8,6 @@
 #define STB_TRUETYPE_IMPLEMENTATION 
 #include "stb_truetype.h" /* http://nothings.org/stb/stb_truetype.h */
 
-
-
 namespace
 {
 	std::vector<unsigned char> ReadFile(const std::string& filename)
@@ -21,7 +19,7 @@ namespace
 		return std::vector<unsigned char>(
 			std::istreambuf_iterator<char>(file),
 			std::istreambuf_iterator<char>()
-			);
+		);
 	}
 }
 
@@ -61,9 +59,17 @@ ceph::Vec2<int> ceph::Font::getGlyphSize(char ch, float horz_scale, float vert_s
 	};
 }
 
+void ceph::Font::paintGlyph(char ch, unsigned char * data_ptr, int wd, int hgt, int data_stride, float scale) const
+{
+	stbtt_MakeCodepointBitmap( &(impl_->info), data_ptr, wd, hgt, data_stride, scale, scale, ch );
+}
+
 float ceph::Font::getScaleForPixelHeight(int hgt) const
 {
-	return 0.0f;
+	return stbtt_ScaleForPixelHeight(
+		&(impl_->info), 
+		static_cast<float>(hgt)
+	);
 }
 
 ceph::Font::~Font()

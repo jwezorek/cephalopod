@@ -160,7 +160,7 @@ namespace ceph {
 	}
 
 	template <typename T>
-	void PackSprites(std::vector<T>& rects, std::optional<Vec2<int>> packing_sz = std::nullopt)
+	void PackSprites(std::vector<T>& rects, Vec2<int>& sz, std::optional<Vec2<int>> packing_sz = std::nullopt)
 	{
 		bool is_grow_mode = !packing_sz.has_value();
 		std::vector<T*> ptr_rects(rects.size());
@@ -200,5 +200,6 @@ namespace ceph {
 					node.sprite->setLocation(node.rect.getLocation());
 			}
 		);
+		sz = root->rect.getSize();
 	}
 };

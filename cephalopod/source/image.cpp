@@ -2,7 +2,12 @@
 #include "../include/cephalopod/image.hpp"
 #include "stb_image.h"
 
-ceph::Image::Image(int wd, int hgt, int channels, const unsigned char* data) 
+ceph::Image::Image(int wd, int hgt, int channels, std::vector<unsigned char>&& data) :
+	wd_(wd), hgt_(hgt), channels_(channels), data_(std::move(data))
+{
+}
+
+ceph::Image::Image(int wd, int hgt, int channels, const unsigned char* data)
 {
     set(wd, hgt, channels, data);
 }

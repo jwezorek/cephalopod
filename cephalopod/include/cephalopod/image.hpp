@@ -17,6 +17,7 @@ namespace ceph
         void set(int wd, int hgt, int channels, const unsigned char* data);
 
     public:
+		Image(int wd, int hgt, int channels, std::vector<unsigned char>&& data);
         Image(int wd, int hgt, int channels, const unsigned char* data);
         Image(const std::string& file);
         const unsigned char* getData() const;

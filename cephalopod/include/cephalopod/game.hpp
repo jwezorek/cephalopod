@@ -68,14 +68,12 @@ namespace ceph
 		static std::unique_ptr<ceph::Game> ceph::Game::createInstance();
 
 		template<typename T, typename... Args>
-		void registerScene(const std::string& s, Args&&... args)
-		{
+		void registerScene(const std::string& s, Args&&... args) {
 			scenes_.emplace(std::make_pair(s, std::make_unique<T>(args...)));
 		}
 
 		template<typename T, typename... Args>
-		void setScene(const std::string& scene_name, Args&&... args)
-		{
+		void setScene(const std::string& scene_name, Args&&... args) {
 			transition_ = std::make_unique<T>(args...);
 			switchScenes(scene_name);
 		}

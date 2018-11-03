@@ -16,8 +16,8 @@ IntroScene::IntroScene()
 	std::shared_ptr<ceph::Font> font = std::make_shared<ceph::Font>(".\\data\\cmunrm.ttf");
 	ceph::FontSheet fsheet(
 		std::vector< ceph::FontSheet::FontItem> {
-			ceph::FontSheet::FontItem(font, 14),
-			ceph::FontSheet::FontItem(font, 24),
+			ceph::FontSheet::FontItem(font, 30),
+			ceph::FontSheet::FontItem(font, 60),
 		}
 	);
 
