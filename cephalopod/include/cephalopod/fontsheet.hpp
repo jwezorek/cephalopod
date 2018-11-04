@@ -9,7 +9,7 @@ namespace ceph
 	class Font;
 	class FontSheetCell;
 
-	class FontSheet : protected SpriteSheet
+	class FontSheet
 	{
 	public:
 
@@ -28,9 +28,11 @@ namespace ceph
 		Rect<int> getFrame(const std::string& font_key, int size, char ch) const;
 		Vec2<int> getFrameSize(const std::string& font_key, int size, char ch) const;
 		SpriteFrame getSpriteFrame(const std::string& font_key, int size, char ch) const;
+		std::shared_ptr<Font> getFont(const std::string& font_key) const;
 
 	private:
 		std::unordered_map<std::string, SpriteSheet::FrameInfo> GetFontAtlas(const std::vector<FontSheetCell>& cells) const;
 		std::unordered_map<std::string, std::shared_ptr<Font>> fonts_;
+		std::shared_ptr<SpriteSheet> sheet_;
 	};
 }

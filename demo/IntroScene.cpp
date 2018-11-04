@@ -5,6 +5,7 @@
 #include "cephalopod/scenetransition.hpp"
 #include "cephalopod/font.hpp"
 #include "cephalopod/fontsheet.hpp"
+#include "cephalopod/label.hpp"
 
 void IntroScene::setMainScene(const std::shared_ptr<Asteroids>& a)
 {
@@ -14,12 +15,18 @@ void IntroScene::setMainScene(const std::shared_ptr<Asteroids>& a)
 IntroScene::IntroScene()
 {
 	std::shared_ptr<ceph::Font> font = std::make_shared<ceph::Font>(".\\data\\cmunrm.ttf");
-	ceph::FontSheet fsheet(
-		std::vector< ceph::FontSheet::FontItem> {
+	auto fsheet = std::make_shared<ceph::FontSheet>(
+		std::vector<ceph::FontSheet::FontItem> {
 			ceph::FontSheet::FontItem(font, 30),
 			ceph::FontSheet::FontItem(font, 60),
 		}
 	);
+	auto lbl = ceph::Actor::create<ceph::Label>(
+		fsheet, "cmunrm.ttf", 60, "Doohickey"
+	);
+	lbl->moveTo(100, 100);
+
+	addActor(lbl);
 
 	setBackgroundColor( ceph::ColorRGB(255, 0, 0) );
 	auto bkgd = std::make_shared<ceph::Texture>(".\\data\\snoopy.png");

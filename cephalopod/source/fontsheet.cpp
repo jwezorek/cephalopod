@@ -51,9 +51,9 @@ namespace {
 			float scale = fi.font->getScaleForPixelHeight(fi.size);
 			std::transform(g_characters.begin(), g_characters.end(), std::back_insert_iterator(cells),
 				[&fi, scale](char ch) {
-				auto sz = fi.font->getGlyphSize(ch, scale, scale);
-				return ceph::FontSheetCell(fi, scale, ch, sz.x + 1, sz.y + 1);
-			}
+					auto sz = fi.font->getCharacterBoundingBox(ch, scale, scale).getSize();
+					return ceph::FontSheetCell(fi, scale, ch, sz.x + 1, sz.y + 1);
+				}
 			);
 		}
 		return cells;
@@ -133,17 +133,21 @@ ceph::FontSheet::FontSheet(const std::vector<FontItem>& fonts)
 
 	// generate a cell for each FontItem/printable-character pair ...
 	// fill these cells with the correct width and height...
-	std::vector<FontSheetCell> cells = GetFontItemCells(fonts);
+	auto cells = GetFontItemCells(fonts);
 
 	// run sprite packing to fill in locations for the cells.
 	ceph::PackSprites(cells, tex_sz);
 
 	// paint the cells into a single channel image and then convert
 	// to RGBA.
-	std::vector<unsigned char> tex_data = PaintFontSheetTexture(tex_sz, cells);
+	auto tex_data = PaintFontSheetTexture(tex_sz, cells);
 
-	texture_ = std::make_shared<ceph::Texture>(ceph::Image(tex_sz.x, tex_sz.y, 4, std::move(tex_data)));
-	atlas_ = GetFontAtlas(cells);
+	sheet_ = std::shared_ptr<SpriteSheet>(
+		new SpriteSheet(
+			std::make_shared<ceph::Texture>(ceph::Image(tex_sz.x, tex_sz.y, 4, std::move(tex_data))),
+			GetFontAtlas(cells)
+		)
+	);
 
 	std::transform(fonts.begin(), fonts.end(), std::inserter(fonts_, fonts_.end()),
 		[](const FontItem& fi) {
@@ -154,22 +158,27 @@ ceph::FontSheet::FontSheet(const std::vector<FontItem>& fonts)
 
 std::shared_ptr<ceph::Sprite> ceph::FontSheet::getSprite(const std::string & font_key, int size, char ch) const
 {
-	return SpriteSheet::getSprite( GetFontItemKey(font_key, size, ch) );
+	return ceph::Actor::create<ceph::Sprite>( sheet_, GetFontItemKey(font_key, size, ch));
 }
 
 ceph::Rect<int> ceph::FontSheet::getFrame(const std::string & font_key, int size, char ch) const
 {
-	return SpriteSheet::getFrame( GetFontItemKey(font_key, size, ch) );
+	return sheet_->getFrame( GetFontItemKey(font_key, size, ch) );
 }
 
 ceph::Vec2<int> ceph::FontSheet::getFrameSize(const std::string & font_key, int size, char ch) const
 {
-	return SpriteSheet::getFrameSize(GetFontItemKey(font_key, size, ch));
+	return  sheet_->getFrameSize(GetFontItemKey(font_key, size, ch));
 }
 
 ceph::SpriteFrame ceph::FontSheet::getSpriteFrame(const std::string & font_key, int size, char ch) const
 {
-	return SpriteSheet::getSpriteFrame(GetFontItemKey(font_key, size, ch));
+	return  sheet_->getSpriteFrame(GetFontItemKey(font_key, size, ch));
+}
+
+std::shared_ptr<ceph::Font> ceph::FontSheet::getFont(const std::string& font_key) const
+{
+	return fonts_.find(font_key)->second;
 }
 
 

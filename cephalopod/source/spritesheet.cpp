@@ -69,6 +69,13 @@ ceph::SpriteSheet::SpriteSheet(const std::string& tex_path, const std::string& a
 	}
 }
 
+ceph::SpriteSheet::SpriteSheet(const std::shared_ptr<Texture>& tex, const std::unordered_map<std::string, FrameInfo>&& atlas)
+{
+	texture_ = tex;
+	atlas_ = std::move(atlas);
+	inverted_y_ = false;
+}
+
 ceph::SpriteSheet::SpriteSheet()
 {
 	texture_ = nullptr;
@@ -82,7 +89,8 @@ std::shared_ptr<ceph::SpriteSheet> ceph::SpriteSheet::create(const std::string& 
 
 std::shared_ptr<ceph::Sprite> ceph::SpriteSheet::getSprite(const std::string& name) const
 {
-	return ceph::Actor::create<ceph::Sprite>(shared_from_this(), name);
+	auto ss = shared_from_this();
+	return ceph::Actor::create<ceph::Sprite>(ss, name);
 }
 
 std::shared_ptr<ceph::Texture> ceph::SpriteSheet::getTexture() const

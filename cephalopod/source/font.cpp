@@ -49,14 +49,11 @@ ceph::Font::Font(const std::string& path)
 	impl_ = std::make_unique<ceph::FontImpl>(path);
 }
 
-ceph::Vec2<int> ceph::Font::getGlyphSize(char ch, float horz_scale, float vert_scale) const
+ceph::Rect<int> ceph::Font::getCharacterBoundingBox(char ch, float horz_scale, float vert_scale) const
 {
 	int c_x1, c_y1, c_x2, c_y2;
 	stbtt_GetCodepointBitmapBox(&(impl_->info), ch, horz_scale, vert_scale, &c_x1, &c_y1, &c_x2, &c_y2);
-	return { 
-		c_x2 - c_x1, 
-		c_y2 - c_y1 
-	};
+	return {  c_x1,  c_y1, c_x2 - c_x1, c_y2 - c_y1 };
 }
 
 void ceph::Font::paintGlyph(char ch, unsigned char * data_ptr, int wd, int hgt, int data_stride, float scale) const

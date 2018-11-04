@@ -27,7 +27,7 @@ namespace ceph {
 		};
 
 		Font(const std::string& path);
-		Vec2<int> getGlyphSize(char ch, float horz_scale, float vert_scale) const;
+		Rect<int> getCharacterBoundingBox(char ch, float horz_scale, float vert_scale) const;
 		void paintGlyph(char ch, unsigned char* data_ptr, int wd, int hgt, int data_stride, float scale) const;
 		float getScaleForPixelHeight(int hgt) const;
 		Metrics getMetrics() const;
