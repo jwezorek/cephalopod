@@ -15,22 +15,49 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h" /* http://nothings.org/stb/stb_image_write.h */
 
-namespace {
-
+namespace ceph
+{
 	class FontSheetCell : public ceph::Rect<int>
 	{
 	public:
-		std::shared_ptr<ceph::Font> font;
+		FontSheet::FontItem font_item;
 		float scale;
 		char character;
 
-		FontSheetCell(const std::shared_ptr<ceph::Font>& fnt = nullptr, float sc = 0, char ch = 0, int w = 0, int h = 0) :
-			ceph::Rect<int>( 0, 0, w, h ), 
-			font( fnt ),
-			scale( sc ),
-			character( ch )
+		FontSheetCell(const FontSheet::FontItem& fi, float sc = 0, char ch = 0, int w = 0, int h = 0) :
+			font_item(fi),
+			ceph::Rect<int>(0, 0, w, h),
+			scale(sc),
+			character(ch)
 		{}
 	};
+}
+
+namespace {
+
+	std::string GetPrintableCharacters();
+	std::string g_characters = GetPrintableCharacters();
+
+	std::string GetFontItemKey(const std::string& font_key, int size, char character)
+	{
+		return font_key + "_" + std::to_string(size) + "_" + std::string(1, character);
+	}
+
+	std::vector<ceph::FontSheetCell> GetFontItemCells(const std::vector<ceph::FontSheet::FontItem>& fonts)
+	{
+		std::vector<ceph::FontSheetCell> cells;
+		cells.reserve(g_characters.size() * fonts.size());
+		for (const ceph::FontSheet::FontItem& fi : fonts) {
+			float scale = fi.font->getScaleForPixelHeight(fi.size);
+			std::transform(g_characters.begin(), g_characters.end(), std::back_insert_iterator(cells),
+				[&fi, scale](char ch) {
+				auto sz = fi.font->getGlyphSize(ch, scale, scale);
+				return ceph::FontSheetCell(fi, scale, ch, sz.x + 1, sz.y + 1);
+			}
+			);
+		}
+		return cells;
+	}
 
 	std::string GetPrintableCharacters()
 	{
@@ -55,8 +82,23 @@ namespace {
 		}
 	}
 
-	std::string g_characters = GetPrintableCharacters();
+	std::vector<unsigned char> PaintFontSheetTexture(const ceph::Vec2<int>& tex_sz, const std::vector<ceph::FontSheetCell>& cells)
+	{
+		std::vector<unsigned char> tex_data;
 
+		size_t data_sz = tex_sz.x * tex_sz.y;
+		tex_data.reserve(data_sz * 4);
+		tex_data.resize(data_sz);
+
+		for (const auto& cell : cells) {
+			unsigned char* data_ptr = &tex_data[cell.x + cell.y * tex_sz.x];
+			cell.font_item.font->paintGlyph(cell.character, data_ptr, cell.wd - 1, cell.hgt - 1, tex_sz.x, cell.scale);
+		}
+		MakeRgbaFromSingleChannel(tex_data);
+		//stbi_write_png("out-4.png", tex_sz.x, tex_sz.y, 4, &(tex_data[0]), 4 * tex_sz.x);
+
+		return tex_data;
+	}
 }
 
 ceph::FontSheet::FontItem::FontItem(const std::string& n, const std::shared_ptr<Font>& f, const int sz) :
@@ -69,43 +111,65 @@ ceph::FontSheet::FontItem::FontItem(const std::shared_ptr<Font>& fp, const int s
 	FontItem(fp->getName(), fp, sz)
 { }
 
-std::shared_ptr<ceph::Texture> ceph::FontSheet::GenerateTexture(const std::vector<ceph::FontSheet::FontItem>& fonts)
+std::unordered_map<std::string, ceph::SpriteSheet::FrameInfo> ceph::FontSheet::GetFontAtlas(const std::vector<ceph::FontSheetCell>& cells) const
 {
-	std::vector<FontSheetCell> cells;
-	cells.reserve(g_characters.size() * fonts.size());
+	std::unordered_map<std::string, SpriteSheet::FrameInfo> atlas;
 
-	for (const ceph::FontSheet::FontItem& fi : fonts) {
-		float scale = fi.font->getScaleForPixelHeight(fi.size);
-		std::transform(g_characters.begin(), g_characters.end(), std::back_insert_iterator(cells),
-			[&fi, scale](char ch) {
-				auto sz = fi.font->getGlyphSize(ch, scale, scale);
-				return FontSheetCell( fi.font, scale, ch, sz.x+1, sz.y+1);
-			}
-		);
-	}
+	int index = 0;
+	std::transform(cells.begin(), cells.end(), std::inserter(atlas, atlas.end()),
+		[&index](const  ceph::FontSheetCell& cell) {
+			std::string key = GetFontItemKey(cell.font_item.name, cell.font_item.size, cell.character);
+			SpriteSheet::FrameInfo frame_info(key, cell, index++);
+			return std::pair<std::string, SpriteSheet::FrameInfo>(key, frame_info);
+		}
+	);
 
-	Vec2<int> tex_sz;
-	ceph::PackSprites( cells, tex_sz );
-
-	std::vector<unsigned char> tex_data;
-	size_t data_sz = tex_sz.x * tex_sz.y;
-	tex_data.reserve(data_sz * 4);
-	tex_data.resize(data_sz);
-
-	for (const auto& cell : cells) {
-		unsigned char* data_ptr = &tex_data[cell.x + cell.y * tex_sz.x];
-		cell.font->paintGlyph(cell.character, data_ptr, cell.wd-1, cell.hgt-1, tex_sz.x, cell.scale);
-	}
-
-	MakeRgbaFromSingleChannel(tex_data);
-	stbi_write_png("out-4.png", tex_sz.x, tex_sz.y, 4, &(tex_data[0]), 4 * tex_sz.x);
-
-	return std::make_shared<ceph::Texture>( ceph::Image( tex_sz.x, tex_sz.y, 4, std::move(tex_data) ) );
+	return atlas;
 }
 
-ceph::FontSheet::FontSheet(const std::vector<FontItem>& fonts) 
+ceph::FontSheet::FontSheet(const std::vector<FontItem>& fonts)
 {
-	texture_ = GenerateTexture(fonts);
+	Vec2<int> tex_sz;
+
+	// generate a cell for each FontItem/printable-character pair ...
+	// fill these cells with the correct width and height...
+	std::vector<FontSheetCell> cells = GetFontItemCells(fonts);
+
+	// run sprite packing to fill in locations for the cells.
+	ceph::PackSprites(cells, tex_sz);
+
+	// paint the cells into a single channel image and then convert
+	// to RGBA.
+	std::vector<unsigned char> tex_data = PaintFontSheetTexture(tex_sz, cells);
+
+	texture_ = std::make_shared<ceph::Texture>(ceph::Image(tex_sz.x, tex_sz.y, 4, std::move(tex_data)));
+	atlas_ = GetFontAtlas(cells);
+
+	std::transform(fonts.begin(), fonts.end(), std::inserter(fonts_, fonts_.end()),
+		[](const FontItem& fi) {
+			return std::pair<std::string, std::shared_ptr<Font>>(fi.name, fi.font);
+		}
+	);
+}
+
+std::shared_ptr<ceph::Sprite> ceph::FontSheet::getSprite(const std::string & font_key, int size, char ch) const
+{
+	return SpriteSheet::getSprite( GetFontItemKey(font_key, size, ch) );
+}
+
+ceph::Rect<int> ceph::FontSheet::getFrame(const std::string & font_key, int size, char ch) const
+{
+	return SpriteSheet::getFrame( GetFontItemKey(font_key, size, ch) );
+}
+
+ceph::Vec2<int> ceph::FontSheet::getFrameSize(const std::string & font_key, int size, char ch) const
+{
+	return SpriteSheet::getFrameSize(GetFontItemKey(font_key, size, ch));
+}
+
+ceph::SpriteFrame ceph::FontSheet::getSpriteFrame(const std::string & font_key, int size, char ch) const
+{
+	return SpriteSheet::getSpriteFrame(GetFontItemKey(font_key, size, ch));
 }
 
 

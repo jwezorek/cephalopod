@@ -72,6 +72,30 @@ float ceph::Font::getScaleForPixelHeight(int hgt) const
 	);
 }
 
+ceph::Font::Metrics ceph::Font::getMetrics() const
+{
+	ceph::Font::Metrics metrics;
+	stbtt_GetFontVMetrics(
+		&(impl_->info), 
+		&metrics.ascent, 
+		&metrics.descent,
+		&metrics.line_gap
+	);
+	return metrics;
+}
+
+int ceph::Font::getCharacterAdvance(char ch) const
+{
+	int ax = 0;
+	stbtt_GetCodepointHMetrics(&(impl_->info), ch, &ax, 0);
+	return ax;
+}
+
+int ceph::Font::getKernAdvance(char c1, char c2) const
+{
+	return  stbtt_GetCodepointKernAdvance(&(impl_->info), c1, c2);
+}
+
 ceph::Font::~Font()
 {
 }
