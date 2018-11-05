@@ -1,3 +1,4 @@
+#include <cctype>
 #include "..\include\cephalopod\label.hpp"
 #include "..\include\cephalopod\font.hpp"
 #include "..\include\cephalopod\sprite.hpp"
@@ -18,17 +19,26 @@ void ceph::Label::initialize()
 
 	float ascent = metrics.ascent * scale;
 	float descent = metrics.descent * scale;
-	float x = 0;
+	float x = 0, line_y = 0;
+
 	for (int i = 0; i < text_.size(); i++) {
 		char ch = text_[i];
-		char next_ch = (i < text_.size()) ? text_[i + 1] : 0;
-		auto y = ascent + font.getCharacterBoundingBox(ch, scale, scale).y;
+		char next_ch = text_[i + 1];
+		float y = line_y - font.getCharacterBoundingBox(ch, scale, scale).y2();
 
-		auto sprite = font_sheet_->getSprite(font_key_, font_sz_, ch);
-		sprite->moveTo(x, y);
-		addChild(sprite);
+		if (std::isgraph(ch)) {
+			auto sprite = font_sheet_->getSprite(font_key_, font_sz_, ch);
+			sprite->setAnchorPcnt(0, 0);
+			sprite->moveTo(x, y);
+			addChild(sprite);
+		}
 
-		x += scale * font.getCharacterAdvance(ch);
-		x += scale * font.getKernAdvance(ch, next_ch);
+		if (ch != '\n') {
+			x += scale * (font.getCharacterAdvance(ch) + font.getKernAdvance(ch, next_ch));
+		} else {
+			x = 0;
+			// should be equal to font_sz_, modulo line_gap I guess...
+			line_y -= (metrics.ascent - metrics.descent + metrics.line_gap) * scale; 
+		}
 	}
 }
