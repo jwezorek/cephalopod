@@ -4,7 +4,7 @@ like SDL and SFML but below the level of game engines.
 
 It is an implementation of sprite sheets, sprites, the notion of a "sprite tree" -- which gets called by different names but is the 2D equivalent of a scene graph, a tree of sprite nodes in which each node has local transformations applied to it that then cascade down to its children. An action system. Scenes. Scene transitions and a library of functions for doing 2D collision detection.
 
-In short cocos2d-x with 
+In short it's akin to cocos2d-x  
 1. minus all the crap 
 2. plus modern C++. 
 
