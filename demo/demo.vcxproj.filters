@@ -70,4 +70,9 @@
       <Filter>data</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="data\Roboto-Medium.ttf">
+      <Filter>data</Filter>
+    </Font>
+  </ItemGroup>
 </Project>

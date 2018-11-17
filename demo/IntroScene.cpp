@@ -14,7 +14,7 @@ void IntroScene::setMainScene(const std::shared_ptr<Asteroids>& a)
 
 IntroScene::IntroScene()
 {
-	std::shared_ptr<ceph::Font> font_1 = std::make_shared<ceph::Font>(".\\data\\cmunrm.ttf");
+	std::shared_ptr<ceph::Font> font_1 = std::make_shared<ceph::Font>(".\\data\\Roboto-Medium.ttf");
 	auto fsheet = std::make_shared<ceph::FontSheet>(
 		std::vector<ceph::FontSheet::FontItem> {
 			ceph::FontSheet::FontItem(font_1, 30),
@@ -22,7 +22,7 @@ IntroScene::IntroScene()
 		}
 	);
 	auto lbl = ceph::Actor::create<ceph::Label>(
-		fsheet, "cmunrm.ttf", 60, "For the love\nof Snoopy"
+		fsheet, "Roboto-Medium.ttf", 30, "For the love\nof Snoopy"
 	);
 	lbl->moveTo(100, 300);
 
