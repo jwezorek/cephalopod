@@ -88,6 +88,13 @@ int ceph::Font::getCharacterAdvance(char ch) const
 	return ax;
 }
 
+int ceph::Font::getCharacterLeftSideBearing(char ch) const
+{
+	int lsb = 0;
+	stbtt_GetCodepointHMetrics(&(impl_->info), ch, 0, &lsb);
+	return lsb;
+}
+
 int ceph::Font::getKernAdvance(char c1, char c2) const
 {
 	return  stbtt_GetCodepointKernAdvance(&(impl_->info), c1, c2);

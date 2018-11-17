@@ -32,6 +32,7 @@ namespace ceph {
 		float getScaleForPixelHeight(int hgt) const;
 		Metrics getMetrics() const;
 		int getCharacterAdvance(char ch) const;
+		int getCharacterLeftSideBearing(char ch) const;
 		int getKernAdvance(char c1, char c2) const;
 		std::string getName() const;
 		~Font();

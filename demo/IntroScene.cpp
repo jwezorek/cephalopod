@@ -15,14 +15,17 @@ void IntroScene::setMainScene(const std::shared_ptr<Asteroids>& a)
 IntroScene::IntroScene()
 {
 	std::shared_ptr<ceph::Font> font_1 = std::make_shared<ceph::Font>(".\\data\\Roboto-Medium.ttf");
+	std::shared_ptr<ceph::Font> font_2 = std::make_shared<ceph::Font>(".\\data\\cmunrm.ttf");
+
 	auto fsheet = std::make_shared<ceph::FontSheet>(
 		std::vector<ceph::FontSheet::FontItem> {
-			ceph::FontSheet::FontItem(font_1, 30),
-			ceph::FontSheet::FontItem(font_1, 60),
+			ceph::FontSheet::FontItem("roboto-small", font_1, 30),
+			ceph::FontSheet::FontItem("roboto-large", font_1, 60),
+			ceph::FontSheet::FontItem(font_2, 50),
 		}
 	);
 	auto lbl = ceph::Actor::create<ceph::Label>(
-		fsheet, "Roboto-Medium.ttf", 30, "For the love\nof Snoopy"
+		fsheet, "roboto-small", "For the love\nof Snoopy"
 	);
 	lbl->moveTo(100, 300);
 

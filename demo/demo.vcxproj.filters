@@ -74,5 +74,8 @@
     <Font Include="data\Roboto-Medium.ttf">
       <Filter>data</Filter>
     </Font>
+    <Font Include="data\cmunrm.ttf">
+      <Filter>data</Filter>
+    </Font>
   </ItemGroup>
 </Project>

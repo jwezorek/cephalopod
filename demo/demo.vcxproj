@@ -179,6 +179,7 @@
     <Image Include="data\zarquon.png" />
   </ItemGroup>
   <ItemGroup>
+    <Font Include="data\cmunrm.ttf" />
     <Font Include="data\Roboto-Medium.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
