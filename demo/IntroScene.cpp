@@ -25,9 +25,9 @@ IntroScene::IntroScene()
 		}
 	);
 	auto lbl = ceph::Actor::create<ceph::Label>(
-		fsheet, "roboto-small", "For the love\nof Snoopy"
+		fsheet, "roboto-small", "For the love\nof Snoopy\nyo yo yo", ceph::Label::Justification::Right
 	);
-	lbl->moveTo(100, 300);
+	lbl->moveTo(200, 300);
 
 	addActor(lbl);
 
