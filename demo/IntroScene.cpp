@@ -24,12 +24,12 @@ IntroScene::IntroScene()
 			ceph::FontSheet::FontItem(font_2, 50),
 		}
 	);
-	auto lbl = ceph::Actor::create<ceph::Label>(
+	label_ = ceph::Actor::create<ceph::Label>(
 		fsheet, "roboto-small", "For the love\nof Snoopy\nyo yo yo", ceph::Label::Justification::Right
 	);
-	lbl->moveTo(200, 300);
+	label_->moveTo(200, 300);
 
-	addActor(lbl);
+	addActor(label_);
 
 	setBackgroundColor( ceph::ColorRGB(255, 0, 0) );
 	auto bkgd = std::make_shared<ceph::Texture>(".\\data\\snoopy.png");
@@ -43,4 +43,6 @@ void IntroScene::handleKey(bool is_key_down, ceph::KeyCode key, unsigned char mo
 {
 	if (is_key_down && key == ceph::KeyCode::G)
 		ceph::Game::getInstance().setScene<ceph::CrossFadeTransition>( "game", 3.0f );
+	if (is_key_down && key == ceph::KeyCode::Space)
+		label_->setFont("cmunrm.ttf", 50);
 }

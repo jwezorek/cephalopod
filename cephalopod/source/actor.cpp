@@ -27,11 +27,9 @@ void ceph::Actor::addChildren(std::initializer_list<std::shared_ptr<Actor>> chil
 		addChild(child);
 }
 
-void ceph::Actor::removeChild(const std::shared_ptr<ceph::Actor>& actor)
+void ceph::Actor::removeChild(std::vector<std::shared_ptr<Actor>>::iterator i)
 {
-	auto i = std::find(children_.begin(), children_.end(), actor);
-	if (i == children_.end())
-		return;
+	auto actor = *i;
 
 	(*i)->parent_ = std::weak_ptr<Actor>();
 	(*i)->detachFromScene();
@@ -43,6 +41,21 @@ void ceph::Actor::removeChild(const std::shared_ptr<ceph::Actor>& actor)
 		if (&scene == &(Game::getInstance().getActiveScene()))
 			scene.dropped_actors_.push_back(actor);
 	}
+}
+
+void ceph::Actor::removeChild(const std::shared_ptr<ceph::Actor>& actor)
+{
+	auto i = std::find(children_.begin(), children_.end(), actor);
+	if (i == children_.end())
+		return;
+
+	removeChild(i);
+}
+
+void ceph::Actor::removeAllChildren()
+{
+	while (!children_.empty())
+		removeChild(children_.begin());
 }
 
 void ceph::Actor::detach()
@@ -228,6 +241,11 @@ void ceph::Actor::setScaleTo(const ceph::Vec2<float>& s)
 	changeScaleBy(scale_delta);
 }
 
+void ceph::Actor::changeScaleBy(float scale)
+{
+	changeScaleBy(Vec2<float>(scale, scale));
+}
+
 void ceph::Actor::changeScaleBy(const ceph::Vec2<float>& s)
 {
 	state_.changeScaleBy(s);
@@ -256,6 +274,11 @@ void ceph::Actor::moveBy(const ceph::Vec2<float>& delta)
 	state_.moveBy(delta);
 	if (actions_.isRunning())
 		actions_.moveBy(delta);
+}
+
+void ceph::Actor::moveBy(float x, float y)
+{
+	moveBy(Vec2<float>(x, y));
 }
 
 ceph::Vec2<float> ceph::Actor::getAnchorPt() const
