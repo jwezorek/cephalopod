@@ -126,7 +126,10 @@
     <ClInclude Include="include\cephalopod\button.hpp">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="include\cephalopod\guiwidget.hpp">
+    <ClInclude Include="source\guiwidgets.hpp">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="source\guiwidget.hpp">
       <Filter>Header Files\include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -210,6 +213,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\guiwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\guiwidgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -37,7 +37,10 @@ namespace ceph {
 		std::vector<std::shared_ptr<Actor>> children_;
 		ActorState state_;
 
+		virtual void onSceneAttached();
+		virtual void onSceneDetached();
 		virtual void drawThis(DrawingContext& rt) const = 0;
+
 		void detachFromScene();
 		void attachToScene(Scene& scene);
 		void runActions();
@@ -68,9 +71,6 @@ namespace ceph {
 		std::weak_ptr<Actor> getParent() const;
 		std::weak_ptr<Actor> getTopLevelParent() const;
 		Scene& getScene() const;
-
-		float setTint(ColorRGB color);
-		ColorRGB getTint() const;
 
 		float getAlpha() const;
 		void setAlphaTo(float alpha);

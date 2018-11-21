@@ -66,11 +66,20 @@ void ceph::Actor::detach()
 		scene_->removeActor(shared_from_this());
 }
 
+void ceph::Actor::onSceneAttached()
+{
+}
+
+void ceph::Actor::onSceneDetached()
+{
+}
+
 void ceph::Actor::detachFromScene()
 {
 	scene_ = nullptr;
 	for (auto child : children_)
 		child->detachFromScene();
+	onSceneDetached();
 }
 
 void ceph::Actor::attachToScene( ceph::Scene& scene)
@@ -78,6 +87,7 @@ void ceph::Actor::attachToScene( ceph::Scene& scene)
 	scene_ = &scene;
 	for (auto child : children_)
 		child->attachToScene(scene);
+	onSceneAttached();
 }
 
 bool ceph::Actor::isInScene() const
