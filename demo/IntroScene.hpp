@@ -13,5 +13,5 @@ private:
 	std::shared_ptr<ceph::SpriteSheet> sprite_sheet_;
 public:
 	IntroScene();
-	void handleKey(bool isPressed, ceph::KeyCode key, unsigned char modifiers);
+	void handleKey(bool isPressed, ceph::KeyCode key, ceph::KeyModifiers modifiers);
 };

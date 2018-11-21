@@ -42,7 +42,7 @@ IntroScene::IntroScene()
 	test_btn->moveTo(500, 500);
 }
 
-void IntroScene::handleKey(bool is_key_down, ceph::KeyCode key, unsigned char modifiers)
+void IntroScene::handleKey(bool is_key_down, ceph::KeyCode key, ceph::KeyModifiers modifiers)
 {
 	if (is_key_down && key == ceph::KeyCode::G)
 		ceph::Game::getInstance().setScene<ceph::CrossFadeTransition>( "game", 3.0f );

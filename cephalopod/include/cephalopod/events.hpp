@@ -113,4 +113,12 @@ namespace ceph {
 		PrintScreen
 	};
 
+	enum class KeyModifiers : unsigned char
+	{
+		Shift = 0x01,
+		Control = 0x02,
+		Alt = 0x04,
+		Super = 0x08
+	};
+
 }

@@ -29,5 +29,5 @@ public:
 	Ship(const std::shared_ptr<ceph::SpriteSheet>& ss);
 	void initialize();
 	void update(float dt);
-	void handleKey(bool isPressed, ceph::KeyCode key, unsigned char modifiers);
+	void handleKey(bool isPressed, ceph::KeyCode key, ceph::KeyModifiers modifiers);
 };

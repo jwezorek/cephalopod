@@ -24,6 +24,6 @@ namespace ceph
 		bool hasFocus() const;
 		void SetFocus();
 
-		virtual void handleKeyboardInput(KeyCode key) = 0;
+		virtual void handleKeyboardInput(KeyCode key, unsigned char mods) = 0;
 	};
 };

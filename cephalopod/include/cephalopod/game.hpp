@@ -63,7 +63,7 @@ namespace ceph
 
 		void run(const std::string& initial_scene);
 
-		Signal<bool, KeyCode, unsigned char> keyEvent;
+		Signal<bool, KeyCode, KeyModifiers> keyEvent;
 		static Game& getInstance();
 		static std::unique_ptr<ceph::Game> ceph::Game::createInstance();
 
