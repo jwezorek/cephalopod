@@ -47,21 +47,25 @@ namespace {
 
 }
 
-ceph::Label::Label(const std::shared_ptr<FontSheet> fs, const std::string & font_name, int font_sz, const std::string& text, Justification just) :
+ceph::Label::Label(const std::shared_ptr<FontSheet> fs, const std::string & font_name, int font_sz, const std::string& text, 
+		Justification just, const ColorRGB& color) :
 	font_sheet_(fs),
 	font_key_str_(font_name),
 	font_key_int_(font_sz),
 	text_(text),
-	just_(just)
+	just_(just),
+	color_(color)
 {
 }
 
-ceph::Label::Label(const std::shared_ptr<FontSheet> fs, const std::string& font_key, const std::string& text, Justification just) :
+ceph::Label::Label(const std::shared_ptr<FontSheet> fs, const std::string& font_key, const std::string& text, 
+		Justification just, const ColorRGB& color) :
 	font_sheet_(fs),
 	font_key_str_(font_key),
 	font_key_int_(0),
 	text_(text),
-	just_(just)
+	just_(just),
+	color_(color)
 {
 }
 
@@ -92,6 +96,7 @@ void ceph::Label::initialize()
 				sprite->setAnchorPcnt(0, 0);
 				float character_x = x + scale * font.getCharacterLeftSideBearing(ch);
 				sprite->moveTo(character_x, character_y);
+				sprite->setTint(color_);
 				addChild(sprite);
 			}
 			x += scale * (font.getCharacterAdvance(ch) + font.getKernAdvance(ch, next_ch));
@@ -126,6 +131,21 @@ void ceph::Label::setFont(const std::string & fontname, int sz)
 	font_key_int_ = sz;
 	removeAllChildren();
 	initialize();
+}
+
+void ceph::Label::setColor(const ColorRGB& color)
+{
+	for (auto& child : children_) {
+		auto sprite = std::dynamic_pointer_cast<ceph::Sprite>(child);
+		if (sprite)
+			sprite->setTint(color);
+	}
+	color_ = color;
+}
+
+ceph::ColorRGB ceph::Label::getColor() const
+{
+	return color_;
 }
 
 ceph::Label::Justification ceph::Label::getJustification() const

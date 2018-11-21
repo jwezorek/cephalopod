@@ -69,6 +69,9 @@ namespace ceph {
 		std::weak_ptr<Actor> getTopLevelParent() const;
 		Scene& getScene() const;
 
+		float setTint(ColorRGB color);
+		ColorRGB getTint() const;
+
 		float getAlpha() const;
 		void setAlphaTo(float alpha);
 		void changeAlphaBy(float alpha);

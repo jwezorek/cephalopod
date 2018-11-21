@@ -5,15 +5,33 @@
 #include "../include/cephalopod/drawingcontext.hpp"
 #include "graphics.hpp"
 
+/*
 ceph::Sprite::Sprite(const std::shared_ptr<Texture>& texture)
 {
 }
+*/
 
 ceph::Sprite::Sprite(const std::shared_ptr<const SpriteSheet>& sheet, const std::string& frame_name) :
-	sprite_sheet_(sheet)
+	sprite_sheet_(sheet),
+	tint_(ColorRGB(255, 255, 255))
 {
 	state_.setSpriteSheet(sheet);
 	state_.setSpriteFrame(frame_name);
+}
+
+void ceph::Sprite::setTint(ColorRGB color)
+{
+	tint_ = color;
+}
+
+ceph::ColorRGB ceph::Sprite::getTint() const
+{
+	return tint_;
+}
+
+std::string ceph::Sprite::getFrame() const
+{
+	return state_.getSpriteFrame();
 }
 
 void ceph::Sprite::setFrame(const std::string& frame_name)
@@ -31,7 +49,9 @@ void ceph::Sprite::drawThis(DrawingContext& dc) const
 
 	auto sprite_sz = state_.getSize();
 	auto matrix = dc.transformation * ceph::Mat3x3().scale(static_cast<float>(sprite_sz.x), static_cast<float>(sprite_sz.y));
-	dc.graphics.Blit(matrix, state_.getRect(), dc.alpha);
+
+	auto color = NormalizedColorRGBA(tint_, dc.alpha);
+	dc.graphics.Blit(matrix, state_.getRect(), color);
 }
 
 ceph::Sprite::~Sprite()

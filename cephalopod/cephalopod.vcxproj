@@ -174,6 +174,7 @@
     <ClInclude Include="include\cephalopod\actions.hpp" />
     <ClInclude Include="include\cephalopod\actor.hpp" />
     <ClInclude Include="include\cephalopod\actorstate.hpp" />
+    <ClInclude Include="include\cephalopod\button.hpp" />
     <ClInclude Include="include\cephalopod\drawingcontext.hpp" />
     <ClInclude Include="include\cephalopod\easingactions.hpp" />
     <ClInclude Include="include\cephalopod\events.hpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="include\cephalopod\fontsheet.hpp" />
     <ClInclude Include="include\cephalopod\game.hpp" />
     <ClInclude Include="include\cephalopod\group.hpp" />
+    <ClInclude Include="include\cephalopod\guiwidget.hpp" />
     <ClInclude Include="include\cephalopod\image.hpp" />
     <ClInclude Include="include\cephalopod\label.hpp" />
     <ClInclude Include="include\cephalopod\mat3x3.hpp" />
@@ -205,6 +207,7 @@
     <ClInclude Include="source\util.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\cephalopod\button.cpp" />
     <ClCompile Include="source\actionconstraints.cpp" />
     <ClCompile Include="source\actionplayer.cpp" />
     <ClCompile Include="source\actions.cpp" />
@@ -219,6 +222,7 @@
     <ClCompile Include="source\glad.c" />
     <ClCompile Include="source\graphics.cpp" />
     <ClCompile Include="source\group.cpp" />
+    <ClCompile Include="source\guiwidget.cpp" />
     <ClCompile Include="source\image.cpp" />
     <ClCompile Include="source\json11.cpp" />
     <ClCompile Include="source\label.cpp" />
