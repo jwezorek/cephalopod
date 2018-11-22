@@ -54,7 +54,7 @@ ceph::Label::Label(const std::shared_ptr<FontSheet> fs, const std::string & font
 	font_key_int_(font_sz),
 	text_(text),
 	just_(just),
-	color_(color),
+	color_(color)
 {
 }
 
