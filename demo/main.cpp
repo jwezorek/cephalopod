@@ -10,7 +10,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	std::unique_ptr<ceph::Game> game = ceph::Game::createInstance();
 
 	game->keyEvent.connect(*game, 
-		[=](bool isPressed, ceph::KeyCode key, unsigned char modifiers) {
+		[=](bool isPressed, ceph::KeyCode key, ceph::KeyModifiers modifiers) {
 			if (isPressed && key == ceph::KeyCode::Escape)
 				ceph::Game::getInstance().quit();
 		}

@@ -135,13 +135,10 @@ namespace {
 		if (action == GLFW_REPEAT) // TODO: Handle this?
 			return;
 
-		//if (key_index == GLFW_KEY_G)
-		//	do_scene_transition = true;
-
 		ceph::KeyCode key = (map_glfw_to_ceph_key.find(key_index) != map_glfw_to_ceph_key.end()) ?
 			map_glfw_to_ceph_key.at(key_index) : ceph::KeyCode::Unknown;
 
-		ceph::Game::getInstance().keyEvent.fire( (action == GLFW_PRESS), key, mods );
+		ceph::Game::getInstance().keyEvent.fire( (action == GLFW_PRESS), key, static_cast<ceph::KeyModifiers>(mods) );
 	}
 
 	GLFWwindow* CreateGlWindow(ceph::WindowMode mode, ceph::VideoMode vm, const char* title = "cephalopod")

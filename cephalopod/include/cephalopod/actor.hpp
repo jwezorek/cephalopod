@@ -37,11 +37,15 @@ namespace ceph {
 		std::vector<std::shared_ptr<Actor>> children_;
 		ActorState state_;
 
+		virtual void onSceneAttached();
+		virtual void onSceneDetached();
 		virtual void drawThis(DrawingContext& rt) const = 0;
+
 		void detachFromScene();
 		void attachToScene(Scene& scene);
 		void runActions();
 		void setActorState(const ActorState& state);
+		void removeChild(std::vector<std::shared_ptr<Actor>>::iterator i);
 
 		Mat3x3 getLocalToGlobalTransform() const; 
 		Mat3x3 getGlobalToLocalTransform() const;
@@ -53,6 +57,7 @@ namespace ceph {
 		void addChild(const std::shared_ptr<Actor>&);
 		void addChildren(std::initializer_list<std::shared_ptr<Actor>> children);
 		void removeChild(const std::shared_ptr<Actor>&);
+		void removeAllChildren();
 		void detach();
 		bool isInScene() const;
 		bool hasParent() const;

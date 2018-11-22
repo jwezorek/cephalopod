@@ -1,0 +1,11 @@
+{
+    "start" : 				{"rect" : [ 0, 0, 420, 132 ], "index" : 0 },
+    "start_selected" : 		{"rect" : [ 0, 132, 420, 132 ], "index" : 1 },
+    "start_disabled" : 		{"rect" : [ 0, 264, 420, 132 ], "index" : 2 },
+    "start_clicked" : 		{"rect" : [ 0, 396, 420, 132 ], "index" : 3 },
+    "exit" : 				{"rect" : [ 420, 0, 420, 132 ], "index" : 0 },
+    "exit_selected" : 		{"rect" : [ 420, 132, 420, 132 ], "index" : 1 },
+    "exit_disabled" : 		{"rect" : [ 420, 264, 420, 132 ], "index" : 2 },
+    "exit_clicked" : 		{"rect" : [ 420, 396, 420, 132 ], "index" : 3 }
+}
+    

@@ -47,25 +47,31 @@ namespace {
 
 }
 
-ceph::Label::Label(const std::shared_ptr<FontSheet> fs, const std::string & font_name, int font_sz, const std::string& text, Justification just) :
+ceph::Label::Label(const std::shared_ptr<FontSheet> fs, const std::string & font_name, int font_sz, const std::string& text, 
+		Justification just, const ColorRGB& color) :
 	font_sheet_(fs),
-	font_key_(font_name),
-	font_sz_(font_sz),
+	font_key_str_(font_name),
+	font_key_int_(font_sz),
 	text_(text),
-	just_(just)
-{}
+	just_(just),
+	color_(color),
+{
+}
 
-ceph::Label::Label(const std::shared_ptr<FontSheet> fs, const std::string& font_key, const std::string& text, Justification just) :
+ceph::Label::Label(const std::shared_ptr<FontSheet> fs, const std::string& font_key, const std::string& text, 
+		Justification just, const ColorRGB& color) :
 	font_sheet_(fs),
-	font_key_(font_key),
-	font_sz_(0),
+	font_key_str_(font_key),
+	font_key_int_(0),
 	text_(text),
-	just_(just)
-{}
+	just_(just),
+	color_(color)
+{
+}
 
 void ceph::Label::initialize()
 {
-	std::string key = (font_sz_ > 0) ? font_key_ + "_" + std::to_string(font_sz_) : font_key_;
+	std::string key = (font_key_int_ > 0) ? font_key_str_ + "_" + std::to_string(font_key_int_) : font_key_str_;
 	auto& font_item = font_sheet_->getFont(key);
 	const auto& font = *font_item.font;
 	float scale = font.getScaleForPixelHeight(font_item.size);
@@ -86,10 +92,11 @@ void ceph::Label::initialize()
 			float character_y = line_y - font.getCharacterBoundingBox(ch, scale, scale).y2();
 
 			if (std::isgraph(ch)) {
-				auto sprite = font_sheet_->getSprite(font_key_, font_sz_, ch);
+				auto sprite = font_sheet_->getSprite(font_key_str_, font_key_int_, ch);
 				sprite->setAnchorPcnt(0, 0);
 				float character_x = x + scale * font.getCharacterLeftSideBearing(ch);
 				sprite->moveTo(character_x, character_y);
+				sprite->setTint(color_);
 				addChild(sprite);
 			}
 			x += scale * (font.getCharacterAdvance(ch) + font.getKernAdvance(ch, next_ch));
@@ -97,4 +104,70 @@ void ceph::Label::initialize()
 		line_y -= (metrics.ascent - metrics.descent + metrics.line_gap) * scale;
 	}
 }
+
+std::string ceph::Label::getText() const
+{
+	return text_;
+}
+
+void ceph::Label::setText(const std::string & text)
+{
+	text_ = text;
+	removeAllChildren();
+	initialize();
+}
+
+void ceph::Label::setFont(const std::string &key)
+{
+	font_key_str_ = key;
+	font_key_int_ = 0;
+	removeAllChildren();
+	initialize();
+}
+
+void ceph::Label::setFont(const std::string & fontname, int sz)
+{
+	font_key_str_ = fontname;
+	font_key_int_ = sz;
+	removeAllChildren();
+	initialize();
+}
+
+void ceph::Label::setColor(const ColorRGB& color)
+{
+	for (auto& child : children_) {
+		auto sprite = std::dynamic_pointer_cast<ceph::Sprite>(child);
+		if (sprite)
+			sprite->setTint(color);
+	}
+	color_ = color;
+}
+
+ceph::ColorRGB ceph::Label::getColor() const
+{
+	return color_;
+}
+
+ceph::Label::Justification ceph::Label::getJustification() const
+{
+	return just_;
+}
+
+void ceph::Label::setJustification(ceph::Label::Justification just)
+{
+	just_ = just;
+	removeAllChildren();
+	initialize();
+}
+
+std::shared_ptr<ceph::FontSheet> ceph::Label::getFontSheet() const
+{
+	return font_sheet_;
+}
+
+
+
+
+
+
 

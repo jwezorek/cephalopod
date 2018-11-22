@@ -3,6 +3,7 @@
 #include "../include/cephalopod/game.hpp"
 #include "../include/cephalopod/texture.hpp"
 #include "../include/cephalopod/drawingcontext.hpp"
+#include "guiwidgets.hpp"
 #include "graphics.hpp"
 #include "util.hpp"
 #include <cmath>
@@ -98,6 +99,11 @@ void ceph::Scene::update(float dt)
 	updateEvent.fire( dt );
 	for (auto actor : stage_)
 		actor->enforceConstraints();
+}
+
+ceph::GuiWidgets& ceph::Scene::getWidgets()
+{
+	return *widgets_;
 }
 
 void ceph::Scene::setBackground(const std::shared_ptr<Texture>& tex, ceph::BackgroundMode bk_mode)

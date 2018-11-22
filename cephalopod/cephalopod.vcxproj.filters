@@ -123,6 +123,15 @@
     <ClInclude Include="include\cephalopod\label.hpp">
       <Filter>Header Files\include</Filter>
     </ClInclude>
+    <ClInclude Include="include\cephalopod\button.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="source\guiwidgets.hpp">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="source\guiwidget.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\game.cpp">
@@ -198,6 +207,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\label.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\cephalopod\button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\guiwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\guiwidgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

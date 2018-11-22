@@ -2,8 +2,8 @@
 
 #include <string>
 #include <optional>
-#include "../include/cephalopod/Mat3x3.hpp"
-#include "../include/cephalopod/types.hpp"
+#include "Mat3x3.hpp"
+#include "types.hpp"
 
 namespace ceph {
 

@@ -14,6 +14,7 @@
 namespace ceph {
 
 	class Game;
+	class GuiWidgets;
 
 	typedef std::function<void(Actor&, float)> UpdateHandlerFunc;
 	typedef std::function<void(Actor&, bool, KeyCode, unsigned char)> KeyEventHandlerFunc;
@@ -32,6 +33,7 @@ namespace ceph {
 		friend class Actor;
 		friend class ActionPlayer;
 		friend class SceneTransition;
+		friend class GuiWidget;
 
 	private:
 
@@ -41,12 +43,14 @@ namespace ceph {
 		std::deque<std::shared_ptr<Actor>> stage_;
 		std::list<std::shared_ptr<Actor>> dropped_actors_;
 		ColorRGB bkgd_color_;
+		std::unique_ptr<GuiWidgets> widgets_;
 
 	protected:
 		Signal<float> updateActionsEvent;
 		void drawBackground(DrawingContext& dc);
 		void endGameLoopIteration();
 		void update(float dt);
+		GuiWidgets& getWidgets();
 		Scene();
 
 	public:

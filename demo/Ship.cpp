@@ -114,7 +114,7 @@ void Ship::shoot()
 	bkgd->addChild(bullet);
 }
 
-void Ship::handleKey(bool is_key_down, ceph::KeyCode key, unsigned char modifiers)
+void Ship::handleKey(bool is_key_down, ceph::KeyCode key, ceph::KeyModifiers modifiers)
 {
 	switch (key) {
 		case  ceph::KeyCode::Left:
