@@ -182,6 +182,7 @@
     <ClInclude Include="include\cephalopod\fontsheet.hpp" />
     <ClInclude Include="include\cephalopod\game.hpp" />
     <ClInclude Include="include\cephalopod\group.hpp" />
+    <ClInclude Include="include\cephalopod\guiwidget.hpp" />
     <ClInclude Include="include\cephalopod\image.hpp" />
     <ClInclude Include="include\cephalopod\label.hpp" />
     <ClInclude Include="include\cephalopod\mat3x3.hpp" />
@@ -197,7 +198,6 @@
     <ClInclude Include="source\easingfunctions.hpp" />
     <ClInclude Include="source\glad.h" />
     <ClInclude Include="source\graphics.hpp" />
-    <ClInclude Include="source\guiwidget.hpp" />
     <ClInclude Include="source\guiwidgets.hpp" />
     <ClInclude Include="source\json11.hpp" />
     <ClInclude Include="source\khrplatform.h" />

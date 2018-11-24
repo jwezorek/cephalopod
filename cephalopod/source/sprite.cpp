@@ -5,12 +5,6 @@
 #include "../include/cephalopod/drawingcontext.hpp"
 #include "graphics.hpp"
 
-/*
-ceph::Sprite::Sprite(const std::shared_ptr<Texture>& texture)
-{
-}
-*/
-
 ceph::Sprite::Sprite(const std::shared_ptr<const SpriteSheet>& sheet, const std::string& frame_name) :
 	sprite_sheet_(sheet),
 	tint_(ColorRGB(255, 255, 255))

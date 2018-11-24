@@ -73,7 +73,7 @@ namespace {
 			std::transform(g_characters.begin(), g_characters.end(), std::back_insert_iterator(cells),
 				[&fi, scale](char ch) {
 					auto sz = fi.font->getCharacterBoundingBox(ch, scale, scale).getSize();
-					return ceph::FontSheetCell(fi, scale, ch, sz.x + 1, sz.y + 1);
+					return ceph::FontSheetCell(fi, scale, ch, sz.x + 2, sz.y + 2); // pad by two pixels
 				}
 			);
 		}
@@ -116,7 +116,7 @@ namespace {
 			cell.font_item.font->paintGlyph(cell.character, data_ptr, cell.wd - 1, cell.hgt - 1, tex_sz.x, cell.scale);
 		}
 		MakeRgbaFromSingleChannel(tex_data);
-		//stbi_write_png("out-4.png", tex_sz.x, tex_sz.y, 4, &(tex_data[0]), 4 * tex_sz.x);
+		stbi_write_png("test-sprite-sheet.png", tex_sz.x, tex_sz.y, 4, &(tex_data[0]), 4 * tex_sz.x);
 
 		return tex_data;
 	}
@@ -158,6 +158,13 @@ ceph::FontSheet::FontSheet(const std::vector<FontItem>& fonts)
 
 	// run sprite packing to fill in locations for the cells.
 	ceph::PackSprites(cells, tex_sz);
+	
+	// we've already padded by two pixels so let's make the cells have one pixel
+	// of slop.
+	for (auto& cell : cells) {
+		cell.wd -= 1;
+		cell.hgt -= 1;
+	}
 
 	// paint the cells into a single channel image and then convert
 	// to RGBA.

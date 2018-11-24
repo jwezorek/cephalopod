@@ -52,6 +52,9 @@
     <None Include="data\zarquon.json">
       <Filter>data</Filter>
     </None>
+    <None Include="data\btns.json">
+      <Filter>data</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\zarquon.png">
@@ -67,6 +70,9 @@
       <Filter>data</Filter>
     </Image>
     <Image Include="data\bkgd.png">
+      <Filter>data</Filter>
+    </Image>
+    <Image Include="data\btns.png">
       <Filter>data</Filter>
     </Image>
   </ItemGroup>

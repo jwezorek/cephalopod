@@ -3,16 +3,10 @@
 #include "..\include\cephalopod\scene.hpp"
 #include "guiwidgets.hpp"
 
-ceph::GuiWidget::GuiWidget(const std::string & id, ceph::Actor& self) :
+ceph::GuiWidget::GuiWidget(ceph::Actor& self) :
 	self_(self),
-	id_(id),
 	is_enabled_(false)
 {
-}
-
-std::string ceph::GuiWidget::getId() const
-{
-	return id_;
 }
 
 bool ceph::GuiWidget::isEnabled() const

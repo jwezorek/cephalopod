@@ -169,10 +169,12 @@
     <ClInclude Include="Ship.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\btns.json" />
     <None Include="data\zarquon.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\bkgd.png" />
+    <Image Include="data\btns.png" />
     <Image Include="data\lenna.png" />
     <Image Include="data\snoopy.png" />
     <Image Include="data\snoopy_2.png" />

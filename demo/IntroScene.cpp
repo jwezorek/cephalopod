@@ -6,7 +6,7 @@
 #include "cephalopod/font.hpp"
 #include "cephalopod/fontsheet.hpp"
 #include "cephalopod/label.hpp"
-#include "cephalopod/sprite.hpp"
+#include "cephalopod/button.hpp"
 
 IntroScene::IntroScene()
 {
@@ -24,9 +24,9 @@ IntroScene::IntroScene()
 		}
 	);
 	auto lbl = ceph::Actor::create<ceph::Label>(
-		fsheet, "roboto-large", "Cephalopod Obligatory Demo Asteroids", ceph::Label::Justification::Left, ceph::ColorRGB(0,0,0)
+		fsheet, "roboto-large", "Cephalopod Obligatory Asteroids Demo", ceph::Label::Justification::Left, ceph::ColorRGB(0,0,0)
 	);
-	lbl->moveTo(200, 300);
+	lbl->moveTo( 430, 800 );
 	addActor(lbl);
 
 	sprite_sheet_ = ceph::SpriteSheet::create(
@@ -37,9 +37,17 @@ IntroScene::IntroScene()
 	auto& key_evt = ceph::Game::getInstance().keyEvent;
 	connect(key_evt, &IntroScene::handleKey);
 
-	auto test_btn = ceph::Actor::create<ceph::Sprite>(sprite_sheet_, "start");
-	addActor(test_btn );
-	test_btn->moveTo(500, 500);
+	start_btn_ = ceph::Actor::create<ceph::Button>(
+		sprite_sheet_, "start", "start_selected", "start_clicked", "start_disabled"
+	);
+	addActor(start_btn_);
+	start_btn_->moveTo(600, 700);
+
+	exit_btn_ = ceph::Actor::create<ceph::Button>(
+		sprite_sheet_, "exit", "exit_selected", "exit_clicked", "exit_disabled"
+	);
+	addActor(exit_btn_);
+	exit_btn_->moveTo(600, 600);
 }
 
 void IntroScene::handleKey(bool is_key_down, ceph::KeyCode key, ceph::KeyModifiers modifiers)

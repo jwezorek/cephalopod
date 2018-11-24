@@ -7,18 +7,21 @@ namespace ceph
 {
 	class Button : public Sprite, public GuiWidget
 	{
+		friend class Actor;
+
 	private:
 		std::string frames_[4];
+		bool is_clicked_;
 
 	protected:
-		Button(const std::string& id, 
-			const std::shared_ptr<const SpriteSheet>& sheet,
+		Button(const std::shared_ptr<SpriteSheet>& sheet,
 			const std::string& normal_frame, 
 			const std::string& selected_frame, 
 			const std::string& clicked_frame,
 			const std::string& disabled_ftame
 		);
 
-	public:
+		void handleKeyboardInput(KeyCode key, KeyModifiers mods);
+		void onStateChange();
 	};
 };

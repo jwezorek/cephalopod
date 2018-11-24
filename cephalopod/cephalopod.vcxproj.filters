@@ -129,7 +129,7 @@
     <ClInclude Include="source\guiwidgets.hpp">
       <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="source\guiwidget.hpp">
+    <ClInclude Include="include\cephalopod\guiwidget.hpp">
       <Filter>Header Files\include</Filter>
     </ClInclude>
   </ItemGroup>
