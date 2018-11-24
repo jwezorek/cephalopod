@@ -1,4 +1,4 @@
-#include "..\include\cephalopod\mat3x3.hpp"
+#include "../include/cephalopod/mat3x3.hpp"
 
 namespace {
 	const int _11 = 0;

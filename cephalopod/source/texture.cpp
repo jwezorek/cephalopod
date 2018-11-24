@@ -1,5 +1,5 @@
-#include "..\include\cephalopod\texture.hpp"
-#include "..\include\cephalopod\image.hpp"
+#include "../include/cephalopod/texture.hpp"
+#include "../include/cephalopod/image.hpp"
 #include "glad.h"
 
 ceph::Texture::Texture(const std::string& img_path, bool useSmoothing, bool useRepeat) :

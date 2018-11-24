@@ -1,7 +1,7 @@
 #include <cctype>
-#include "..\include\cephalopod\label.hpp"
-#include "..\include\cephalopod\font.hpp"
-#include "..\include\cephalopod\sprite.hpp"
+#include "../include/cephalopod/label.hpp"
+#include "../include/cephalopod/font.hpp"
+#include "../include/cephalopod/sprite.hpp"
 
 namespace {
 

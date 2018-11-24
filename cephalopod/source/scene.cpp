@@ -103,6 +103,8 @@ void ceph::Scene::update(float dt)
 
 ceph::GuiWidgets& ceph::Scene::getWidgets()
 {
+	if (!widgets_)
+		widgets_ = std::make_unique<GuiWidgets>(*this);
 	return *widgets_;
 }
 

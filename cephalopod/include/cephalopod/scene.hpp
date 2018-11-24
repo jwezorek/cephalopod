@@ -45,12 +45,13 @@ namespace ceph {
 		ColorRGB bkgd_color_;
 		std::unique_ptr<GuiWidgets> widgets_;
 
+		GuiWidgets& getWidgets();
+
 	protected:
 		Signal<float> updateActionsEvent;
 		void drawBackground(DrawingContext& dc);
 		void endGameLoopIteration();
 		void update(float dt);
-		GuiWidgets& getWidgets();
 		Scene();
 
 	public:

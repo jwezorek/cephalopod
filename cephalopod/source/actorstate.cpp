@@ -1,5 +1,5 @@
-#include "..\include\cephalopod\actorstate.hpp"
-#include "..\include\cephalopod\spritesheet.hpp"
+#include "../include/cephalopod/actorstate.hpp"
+#include "../include/cephalopod/spritesheet.hpp"
 #include "util.hpp"
 
 namespace

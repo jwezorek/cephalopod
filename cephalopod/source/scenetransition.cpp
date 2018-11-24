@@ -1,5 +1,5 @@
-#include "..\include\cephalopod\scenetransition.hpp"
-#include "..\include\cephalopod\scene.hpp"
+#include "../include/cephalopod/scenetransition.hpp"
+#include "../include/cephalopod/scene.hpp"
 
 ceph::SceneTransition::SceneTransition(float duration) : 
 	duration_(duration), elapsed_(0), old_scene_(nullptr), active_scene_(nullptr)

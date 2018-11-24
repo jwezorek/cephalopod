@@ -1,3 +1,5 @@
+#include "../include/cephalopod/mat3x3.hpp"
+#include "../include/cephalopod/texture.hpp"
 #include "graphics.hpp"
 #include "glad.h"
 #include <GLFW/glfw3.h>
@@ -7,8 +9,6 @@
 #include <streambuf>
 #include <unordered_map>
 #include <functional>
-#include "..\include\cephalopod\mat3x3.hpp"
-#include "..\include\cephalopod\texture.hpp"
 
 ceph::CoordinateMappingInfo::CoordinateMappingInfo(const ceph::Mat3x3& m, ceph::Rect<float>& vp) :
 	matrix(m), viewport(vp)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_map>
+#include <vector>
 
 namespace ceph
 {
@@ -11,14 +11,16 @@ namespace ceph
 	{
 	private:
 		Scene& parent_;
-		std::unordered_map<std::string, GuiWidget&> widgets_;
-
-		void addWidget(GuiWidget& widget);
-		void removeWidget(GuiWidget& widget);
+		GuiWidget* initial_widget_;
+		GuiWidget* focused_widget_;
+		std::vector<GuiWidget*> widgets_;
 
 	public:
 		GuiWidgets(Scene& scene);
 		GuiWidget* getFocus();
+
+		void addWidget(GuiWidget& widget);
+		void removeWidget(GuiWidget& widget);
 	};
 
 };

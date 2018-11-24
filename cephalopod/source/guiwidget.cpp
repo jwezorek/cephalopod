@@ -1,6 +1,6 @@
-#include "..\include\cephalopod\guiwidget.hpp"
-#include "..\include\cephalopod\actor.hpp"
-#include "..\include\cephalopod\scene.hpp"
+#include "../include/cephalopod/guiwidget.hpp"
+#include "../include/cephalopod/actor.hpp"
+#include "../include/cephalopod/scene.hpp"
 #include "guiwidgets.hpp"
 
 ceph::GuiWidget::GuiWidget(ceph::Actor& self) :

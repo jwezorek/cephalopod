@@ -1,4 +1,4 @@
-#include "..\include\cephalopod\font.hpp"
+#include "../include/cephalopod/font.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
