@@ -23,6 +23,7 @@ namespace ceph
 	public:
 		GuiWidgets(Scene& scene);
 		GuiWidget* getFocus();
+		const GuiWidget* getFocus() const;
 
 		void setFocus(GuiWidget& widget);
 		void clearFocus();

@@ -65,6 +65,11 @@ ceph::GuiWidget* ceph::GuiWidgets::getFocus()
 	return focused_widget_;
 }
 
+const ceph::GuiWidget* ceph::GuiWidgets::getFocus() const
+{
+	return focused_widget_;
+}
+
 void ceph::GuiWidgets::setFocus(GuiWidget & widget)
 {
 	focused_widget_ = &widget;

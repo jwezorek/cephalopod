@@ -27,8 +27,9 @@ namespace ceph
 		GuiWidget* getNext();
 		GuiWidget* getPrev();
 
-		Actor& self();
-		const Actor& self() const;
+		GuiWidgets& parent();
+		const GuiWidgets& parent() const;
+		bool hasParent() const;
 
 	public:
 		GuiWidget();

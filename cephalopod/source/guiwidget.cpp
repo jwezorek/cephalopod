@@ -28,8 +28,7 @@ void ceph::GuiWidget::disable()
 
 bool ceph::GuiWidget::hasFocus() const
 {
-	auto& widgets = self().getScene().getWidgets();
-	return widgets.getFocus() == this;
+	return hasParent() ? parent().getFocus() == this : false;
 }
 
 void ceph::GuiWidget::focus()
@@ -40,14 +39,17 @@ void ceph::GuiWidget::focus()
 
 void ceph::GuiWidget::removeFocus()
 {
-	auto& widgets = self().getScene().getWidgets();
-	widgets.clearFocus();
-	onStateChange();
+	if (hasParent()) {
+		parent().clearFocus();
+		onStateChange();
+	}
 }
 
 void ceph::GuiWidget::focusNext()
 {
-	auto& widgets = self().getScene().getWidgets();
+	if (!hasParent())
+		return;
+	auto& widgets = parent();
 	if (!next_.expired()) {
 		auto next = next_.lock();
 		widgets.setFocus(*next);
@@ -59,7 +61,9 @@ void ceph::GuiWidget::focusNext()
 
 void ceph::GuiWidget::focusPrev()
 {
-	auto& widgets = self().getScene().getWidgets();
+	if (!hasParent())
+		return;
+	auto& widgets = parent();
 	if (!prev_.expired()) {
 		auto prev = prev_.lock();
 		widgets.setFocus(*prev);
@@ -79,26 +83,31 @@ ceph::GuiWidget * ceph::GuiWidget::getPrev()
 	return (!prev_.expired()) ? prev_.lock().get() : nullptr;
 }
 
-ceph::Actor& ceph::GuiWidget::self()
+ceph::GuiWidgets& ceph::GuiWidget::parent()
 {
-	return *dynamic_cast<ceph::Actor*>(this);
+	return dynamic_cast<ceph::Actor*>(this)->getScene().getWidgets();
 }
 
-const ceph::Actor& ceph::GuiWidget::self() const
+const ceph::GuiWidgets& ceph::GuiWidget::parent() const
 {
-	return *dynamic_cast<const ceph::Actor*>(this);
+	return dynamic_cast<const ceph::Actor*>(this)->getScene().getWidgets();
+}
+
+bool ceph::GuiWidget::hasParent() const
+{
+	return dynamic_cast<const ceph::Actor*>(this)->isInScene();
 }
 
 void ceph::GuiWidget::onWidgetAttachedToScene()
 {
-	auto& widgets = self().getScene().getWidgets();
-	widgets.addWidget(*this);
+	if (hasParent())
+		parent().addWidget(*this);
 }
 
 void ceph::GuiWidget::onBeforeWidgetDetachedFromScene()
 {
-	auto& widgets = self().getScene().getWidgets();
-	widgets.removeWidget(*this);
+	if (hasParent())
+		parent().removeWidget(*this);
 }
 
 void ceph::GuiWidget::setNext(const std::shared_ptr<GuiWidget>& widget)
