@@ -17,10 +17,11 @@ Ship::RotationType Ship::getRotationState() const
 	return RotationType::None;
 }
 
-Ship::Ship(const std::shared_ptr<ceph::SpriteSheet>& ss) :
+Ship::Ship(const std::shared_ptr<ceph::SpriteSheet>& ss, ceph::Signal<bool, ceph::KeyCode, ceph::KeyModifiers>& key_event) :
 	sprites_(ss),
 	is_thruster_on_(false),
-	velocity_(0.0f,0.0f)
+	velocity_(0.0f,0.0f),
+	key_event_(key_event)
 {
 }
 
@@ -29,8 +30,7 @@ void Ship::initialize()
 	auto main_ship_sprite = ceph::Actor::create<ceph::Sprite>(sprites_, "ship");
 	main_ship_sprite->setAnchorPcnt(0.5f, 0.5f);
 	addChild(main_ship_sprite);
-	auto& key_evt = ceph::Game::getInstance().keyEvent;
-	connect(key_evt, &Ship::handleKey);
+	connect(key_event_, &Ship::handleKey);
 }
 
 void Ship::update(float dt)

@@ -37,8 +37,19 @@ namespace ceph {
 		std::vector<std::shared_ptr<Actor>> children_;
 		ActorState state_;
 
-		virtual void onSceneAttached();
-		virtual void onSceneDetached();
+		virtual void onBeforeAttachParent( Actor& );
+		virtual void onAttachParent();
+
+		virtual void onBeforeDetachParent();
+		virtual void onDetachParent();
+
+		virtual void onBeforeAttachScene( Scene& );
+		virtual void onAttachScene();
+
+		virtual void onBeforeDetachScene();
+		virtual void onDetachScene();
+
+
 		virtual void drawThis(DrawingContext& rt) const = 0;
 
 		void detachFromScene();

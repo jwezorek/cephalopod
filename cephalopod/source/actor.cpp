@@ -12,6 +12,8 @@ ceph::Actor::Actor() : actions_(*this), scene_(nullptr)
 
 void ceph::Actor::addChild(const std::shared_ptr<ceph::Actor>& child)
 {
+	child->onBeforeAttachParent( *this );
+
 	child->parent_ = shared_from_this();
 	children_.push_back(child);
 	if (isInScene()) {
@@ -19,6 +21,8 @@ void ceph::Actor::addChild(const std::shared_ptr<ceph::Actor>& child)
 		if (child->hasActions())
 			child->runActions();
 	}
+
+	child->onAttachParent();
 }
 
 void ceph::Actor::addChildren(std::initializer_list<std::shared_ptr<Actor>> children)
@@ -30,9 +34,10 @@ void ceph::Actor::addChildren(std::initializer_list<std::shared_ptr<Actor>> chil
 void ceph::Actor::removeChild(std::vector<std::shared_ptr<Actor>>::iterator i)
 {
 	auto actor = *i;
+	actor->onBeforeDetachParent();
 
-	(*i)->parent_ = std::weak_ptr<Actor>();
-	(*i)->detachFromScene();
+	actor->parent_ = std::weak_ptr<Actor>();
+	actor->detachFromScene();
 	children_.erase(i);
 
 	if (isInScene())
@@ -41,6 +46,7 @@ void ceph::Actor::removeChild(std::vector<std::shared_ptr<Actor>>::iterator i)
 		if (&scene == &(Game::getInstance().getActiveScene()))
 			scene.dropped_actors_.push_back(actor);
 	}
+	actor->onDetachParent();
 }
 
 void ceph::Actor::removeChild(const std::shared_ptr<ceph::Actor>& actor)
@@ -66,28 +72,58 @@ void ceph::Actor::detach()
 		scene_->removeActor(shared_from_this());
 }
 
-void ceph::Actor::onSceneAttached()
+void ceph::Actor::onBeforeAttachParent( ceph::Actor& new_parent)
 {
 }
 
-void ceph::Actor::onSceneDetached()
+void ceph::Actor::onAttachParent()
+{
+}
+
+void ceph::Actor::onBeforeDetachParent()
+{
+}
+
+void ceph::Actor::onDetachParent( )
+{
+}
+
+void ceph::Actor::onBeforeAttachScene( ceph::Scene& scene )
+{
+}
+
+void ceph::Actor::onAttachScene()
+{
+}
+
+void ceph::Actor::onBeforeDetachScene()
+{
+}
+
+void ceph::Actor::onDetachScene( )
 {
 }
 
 void ceph::Actor::detachFromScene()
 {
+	onBeforeDetachScene();
+
 	scene_ = nullptr;
 	for (auto child : children_)
 		child->detachFromScene();
-	onSceneDetached();
+
+	onDetachScene();
 }
 
 void ceph::Actor::attachToScene( ceph::Scene& scene)
 {
+	onBeforeAttachScene( scene );
+
 	scene_ = &scene;
 	for (auto child : children_)
 		child->attachToScene(scene);
-	onSceneAttached();
+
+	onAttachScene();
 }
 
 bool ceph::Actor::isInScene() const

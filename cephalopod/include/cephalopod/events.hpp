@@ -121,4 +121,34 @@ namespace ceph {
 		Super = 0x08
 	};
 
+	inline KeyModifiers operator| (KeyModifiers lhs, KeyModifiers rhs)
+	{
+		using T = std::underlying_type_t <KeyModifiers>;
+		return static_cast<KeyModifiers>(static_cast<T>(lhs) | static_cast<T>(rhs));
+	}
+
+	inline KeyModifiers& operator |= (KeyModifiers& lhs, KeyModifiers rhs)
+	{
+		lhs = lhs | rhs;
+		return lhs;
+	}
+
+	inline KeyModifiers operator& (KeyModifiers lhs, KeyModifiers rhs)
+	{
+		using T = std::underlying_type_t <KeyModifiers>;
+		return static_cast<KeyModifiers>(static_cast<T>(lhs) & static_cast<T>(rhs));
+	}
+
+	inline KeyModifiers& operator &= (KeyModifiers& lhs, KeyModifiers rhs)
+	{
+		lhs = lhs & rhs;
+		return lhs;
+	}
+
+	inline bool any(KeyModifiers arg) {
+		using T = std::underlying_type_t <KeyModifiers>;
+		return static_cast<T>(arg) != 0;
+	}
+
+
 }

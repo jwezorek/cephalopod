@@ -37,7 +37,7 @@ Asteroids::Asteroids(const ceph::ColorRGB& color)
 		bkgd_layer_ = ceph::Actor::create<ceph::Group>()
 	);
 	
-	auto ship = ceph::Actor::create<Ship>(sprite_sheet_);
+	auto ship = ceph::Actor::create<Ship>(sprite_sheet_, std::ref(keyEvent) );
 
 	ship->moveTo(700, 300);
 	ship->applyConstraint(

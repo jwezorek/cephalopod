@@ -34,20 +34,33 @@ IntroScene::IntroScene()
 		".\\data\\btns.json"
 	);
 
-	auto& key_evt = ceph::Game::getInstance().keyEvent;
-	connect(key_evt, &IntroScene::handleKey);
+	connect(keyEvent, &IntroScene::handleKey);
 
 	start_btn_ = ceph::Actor::create<ceph::Button>(
 		sprite_sheet_, "start", "start_selected", "start_clicked", "start_disabled"
 	);
 	addActor(start_btn_);
 	start_btn_->moveTo(600, 700);
+	start_btn_->clickEvent.connect(
+		*this,
+		[=](ceph::Actor&) {
+			ceph::Game::getInstance().setScene<ceph::CrossFadeTransition>( "game", 3.0f );
+		}
+	);
 
 	exit_btn_ = ceph::Actor::create<ceph::Button>(
 		sprite_sheet_, "exit", "exit_selected", "exit_clicked", "exit_disabled"
 	);
 	addActor(exit_btn_);
 	exit_btn_->moveTo(600, 600);
+	exit_btn_->clickEvent.connect(
+		*this,
+		[=](ceph::Actor&) {
+			ceph::Game::getInstance().quit();
+		}
+	);
+
+	start_btn_->setNext(exit_btn_);
 }
 
 void IntroScene::handleKey(bool is_key_down, ceph::KeyCode key, ceph::KeyModifiers modifiers)

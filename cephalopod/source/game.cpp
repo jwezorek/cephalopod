@@ -272,30 +272,19 @@ void ceph::Game::setScene(const std::string& scene_name)
 void ceph::Game::switchScenes(const std::string& scene_name)
 {
 	auto old_scene = impl_->active_scene_;
-	impl_->active_scene_ = scenes_[scene_name].get();
+	auto new_scene = impl_->active_scene_ = scenes_[scene_name].get();
 	if (transition_)
-		transition_->setScenes( *old_scene, *(impl_->active_scene_) );
+		transition_->setScenes(*old_scene, *new_scene);
 }
-
-/*
-void testSpritePack()
-{
-	std::vector<ceph::Rect<int>> rects = {
-		{0, 0, 20, 20},
-		{0,0,100,150},
-		{0,0,150,10},
-		{0,0,40,40}
-	};
-
-	ceph::PackSprites(rects);
-}
-*/
 
 void ceph::Game::run(const std::string& scene_name) {
 	ceph::Clock clock;
 
 	setScene(scene_name);
+	impl_->active_scene_->onBecomeActive();
+
 	while (!glfwWindowShouldClose(impl_->window_)) {
+		auto old_scene = impl_->active_scene_;
 		glfwPollEvents();
 		auto elapsed = clock.restart();
 
@@ -317,6 +306,14 @@ void ceph::Game::run(const std::string& scene_name) {
 			transition.endGameLoopIteration();
 			if (transition.isComplete())
 				clearTransition();
+		}
+
+		auto new_scene = impl_->active_scene_;
+		if (old_scene != new_scene) {
+			if (old_scene)
+				old_scene->onBecomeInactive();
+			if (new_scene) 
+				new_scene->onBecomeActive();
 		}
 	}
 }

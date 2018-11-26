@@ -60,6 +60,7 @@ namespace ceph {
 			template<class Receiver> friend class Slot;
 		protected:
 			virtual void removeSubscriber(void* t) = 0;
+			virtual bool isConnectedTo(void* t) = 0;
 		public:
 			virtual ~SignalBase() {
 			}
@@ -106,6 +107,17 @@ namespace ceph {
 				[t](auto& elt) { return elt->getInstance() == t; }
 			);
 			subscribers.erase(to_remove, subscribers.end());
+		}
+
+		bool isConnectedTo(void* t) override {
+			auto subscriber = std::find_if(
+				subscribers.begin(), 
+				subscribers.end(),
+				[t](auto& elt) { 
+					return elt->getInstance() == t; 
+				}
+			);
+			return subscriber != subscribers.end();
 		}
 
 		std::vector<std::function<void()>> deferred_ops_;
@@ -168,6 +180,11 @@ namespace ceph {
 			}
 		}
 
+		template<class T>
+		bool isConnectedTo(Slot<T>& t) {
+			return t.isConnectedTo(*this);
+		}
+
 		~Signal() {
 			for (auto& s : subscribers)
 				static_cast<details::SlotBase*>(s->getInstance())->removeEvent(this);
@@ -215,6 +232,12 @@ namespace ceph {
 		{
 			ev.removeSubscriber(this);
 			removeEvent(&ev);
+		}
+
+		template<class... Args>
+		bool isConnectedTo(Signal<Args...>& ev)
+		{
+			return ev.isConnectedTo(this);
 		}
 
 		~Slot() {

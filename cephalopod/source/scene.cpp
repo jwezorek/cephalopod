@@ -86,6 +86,7 @@ namespace
 
 ceph::Scene::Scene()
 {
+
 }
 
 void ceph::Scene::endGameLoopIteration()
@@ -103,8 +104,9 @@ void ceph::Scene::update(float dt)
 
 ceph::GuiWidgets& ceph::Scene::getWidgets()
 {
-	if (!widgets_)
+	if (!widgets_) {
 		widgets_ = std::make_unique<GuiWidgets>(*this);
+	}
 	return *widgets_;
 }
 
@@ -174,6 +176,27 @@ void ceph::Scene::drawBackground(ceph::DrawingContext& dc)
 		else
 			DrawTiledBackground(dc.graphics, bkgd_->getSize(), dc.transformation, dc.alpha); //TODO: possibly do this via texture wrapMode
 	}
+}
+
+void ceph::Scene::onBecomeInactive()
+{
+	auto& game = ceph::Game::getInstance();
+	if (! game.keyEvent.isConnectedTo(*this))
+		return;
+	game.keyEvent.disconnect(*this);
+}
+
+void ceph::Scene::onBecomeActive()
+{
+	auto& game = ceph::Game::getInstance();
+	if (game.keyEvent.isConnectedTo(*this))
+		return;
+
+	game.keyEvent.connect( *this,
+		[=](bool isPressed, ceph::KeyCode key, ceph::KeyModifiers modifiers) {
+			this->keyEvent.fire(isPressed, key, modifiers);
+		}
+	);
 }
 
 ceph::Scene::~Scene()

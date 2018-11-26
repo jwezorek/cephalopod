@@ -21,7 +21,16 @@ namespace ceph
 			const std::string& disabled_ftame
 		);
 
-		void handleKeyboardInput(KeyCode key, KeyModifiers mods);
+		void handleKeyDown( ceph::KeyCode key, ceph::KeyModifiers modifiers );
+		void handleKeyUp( ceph::KeyCode key, ceph::KeyModifiers modifiers );
 		void onStateChange();
+
+		void onAttachScene() override;
+		void onBeforeDetachScene() override;
+
+	public:
+
+		Signal<Actor&> clickEvent;
+
 	};
 };

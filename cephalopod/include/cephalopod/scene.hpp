@@ -54,6 +54,9 @@ namespace ceph {
 		void update(float dt);
 		Scene();
 
+		virtual void onBecomeInactive();
+		virtual void onBecomeActive();
+
 	public:
 
 		void setBackground(const std::shared_ptr<Texture>& tex, BackgroundMode mapping = BackgroundMode::StretchToFit);
@@ -71,6 +74,7 @@ namespace ceph {
 		void draw(DrawingContext& rt);
 
 		Signal<float> updateEvent;
+		Signal<bool, KeyCode, KeyModifiers> keyEvent;
 
 		virtual ~Scene();
 	};

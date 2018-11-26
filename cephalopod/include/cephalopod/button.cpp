@@ -1,4 +1,5 @@
 #include "button.hpp"
+#include "guiwidget.hpp"
 
 namespace {
 	enum ButtonFrame
@@ -24,7 +25,7 @@ namespace {
 ceph::Button::Button(const std::shared_ptr<SpriteSheet>& sheet, const std::string& normal_frame, 
 		const std::string & selected_frame, const std::string & clicked_frame, const std::string & disabled_ftame) :
 	ceph::Sprite( sheet, normal_frame ),
-	ceph::GuiWidget( *this ),
+	ceph::GuiWidget( *static_cast<ceph::Actor*>(this) ),
 	is_clicked_( false )
 {
 	frames_[ButtonFrame::Normal] = normal_frame;
@@ -33,8 +34,21 @@ ceph::Button::Button(const std::shared_ptr<SpriteSheet>& sheet, const std::strin
 	frames_[ButtonFrame::Disabled] = disabled_ftame;
 }
 
-void ceph::Button::handleKeyboardInput(KeyCode key, KeyModifiers mods)
+void ceph::Button::handleKeyDown(ceph::KeyCode key, ceph::KeyModifiers modifiers)
 {
+	if (key == ceph::KeyCode::Space) {
+		is_clicked_ = true;
+		onStateChange();
+	}
+}
+
+void ceph::Button::handleKeyUp(ceph::KeyCode key, ceph::KeyModifiers modifiers)
+{
+	if (key == ceph::KeyCode::Space) {
+		is_clicked_ = false;
+		onStateChange();
+		clickEvent.fire(*this);
+	}
 }
 
 void ceph::Button::onStateChange()
@@ -42,4 +56,14 @@ void ceph::Button::onStateChange()
 	setFrame(
 		frames_[ GetFrame(is_clicked_, isEnabled(), hasFocus()) ]
 	);
+}
+
+void ceph::Button::onAttachScene()
+{
+	onWidgetAttachedToScene();
+}
+
+void ceph::Button::onBeforeDetachScene()
+{
+	onBeforeWidgetDetachedFromScene();
 }
