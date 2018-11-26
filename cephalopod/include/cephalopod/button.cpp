@@ -25,7 +25,6 @@ namespace {
 ceph::Button::Button(const std::shared_ptr<SpriteSheet>& sheet, const std::string& normal_frame, 
 		const std::string & selected_frame, const std::string & clicked_frame, const std::string & disabled_ftame) :
 	ceph::Sprite( sheet, normal_frame ),
-	ceph::GuiWidget( *static_cast<ceph::Actor*>(this) ),
 	is_clicked_( false )
 {
 	frames_[ButtonFrame::Normal] = normal_frame;

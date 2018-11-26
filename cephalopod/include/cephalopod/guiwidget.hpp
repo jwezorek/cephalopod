@@ -14,7 +14,6 @@ namespace ceph
 
 	protected:
 		bool is_enabled_;
-		Actor& self_;
 		std::weak_ptr<GuiWidget> next_, prev_;
 
 		virtual void handleKeyDown(ceph::KeyCode key, ceph::KeyModifiers modifiers) = 0;
@@ -28,9 +27,11 @@ namespace ceph
 		GuiWidget* getNext();
 		GuiWidget* getPrev();
 
+		Actor& self();
+		const Actor& self() const;
 
 	public:
-		GuiWidget(Actor& self);
+		GuiWidget();
 		bool isEnabled() const;
 		void enable();
 		void disable();

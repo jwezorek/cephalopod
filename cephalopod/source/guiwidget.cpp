@@ -4,8 +4,7 @@
 #include "guiwidgets.hpp"
 #include <iostream>
 
-ceph::GuiWidget::GuiWidget(ceph::Actor& self) :
-	self_(self),
+ceph::GuiWidget::GuiWidget() :
 	is_enabled_(false)
 {
 }
@@ -29,7 +28,7 @@ void ceph::GuiWidget::disable()
 
 bool ceph::GuiWidget::hasFocus() const
 {
-	auto& widgets = self_.getScene().getWidgets();
+	auto& widgets = self().getScene().getWidgets();
 	return widgets.getFocus() == this;
 }
 
@@ -41,14 +40,14 @@ void ceph::GuiWidget::focus()
 
 void ceph::GuiWidget::removeFocus()
 {
-	auto& widgets = self_.getScene().getWidgets();
+	auto& widgets = self().getScene().getWidgets();
 	widgets.clearFocus();
 	onStateChange();
 }
 
 void ceph::GuiWidget::focusNext()
 {
-	auto& widgets = self_.getScene().getWidgets();
+	auto& widgets = self().getScene().getWidgets();
 	if (!next_.expired()) {
 		auto next = next_.lock();
 		widgets.setFocus(*next);
@@ -60,7 +59,7 @@ void ceph::GuiWidget::focusNext()
 
 void ceph::GuiWidget::focusPrev()
 {
-	auto& widgets = self_.getScene().getWidgets();
+	auto& widgets = self().getScene().getWidgets();
 	if (!prev_.expired()) {
 		auto prev = prev_.lock();
 		widgets.setFocus(*prev);
@@ -80,15 +79,25 @@ ceph::GuiWidget * ceph::GuiWidget::getPrev()
 	return (!prev_.expired()) ? prev_.lock().get() : nullptr;
 }
 
+ceph::Actor& ceph::GuiWidget::self()
+{
+	return *dynamic_cast<ceph::Actor*>(this);
+}
+
+const ceph::Actor& ceph::GuiWidget::self() const
+{
+	return *dynamic_cast<const ceph::Actor*>(this);
+}
+
 void ceph::GuiWidget::onWidgetAttachedToScene()
 {
-	auto& widgets = self_.getScene().getWidgets();
+	auto& widgets = self().getScene().getWidgets();
 	widgets.addWidget(*this);
 }
 
 void ceph::GuiWidget::onBeforeWidgetDetachedFromScene()
 {
-	auto& widgets = self_.getScene().getWidgets();
+	auto& widgets = self().getScene().getWidgets();
 	widgets.removeWidget(*this);
 }
 
